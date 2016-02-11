@@ -207,6 +207,14 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <smd name="5" x="5.08" y="-10.16" dx="3.048" dy="5.08" layer="16" roundness="20"/>
 <wire x1="-9.525" y1="-13.335" x2="9.525" y2="-13.335" width="0.127" layer="21"/>
 </package>
+<package name="PWR_SOCKET_2_1MM">
+<circle x="0" y="0" radius="5.4" width="0.127" layer="21"/>
+<pad name="BARREL" x="0" y="4.2" drill="3" diameter="5"/>
+<pad name="NC" x="-4.2" y="0" drill="3" diameter="5"/>
+<pad name="PIN" x="3.4" y="-0.7" drill="3" diameter="5"/>
+<circle x="0" y="0" radius="3.7" width="0.127" layer="21"/>
+<circle x="0" y="0" radius="2.25" width="0.127" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="STEREO_NOSWITCH_JACK">
@@ -277,6 +285,26 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <pin name="4" x="12.7" y="-2.54" visible="off" direction="pas" swaplevel="2" rot="R180"/>
 <pin name="5" x="-12.7" y="-2.54" visible="off" direction="pas" swaplevel="2"/>
 </symbol>
+<symbol name="PWR_SOCKET">
+<pin name="PIN" x="12.7" y="5.08" length="middle" rot="R180"/>
+<pin name="NC" x="12.7" y="2.54" length="middle" rot="R180"/>
+<pin name="BARREL" x="12.7" y="0" length="middle" rot="R180"/>
+<wire x1="7.62" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="-1.016" y2="1.016" width="0.254" layer="94"/>
+<wire x1="-1.016" y1="1.016" x2="-2.032" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="2.54" x2="2.54" y2="2.54" width="0.254" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="0.254" width="0.254" layer="94"/>
+<wire x1="2.54" y1="0.254" x2="3.048" y2="0.762" width="0.254" layer="94"/>
+<wire x1="2.54" y1="0.254" x2="2.032" y2="0.762" width="0.254" layer="94"/>
+<wire x1="7.62" y1="5.08" x2="2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="2.54" y2="5.588" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.588" x2="0" y2="5.588" width="0.254" layer="94"/>
+<wire x1="0" y1="5.588" x2="0" y2="4.572" width="0.254" layer="94"/>
+<wire x1="0" y1="4.572" x2="2.54" y2="4.572" width="0.254" layer="94"/>
+<wire x1="2.54" y1="4.572" x2="2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="0" y1="4.572" x2="-0.508" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-0.508" y1="5.08" x2="0" y2="5.588" width="0.254" layer="94"/>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="VERTICAL_3_5MM_SOCKET" prefix="X">
@@ -334,6 +362,23 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <connect gate="G$1" pin="3" pad="3"/>
 <connect gate="G$1" pin="4" pad="4"/>
 <connect gate="G$1" pin="5" pad="5"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="PWR_SOCKET_2_1MM">
+<gates>
+<gate name="G$1" symbol="PWR_SOCKET" x="-7.62" y="-2.54"/>
+</gates>
+<devices>
+<device name="" package="PWR_SOCKET_2_1MM">
+<connects>
+<connect gate="G$1" pin="BARREL" pad="BARREL"/>
+<connect gate="G$1" pin="NC" pad="NC"/>
+<connect gate="G$1" pin="PIN" pad="PIN"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -8674,96 +8719,6 @@ Source: www.kingbright.com</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="pinhead">
-<description>&lt;b&gt;Pin Header Connectors&lt;/b&gt;&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="1X02">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<wire x1="-1.905" y1="1.27" x2="-0.635" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="-0.635" y1="1.27" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="0" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="-0.635" x2="-0.635" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="0.635" x2="-2.54" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="-1.905" y1="1.27" x2="-2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="-0.635" x2="-1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="-0.635" y1="-1.27" x2="-1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="0.635" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="0.635" y1="1.27" x2="1.905" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="1.905" y1="1.27" x2="2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="0.635" x2="2.54" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="-0.635" x2="1.905" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="1.905" y1="-1.27" x2="0.635" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="0.635" y1="-1.27" x2="0" y2="-0.635" width="0.1524" layer="21"/>
-<pad name="1" x="-1.27" y="0" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="1.27" y="0" drill="1.016" shape="long" rot="R90"/>
-<text x="-2.6162" y="1.8288" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-2.54" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-1.524" y1="-0.254" x2="-1.016" y2="0.254" layer="51"/>
-<rectangle x1="1.016" y1="-0.254" x2="1.524" y2="0.254" layer="51"/>
-</package>
-<package name="1X02/90">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<wire x1="-2.54" y1="-1.905" x2="0" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="0" y1="-1.905" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="-2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="-2.54" y1="0.635" x2="-2.54" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="-1.27" y1="6.985" x2="-1.27" y2="1.27" width="0.762" layer="21"/>
-<wire x1="0" y1="-1.905" x2="2.54" y2="-1.905" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="-1.905" x2="2.54" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="2.54" y1="0.635" x2="0" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="1.27" y1="6.985" x2="1.27" y2="1.27" width="0.762" layer="21"/>
-<pad name="1" x="-1.27" y="-3.81" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="1.27" y="-3.81" drill="1.016" shape="long" rot="R90"/>
-<text x="-3.175" y="-3.81" size="1.27" layer="25" ratio="10" rot="R90">&gt;NAME</text>
-<text x="4.445" y="-3.81" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
-<rectangle x1="-1.651" y1="0.635" x2="-0.889" y2="1.143" layer="21"/>
-<rectangle x1="0.889" y1="0.635" x2="1.651" y2="1.143" layer="21"/>
-<rectangle x1="-1.651" y1="-2.921" x2="-0.889" y2="-1.905" layer="21"/>
-<rectangle x1="0.889" y1="-2.921" x2="1.651" y2="-1.905" layer="21"/>
-</package>
-</packages>
-<symbols>
-<symbol name="PINHD2">
-<wire x1="-6.35" y1="-2.54" x2="1.27" y2="-2.54" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="-2.54" x2="1.27" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="1.27" y1="5.08" x2="-6.35" y2="5.08" width="0.4064" layer="94"/>
-<wire x1="-6.35" y1="5.08" x2="-6.35" y2="-2.54" width="0.4064" layer="94"/>
-<text x="-6.35" y="5.715" size="1.778" layer="95">&gt;NAME</text>
-<text x="-6.35" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="1" x="-2.54" y="2.54" visible="pad" length="short" direction="pas" function="dot"/>
-<pin name="2" x="-2.54" y="0" visible="pad" length="short" direction="pas" function="dot"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="PINHD-1X2" prefix="JP" uservalue="yes">
-<description>&lt;b&gt;PIN HEADER&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="PINHD2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="1X02">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="/90" package="1X02/90">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="resistor">
 <description>&lt;b&gt;Resistors, Capacitors, Inductors&lt;/b&gt;&lt;p&gt;
 Based on the previous libraries:
@@ -15707,7 +15662,6 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
 <part name="IC5" library="burr-brown" deviceset="REG1117" device=""/>
-<part name="JP1" library="pinhead" deviceset="PINHD-1X2" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="C11" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
 <part name="C18" library="rcl" deviceset="C-EU" device="C0805"/>
@@ -15754,6 +15708,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="C6" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
+<part name="U$2" library="jason_eagle6" deviceset="PWR_SOCKET_2_1MM" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -15828,7 +15783,6 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="GND22" gate="1" x="-22.86" y="-5.08"/>
 <instance part="GND23" gate="1" x="-15.24" y="-5.08"/>
 <instance part="IC5" gate="G$1" x="-58.42" y="208.28"/>
-<instance part="JP1" gate="G$1" x="-109.22" y="208.28" rot="R180"/>
 <instance part="GND4" gate="1" x="-58.42" y="187.96"/>
 <instance part="C11" gate="G$1" x="-81.28" y="200.66"/>
 <instance part="C18" gate="G$1" x="-73.66" y="198.12" rot="R180"/>
@@ -15892,6 +15846,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="GND7" gate="1" x="-137.16" y="66.04"/>
 <instance part="C6" gate="G$1" x="76.2" y="116.84"/>
 <instance part="GND8" gate="1" x="76.2" y="106.68"/>
+<instance part="U$2" gate="G$1" x="-132.08" y="208.28"/>
 </instances>
 <busses>
 </busses>
@@ -16036,8 +15991,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-15.24" y1="-2.54" x2="-15.24" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="G$1" pin="1"/>
-<wire x1="-106.68" y1="205.74" x2="-83.82" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="-114.3" y1="205.74" x2="-83.82" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="-83.82" y1="205.74" x2="-83.82" y2="193.04" width="0.1524" layer="91"/>
 <pinref part="IC5" gate="G$1" pin="GND"/>
 <wire x1="-83.82" y1="193.04" x2="-81.28" y2="193.04" width="0.1524" layer="91"/>
@@ -16060,6 +16014,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-38.1" y1="193.04" x2="-38.1" y2="195.58" width="0.1524" layer="91"/>
 <junction x="-43.18" y="193.04"/>
 <pinref part="C5" gate="G$1" pin="-"/>
+<pinref part="U$2" gate="G$1" pin="PIN"/>
+<wire x1="-119.38" y1="213.36" x2="-114.3" y2="213.36" width="0.1524" layer="91"/>
+<wire x1="-114.3" y1="213.36" x2="-114.3" y2="205.74" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="OK1" gate="G$1" pin="GND"/>
@@ -16386,50 +16343,50 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="VOUTA" class="0">
 <segment>
-<label x="91.44" y="86.36" size="1.778" layer="95"/>
-<wire x1="106.68" y1="86.36" x2="93.98" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="C" pin="+IN"/>
-</segment>
-<segment>
 <pinref part="IC3" gate="G$1" pin="VOUTA"/>
 <wire x1="45.72" y1="71.12" x2="60.96" y2="71.12" width="0.1524" layer="91"/>
 <label x="58.42" y="71.12" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="IC4" gate="B" pin="+IN"/>
+<wire x1="106.68" y1="101.6" x2="96.52" y2="101.6" width="0.1524" layer="91"/>
+<label x="96.52" y="101.6" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="VOUTB" class="0">
-<segment>
-<label x="93.98" y="71.12" size="1.778" layer="95"/>
-<wire x1="106.68" y1="71.12" x2="93.98" y2="71.12" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="D" pin="+IN"/>
-</segment>
 <segment>
 <pinref part="IC3" gate="G$1" pin="VOUTB"/>
 <wire x1="45.72" y1="73.66" x2="60.96" y2="73.66" width="0.1524" layer="91"/>
 <label x="58.42" y="73.66" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="IC4" gate="A" pin="+IN"/>
+<wire x1="106.68" y1="116.84" x2="96.52" y2="116.84" width="0.1524" layer="91"/>
+<label x="96.52" y="116.84" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="VOUTC" class="0">
-<segment>
-<label x="91.44" y="116.84" size="1.778" layer="95"/>
-<wire x1="106.68" y1="116.84" x2="93.98" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="A" pin="+IN"/>
-</segment>
 <segment>
 <pinref part="IC3" gate="G$1" pin="VOUTC"/>
 <wire x1="45.72" y1="76.2" x2="60.96" y2="76.2" width="0.1524" layer="91"/>
 <label x="58.42" y="76.2" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="IC4" gate="D" pin="+IN"/>
+<wire x1="106.68" y1="71.12" x2="96.52" y2="71.12" width="0.1524" layer="91"/>
+<label x="96.52" y="71.12" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="VOUTD" class="0">
-<segment>
-<label x="93.98" y="101.6" size="1.778" layer="95"/>
-<wire x1="106.68" y1="101.6" x2="93.98" y2="101.6" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="B" pin="+IN"/>
-</segment>
 <segment>
 <pinref part="IC3" gate="G$1" pin="VOUTD"/>
 <wire x1="45.72" y1="78.74" x2="60.96" y2="78.74" width="0.1524" layer="91"/>
 <label x="58.42" y="78.74" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC4" gate="C" pin="+IN"/>
+<wire x1="106.68" y1="86.36" x2="96.52" y2="86.36" width="0.1524" layer="91"/>
+<label x="96.52" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SR_DAT" class="0">
@@ -16673,8 +16630,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <net name="N$40" class="0">
 <segment>
 <pinref part="D3" gate="1" pin="A"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
-<wire x1="-91.44" y1="208.28" x2="-106.68" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="208.28" x2="-119.38" y2="208.28" width="0.1524" layer="91"/>
+<pinref part="U$2" gate="G$1" pin="BARREL"/>
 </segment>
 </net>
 <net name="N$29" class="0">
