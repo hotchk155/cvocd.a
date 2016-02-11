@@ -15612,101 +15612,101 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="VEL2CV" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="NOTE1CV" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="NOTE2CV" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
-<part name="GATA" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
+<part name="CLK2" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="GATE2" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="GATE1" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
-<part name="SYNC1" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
+<part name="CLK1" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="MIDI" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="IC1" library="jasons_stuff" deviceset="PIC16F1825" device="SO14"/>
-<part name="IC3" library="jason_eagle6" deviceset="MCP4728_QUAD_DAC" device=""/>
-<part name="IC2" library="74xx-eu" deviceset="74*595" device="D" technology="HC"/>
-<part name="R2" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R1" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R4" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="IC4" library="jason_eagle6" deviceset="MCP4728_QUAD_DAC" device=""/>
+<part name="IC3" library="74xx-eu" deviceset="74*595" device="D" technology="HC"/>
+<part name="R14" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R13" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R15" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R16" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
-<part name="R19" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R18" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="GND12" library="supply1" deviceset="GND" device=""/>
-<part name="IC4" library="linear" deviceset="LM324" device="D"/>
-<part name="R27" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R22" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R21" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R26" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R28" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R23" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="GND12" library="supply1" deviceset="GND" device=""/>
+<part name="IC5" library="linear" deviceset="LM324" device="D"/>
+<part name="R17" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R20" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R26" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R23" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R18" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R19" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R25" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R24" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
-<part name="C8" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C13" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="C17" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="C9" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C3" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C2" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C1" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C4" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C19" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C17" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C15" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C14" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C16" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="ISCP" library="tag-connect" deviceset="TC2030" device="-MCP-NL"/>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
 <part name="GND19" library="supply1" deviceset="GND" device=""/>
-<part name="PWR" library="led" deviceset="LED" device="3MM"/>
-<part name="ACT" library="led" deviceset="LED" device="3MM"/>
-<part name="R14" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R13" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R12" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="STS" library="led" deviceset="LED" device="3MM"/>
+<part name="L3" library="led" deviceset="LED" device="3MM"/>
+<part name="L1" library="led" deviceset="LED" device="3MM"/>
+<part name="R1" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R3" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R2" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="L2" library="led" deviceset="LED" device="3MM"/>
 <part name="GND21" library="supply1" deviceset="GND" device=""/>
 <part name="GND22" library="supply1" deviceset="GND" device=""/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
-<part name="IC5" library="burr-brown" deviceset="REG1117" device=""/>
+<part name="IC6" library="burr-brown" deviceset="REG1117" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
-<part name="C11" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
-<part name="C18" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C12" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="D3" library="jasons_stuff" deviceset="1N4004" device=""/>
+<part name="C21" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
+<part name="C10" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C11" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="D2" library="jasons_stuff" deviceset="1N4004" device=""/>
 <part name="MIDI_IN" library="jason_eagle6" deviceset="DIN5PIN" device=""/>
-<part name="OK1" library="optocoupler" deviceset="6N138" device=""/>
-<part name="R7" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="U$1" library="jasons_stuff" deviceset="0805DIODE" device=""/>
-<part name="R8" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R10" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="DRMA" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
+<part name="IC7" library="optocoupler" deviceset="6N138" device=""/>
+<part name="R29" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="D1" library="jasons_stuff" deviceset="0805DIODE" device=""/>
+<part name="R27" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R28" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="DRM1" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM2" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM3" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM4" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM5" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM6" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM7" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
-<part name="IC6" library="74xx-eu" deviceset="74*595" device="D" technology="HC"/>
-<part name="R17" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R24" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R29" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R30" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R31" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R32" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R33" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="IC2" library="74xx-eu" deviceset="74*595" device="D" technology="HC"/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R5" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R12" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R11" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R10" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R8" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R7" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="C14" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C15" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C16" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C19" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C20" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C21" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C22" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C23" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C12" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C3" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C8" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C4" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C6" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C7" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="DRM8" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
-<part name="R34" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="C24" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C5" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
+<part name="R9" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="C5" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C20" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
 <part name="S1" library="switch-omron" deviceset="10-XX" device=""/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R4" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
-<part name="C6" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C18" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="U$2" library="jason_eagle6" deviceset="PWR_SOCKET_2_1MM" device=""/>
 </parts>
@@ -15720,7 +15720,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="VEL2CV" gate="G$1" x="152.4" y="114.3" rot="R180"/>
 <instance part="NOTE1CV" gate="G$1" x="152.4" y="83.82" rot="R180"/>
 <instance part="NOTE2CV" gate="G$1" x="152.4" y="68.58" rot="R180"/>
-<instance part="GATA" gate="G$1" x="144.78" y="27.94" smashed="yes" rot="R180">
+<instance part="CLK2" gate="G$1" x="144.78" y="27.94" smashed="yes" rot="R180">
 <attribute name="NAME" x="158.242" y="27.178" size="1.778" layer="94" rot="R180"/>
 </instance>
 <instance part="GATE2" gate="G$1" x="144.78" y="20.32" smashed="yes" rot="R180">
@@ -15729,72 +15729,72 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="GATE1" gate="G$1" x="144.78" y="12.7" smashed="yes" rot="R180">
 <attribute name="NAME" x="160.782" y="11.938" size="1.778" layer="94" rot="R180"/>
 </instance>
-<instance part="SYNC1" gate="G$1" x="144.78" y="5.08" smashed="yes" rot="R180">
+<instance part="CLK1" gate="G$1" x="144.78" y="5.08" smashed="yes" rot="R180">
 <attribute name="NAME" x="160.782" y="4.318" size="1.778" layer="94" rot="R180"/>
 </instance>
 <instance part="MIDI" gate="G$1" x="-99.06" y="312.42" rot="MR180"/>
 <instance part="IC1" gate="G$1" x="-71.12" y="81.28"/>
-<instance part="IC3" gate="G$1" x="30.48" y="76.2"/>
-<instance part="IC2" gate="A" x="25.4" y="12.7"/>
-<instance part="R2" gate="G$1" x="76.2" y="12.7"/>
-<instance part="R1" gate="G$1" x="76.2" y="5.08"/>
-<instance part="R4" gate="G$1" x="76.2" y="27.94"/>
-<instance part="R3" gate="G$1" x="76.2" y="20.32"/>
+<instance part="IC4" gate="G$1" x="30.48" y="76.2"/>
+<instance part="IC3" gate="A" x="25.4" y="12.7"/>
+<instance part="R14" gate="G$1" x="76.2" y="12.7"/>
+<instance part="R13" gate="G$1" x="76.2" y="5.08"/>
+<instance part="R15" gate="G$1" x="76.2" y="27.94"/>
+<instance part="R16" gate="G$1" x="76.2" y="20.32"/>
 <instance part="GND2" gate="1" x="132.08" y="-45.72"/>
-<instance part="R19" gate="G$1" x="-2.54" y="86.36" rot="R270"/>
-<instance part="R18" gate="G$1" x="0" y="86.36" rot="R270"/>
+<instance part="R22" gate="G$1" x="-2.54" y="86.36" rot="R270"/>
+<instance part="R21" gate="G$1" x="0" y="86.36" rot="R270"/>
 <instance part="GND12" gate="1" x="-22.86" y="58.42"/>
-<instance part="IC4" gate="A" x="114.3" y="114.3"/>
-<instance part="IC4" gate="B" x="114.3" y="99.06"/>
-<instance part="IC4" gate="C" x="114.3" y="83.82"/>
-<instance part="IC4" gate="D" x="114.3" y="68.58"/>
-<instance part="R27" gate="G$1" x="116.84" y="106.68"/>
-<instance part="R22" gate="G$1" x="116.84" y="91.44"/>
-<instance part="R21" gate="G$1" x="116.84" y="76.2"/>
-<instance part="R26" gate="G$1" x="116.84" y="60.96"/>
-<instance part="R28" gate="G$1" x="96.52" y="106.68"/>
-<instance part="R23" gate="G$1" x="96.52" y="91.44"/>
-<instance part="R20" gate="G$1" x="96.52" y="76.2"/>
-<instance part="R25" gate="G$1" x="96.52" y="60.96"/>
+<instance part="IC5" gate="A" x="114.3" y="114.3"/>
+<instance part="IC5" gate="B" x="114.3" y="99.06"/>
+<instance part="IC5" gate="C" x="114.3" y="83.82"/>
+<instance part="IC5" gate="D" x="114.3" y="68.58"/>
+<instance part="R17" gate="G$1" x="116.84" y="106.68"/>
+<instance part="R20" gate="G$1" x="116.84" y="91.44"/>
+<instance part="R26" gate="G$1" x="116.84" y="76.2"/>
+<instance part="R23" gate="G$1" x="116.84" y="60.96"/>
+<instance part="R18" gate="G$1" x="96.52" y="106.68"/>
+<instance part="R19" gate="G$1" x="96.52" y="91.44"/>
+<instance part="R25" gate="G$1" x="96.52" y="76.2"/>
+<instance part="R24" gate="G$1" x="96.52" y="60.96"/>
 <instance part="GND1" gate="1" x="88.9" y="55.88"/>
 <instance part="GND13" gate="1" x="139.7" y="55.88"/>
-<instance part="IC2" gate="P" x="25.4" y="-7.62" rot="R270"/>
+<instance part="IC3" gate="P" x="25.4" y="-7.62" rot="R270"/>
 <instance part="GND14" gate="1" x="10.16" y="-20.32"/>
-<instance part="C8" gate="G$1" x="27.94" y="-12.7" rot="R270"/>
+<instance part="C13" gate="G$1" x="27.94" y="-12.7" rot="R270"/>
 <instance part="GND15" gate="1" x="50.8" y="55.88"/>
-<instance part="C17" gate="G$1" x="30.48" y="88.9" rot="R270"/>
-<instance part="C9" gate="G$1" x="-68.58" y="96.52" rot="R270"/>
-<instance part="C3" gate="G$1" x="88.9" y="-40.64"/>
-<instance part="C2" gate="G$1" x="93.98" y="-40.64"/>
-<instance part="C1" gate="G$1" x="99.06" y="-40.64"/>
-<instance part="C4" gate="G$1" x="83.82" y="-40.64"/>
+<instance part="C9" gate="G$1" x="30.48" y="88.9" rot="R270"/>
+<instance part="C19" gate="G$1" x="-68.58" y="96.52" rot="R270"/>
+<instance part="C17" gate="G$1" x="88.9" y="-40.64"/>
+<instance part="C15" gate="G$1" x="93.98" y="-40.64"/>
+<instance part="C14" gate="G$1" x="99.06" y="-40.64"/>
+<instance part="C16" gate="G$1" x="83.82" y="-40.64"/>
 <instance part="GND16" gate="1" x="114.3" y="-53.34"/>
-<instance part="IC4" gate="P" x="88.9" y="114.3"/>
+<instance part="IC5" gate="P" x="88.9" y="114.3"/>
 <instance part="ISCP" gate="G$1" x="-124.46" y="48.26" rot="MR0"/>
 <instance part="GND18" gate="1" x="-93.98" y="33.02"/>
 <instance part="GND19" gate="1" x="7.62" y="58.42"/>
-<instance part="PWR" gate="G$1" x="-30.48" y="17.78"/>
-<instance part="ACT" gate="G$1" x="-22.86" y="17.78"/>
-<instance part="R14" gate="G$1" x="-30.48" y="5.08" rot="R270"/>
-<instance part="R13" gate="G$1" x="-22.86" y="5.08" rot="R270"/>
-<instance part="R12" gate="G$1" x="-15.24" y="5.08" rot="R270"/>
-<instance part="STS" gate="G$1" x="-15.24" y="17.78"/>
+<instance part="L3" gate="G$1" x="-30.48" y="17.78"/>
+<instance part="L1" gate="G$1" x="-22.86" y="17.78"/>
+<instance part="R1" gate="G$1" x="-30.48" y="5.08" rot="R270"/>
+<instance part="R3" gate="G$1" x="-22.86" y="5.08" rot="R270"/>
+<instance part="R2" gate="G$1" x="-15.24" y="5.08" rot="R270"/>
+<instance part="L2" gate="G$1" x="-15.24" y="17.78"/>
 <instance part="GND21" gate="1" x="-30.48" y="-5.08"/>
 <instance part="GND22" gate="1" x="-22.86" y="-5.08"/>
 <instance part="GND23" gate="1" x="-15.24" y="-5.08"/>
-<instance part="IC5" gate="G$1" x="-58.42" y="208.28"/>
+<instance part="IC6" gate="G$1" x="-58.42" y="208.28"/>
 <instance part="GND4" gate="1" x="-58.42" y="187.96"/>
-<instance part="C11" gate="G$1" x="-81.28" y="200.66"/>
-<instance part="C18" gate="G$1" x="-73.66" y="198.12" rot="R180"/>
-<instance part="C12" gate="G$1" x="-43.18" y="198.12" rot="R180"/>
-<instance part="D3" gate="1" x="-88.9" y="208.28"/>
+<instance part="C21" gate="G$1" x="-81.28" y="200.66"/>
+<instance part="C10" gate="G$1" x="-73.66" y="198.12" rot="R180"/>
+<instance part="C11" gate="G$1" x="-43.18" y="198.12" rot="R180"/>
+<instance part="D2" gate="1" x="-88.9" y="208.28"/>
 <instance part="MIDI_IN" gate="G$1" x="-86.36" y="294.64"/>
-<instance part="OK1" gate="G$1" x="-27.94" y="287.02"/>
-<instance part="R7" gate="G$1" x="-55.88" y="292.1"/>
-<instance part="U$1" gate="G$1" x="-43.18" y="289.56"/>
-<instance part="R8" gate="G$1" x="0" y="287.02"/>
-<instance part="R10" gate="G$1" x="0" y="289.56"/>
-<instance part="DRMA" gate="G$1" x="144.78" y="-66.04" smashed="yes" rot="R180">
+<instance part="IC7" gate="G$1" x="-27.94" y="287.02"/>
+<instance part="R29" gate="G$1" x="-55.88" y="292.1"/>
+<instance part="D1" gate="G$1" x="-43.18" y="289.56"/>
+<instance part="R27" gate="G$1" x="0" y="287.02"/>
+<instance part="R28" gate="G$1" x="0" y="289.56"/>
+<instance part="DRM1" gate="G$1" x="144.78" y="-66.04" smashed="yes" rot="R180">
 <attribute name="NAME" x="160.782" y="-66.802" size="1.778" layer="94" rot="R180"/>
 </instance>
 <instance part="DRM2" gate="G$1" x="144.78" y="-73.66" smashed="yes" rot="R180">
@@ -15815,36 +15815,36 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="DRM7" gate="G$1" x="144.78" y="-111.76" smashed="yes" rot="R180">
 <attribute name="NAME" x="160.782" y="-112.522" size="1.778" layer="94" rot="R180"/>
 </instance>
-<instance part="IC6" gate="A" x="25.4" y="-81.28"/>
-<instance part="R17" gate="G$1" x="63.5" y="-81.28"/>
-<instance part="R24" gate="G$1" x="63.5" y="-88.9"/>
-<instance part="R29" gate="G$1" x="63.5" y="-96.52"/>
-<instance part="R30" gate="G$1" x="63.5" y="-104.14"/>
-<instance part="R31" gate="G$1" x="63.5" y="-111.76"/>
-<instance part="R32" gate="G$1" x="63.5" y="-66.04"/>
-<instance part="R33" gate="G$1" x="63.5" y="-73.66"/>
+<instance part="IC2" gate="A" x="25.4" y="-81.28"/>
+<instance part="R6" gate="G$1" x="63.5" y="-81.28"/>
+<instance part="R5" gate="G$1" x="63.5" y="-88.9"/>
+<instance part="R12" gate="G$1" x="63.5" y="-96.52"/>
+<instance part="R11" gate="G$1" x="63.5" y="-104.14"/>
+<instance part="R10" gate="G$1" x="63.5" y="-111.76"/>
+<instance part="R8" gate="G$1" x="63.5" y="-66.04"/>
+<instance part="R7" gate="G$1" x="63.5" y="-73.66"/>
 <instance part="GND3" gate="1" x="132.08" y="-139.7"/>
-<instance part="IC6" gate="P" x="25.4" y="-101.6" rot="R270"/>
+<instance part="IC2" gate="P" x="25.4" y="-101.6" rot="R270"/>
 <instance part="GND5" gate="1" x="10.16" y="-114.3"/>
-<instance part="C14" gate="G$1" x="27.94" y="-106.68" rot="R270"/>
-<instance part="C15" gate="G$1" x="88.9" y="-134.62"/>
-<instance part="C16" gate="G$1" x="93.98" y="-134.62"/>
-<instance part="C19" gate="G$1" x="99.06" y="-134.62"/>
-<instance part="C20" gate="G$1" x="104.14" y="-134.62"/>
-<instance part="C21" gate="G$1" x="83.82" y="-134.62"/>
-<instance part="C22" gate="G$1" x="114.3" y="-134.62"/>
-<instance part="C23" gate="G$1" x="109.22" y="-134.62"/>
+<instance part="C12" gate="G$1" x="27.94" y="-106.68" rot="R270"/>
+<instance part="C3" gate="G$1" x="88.9" y="-134.62"/>
+<instance part="C2" gate="G$1" x="93.98" y="-134.62"/>
+<instance part="C1" gate="G$1" x="99.06" y="-134.62"/>
+<instance part="C8" gate="G$1" x="104.14" y="-134.62"/>
+<instance part="C4" gate="G$1" x="83.82" y="-134.62"/>
+<instance part="C6" gate="G$1" x="114.3" y="-134.62"/>
+<instance part="C7" gate="G$1" x="109.22" y="-134.62"/>
 <instance part="GND6" gate="1" x="114.3" y="-147.32"/>
 <instance part="DRM8" gate="G$1" x="144.78" y="-119.38" smashed="yes" rot="R180">
 <attribute name="NAME" x="160.782" y="-120.142" size="1.778" layer="94" rot="R180"/>
 </instance>
-<instance part="R34" gate="G$1" x="63.5" y="-119.38"/>
-<instance part="C24" gate="G$1" x="119.38" y="-134.62"/>
-<instance part="C5" gate="G$1" x="-38.1" y="200.66"/>
+<instance part="R9" gate="G$1" x="63.5" y="-119.38"/>
+<instance part="C5" gate="G$1" x="119.38" y="-134.62"/>
+<instance part="C20" gate="G$1" x="-38.1" y="200.66"/>
 <instance part="S1" gate="1" x="-127" y="73.66" rot="R270"/>
-<instance part="R5" gate="G$1" x="-119.38" y="83.82" rot="R270"/>
+<instance part="R4" gate="G$1" x="-119.38" y="83.82" rot="R270"/>
 <instance part="GND7" gate="1" x="-137.16" y="66.04"/>
-<instance part="C6" gate="G$1" x="76.2" y="116.84"/>
+<instance part="C18" gate="G$1" x="76.2" y="116.84"/>
 <instance part="GND8" gate="1" x="76.2" y="106.68"/>
 <instance part="U$2" gate="G$1" x="-132.08" y="208.28"/>
 </instances>
@@ -15853,14 +15853,14 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="GATA" gate="G$1" pin="2"/>
+<pinref part="CLK2" gate="G$1" pin="2"/>
 <wire x1="134.62" y1="25.4" x2="132.08" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="25.4" x2="132.08" y2="17.78" width="0.1524" layer="91"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <wire x1="132.08" y1="17.78" x2="132.08" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="10.16" x2="132.08" y2="2.54" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="2.54" x2="132.08" y2="-43.18" width="0.1524" layer="91"/>
-<pinref part="SYNC1" gate="G$1" pin="2"/>
+<pinref part="CLK1" gate="G$1" pin="2"/>
 <wire x1="134.62" y1="2.54" x2="132.08" y2="2.54" width="0.1524" layer="91"/>
 <junction x="132.08" y="2.54"/>
 <pinref part="GATE1" gate="G$1" pin="2"/>
@@ -15876,30 +15876,30 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-43.18" y1="88.9" x2="-22.86" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="-22.86" y1="88.9" x2="-22.86" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="GND12" gate="1" pin="GND"/>
-<pinref part="C9" gate="G$1" pin="1"/>
+<pinref part="C19" gate="G$1" pin="1"/>
 <wire x1="-66.04" y1="96.52" x2="-43.18" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="96.52" x2="-43.18" y2="88.9" width="0.1524" layer="91"/>
 <junction x="-43.18" y="88.9"/>
 <junction x="-48.26" y="88.9"/>
 </segment>
 <segment>
-<pinref part="R28" gate="G$1" pin="1"/>
+<pinref part="R18" gate="G$1" pin="1"/>
 <wire x1="91.44" y1="106.68" x2="88.9" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="106.68" x2="88.9" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="R25" gate="G$1" pin="1"/>
+<pinref part="R24" gate="G$1" pin="1"/>
 <wire x1="88.9" y1="91.44" x2="88.9" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="76.2" x2="88.9" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="60.96" x2="91.44" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
 <wire x1="88.9" y1="58.42" x2="88.9" y2="60.96" width="0.1524" layer="91"/>
 <junction x="88.9" y="60.96"/>
-<pinref part="R20" gate="G$1" pin="1"/>
+<pinref part="R25" gate="G$1" pin="1"/>
 <wire x1="91.44" y1="76.2" x2="88.9" y2="76.2" width="0.1524" layer="91"/>
 <junction x="88.9" y="76.2"/>
-<pinref part="R23" gate="G$1" pin="1"/>
+<pinref part="R19" gate="G$1" pin="1"/>
 <wire x1="91.44" y1="91.44" x2="88.9" y2="91.44" width="0.1524" layer="91"/>
 <junction x="88.9" y="91.44"/>
-<pinref part="IC4" gate="P" pin="V-"/>
+<pinref part="IC5" gate="P" pin="V-"/>
 <junction x="88.9" y="106.68"/>
 </segment>
 <segment>
@@ -15921,43 +15921,43 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <junction x="139.7" y="96.52"/>
 </segment>
 <segment>
-<pinref part="IC2" gate="P" pin="GND"/>
+<pinref part="IC3" gate="P" pin="GND"/>
 <wire x1="17.78" y1="-7.62" x2="10.16" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-7.62" x2="10.16" y2="-12.7" width="0.1524" layer="91"/>
 <pinref part="GND14" gate="1" pin="GND"/>
-<pinref part="C8" gate="G$1" pin="2"/>
+<pinref part="C13" gate="G$1" pin="2"/>
 <wire x1="10.16" y1="-12.7" x2="10.16" y2="-17.78" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="-12.7" x2="10.16" y2="-12.7" width="0.1524" layer="91"/>
 <junction x="10.16" y="-12.7"/>
-<pinref part="IC2" gate="A" pin="G"/>
+<pinref part="IC3" gate="A" pin="G"/>
 <wire x1="12.7" y1="0" x2="10.16" y2="0" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="0" x2="10.16" y2="-7.62" width="0.1524" layer="91"/>
 <junction x="10.16" y="-7.62"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="VSS"/>
+<pinref part="IC4" gate="G$1" pin="VSS"/>
 <wire x1="45.72" y1="81.28" x2="50.8" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="81.28" x2="50.8" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="GND15" gate="1" pin="GND"/>
-<pinref part="C17" gate="G$1" pin="1"/>
+<pinref part="C9" gate="G$1" pin="1"/>
 <wire x1="33.02" y1="88.9" x2="50.8" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="88.9" x2="50.8" y2="81.28" width="0.1524" layer="91"/>
 <junction x="50.8" y="81.28"/>
 </segment>
 <segment>
-<pinref part="C4" gate="G$1" pin="2"/>
+<pinref part="C16" gate="G$1" pin="2"/>
 <wire x1="83.82" y1="-45.72" x2="83.82" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="-48.26" x2="88.9" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="-48.26" x2="93.98" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="-48.26" x2="99.06" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="-48.26" x2="114.3" y2="-48.26" width="0.1524" layer="91"/>
-<pinref part="C3" gate="G$1" pin="2"/>
+<pinref part="C17" gate="G$1" pin="2"/>
 <wire x1="88.9" y1="-45.72" x2="88.9" y2="-48.26" width="0.1524" layer="91"/>
 <junction x="88.9" y="-48.26"/>
-<pinref part="C2" gate="G$1" pin="2"/>
+<pinref part="C15" gate="G$1" pin="2"/>
 <wire x1="93.98" y1="-45.72" x2="93.98" y2="-48.26" width="0.1524" layer="91"/>
 <junction x="93.98" y="-48.26"/>
-<pinref part="C1" gate="G$1" pin="2"/>
+<pinref part="C14" gate="G$1" pin="2"/>
 <wire x1="99.06" y1="-45.72" x2="99.06" y2="-48.26" width="0.1524" layer="91"/>
 <junction x="99.06" y="-48.26"/>
 <pinref part="GND16" gate="1" pin="GND"/>
@@ -15970,30 +15970,30 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="GND18" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="LDAC#"/>
+<pinref part="IC4" gate="G$1" pin="LDAC#"/>
 <wire x1="15.24" y1="73.66" x2="7.62" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="73.66" x2="7.62" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="GND19" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND21" gate="1" pin="GND"/>
-<pinref part="R14" gate="G$1" pin="2"/>
+<pinref part="R1" gate="G$1" pin="2"/>
 <wire x1="-30.48" y1="-2.54" x2="-30.48" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND22" gate="1" pin="GND"/>
-<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="R3" gate="G$1" pin="2"/>
 <wire x1="-22.86" y1="-2.54" x2="-22.86" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND23" gate="1" pin="GND"/>
-<pinref part="R12" gate="G$1" pin="2"/>
+<pinref part="R2" gate="G$1" pin="2"/>
 <wire x1="-15.24" y1="-2.54" x2="-15.24" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="-114.3" y1="205.74" x2="-83.82" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="-83.82" y1="205.74" x2="-83.82" y2="193.04" width="0.1524" layer="91"/>
-<pinref part="IC5" gate="G$1" pin="GND"/>
+<pinref part="IC6" gate="G$1" pin="GND"/>
 <wire x1="-83.82" y1="193.04" x2="-81.28" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="-81.28" y1="193.04" x2="-73.66" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="-73.66" y1="193.04" x2="-58.42" y2="193.04" width="0.1524" layer="91"/>
@@ -16001,27 +16001,27 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="GND4" gate="1" pin="GND"/>
 <wire x1="-58.42" y1="190.5" x2="-58.42" y2="193.04" width="0.1524" layer="91"/>
 <junction x="-58.42" y="193.04"/>
-<pinref part="C11" gate="G$1" pin="-"/>
+<pinref part="C21" gate="G$1" pin="-"/>
 <wire x1="-81.28" y1="195.58" x2="-81.28" y2="193.04" width="0.1524" layer="91"/>
 <junction x="-81.28" y="193.04"/>
-<pinref part="C18" gate="G$1" pin="1"/>
+<pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="-73.66" y1="195.58" x2="-73.66" y2="193.04" width="0.1524" layer="91"/>
 <junction x="-73.66" y="193.04"/>
-<pinref part="C12" gate="G$1" pin="1"/>
+<pinref part="C11" gate="G$1" pin="1"/>
 <wire x1="-58.42" y1="193.04" x2="-43.18" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="193.04" x2="-43.18" y2="195.58" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="193.04" x2="-38.1" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="193.04" x2="-38.1" y2="195.58" width="0.1524" layer="91"/>
 <junction x="-43.18" y="193.04"/>
-<pinref part="C5" gate="G$1" pin="-"/>
+<pinref part="C20" gate="G$1" pin="-"/>
 <pinref part="U$2" gate="G$1" pin="PIN"/>
 <wire x1="-119.38" y1="213.36" x2="-114.3" y2="213.36" width="0.1524" layer="91"/>
 <wire x1="-114.3" y1="213.36" x2="-114.3" y2="205.74" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="OK1" gate="G$1" pin="GND"/>
+<pinref part="IC7" gate="G$1" pin="GND"/>
 <wire x1="-15.24" y1="281.94" x2="10.16" y2="281.94" width="0.1524" layer="91"/>
-<pinref part="R10" gate="G$1" pin="2"/>
+<pinref part="R28" gate="G$1" pin="2"/>
 <wire x1="10.16" y1="281.94" x2="15.24" y2="281.94" width="0.1524" layer="91"/>
 <wire x1="5.08" y1="289.56" x2="10.16" y2="289.56" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="289.56" x2="10.16" y2="281.94" width="0.1524" layer="91"/>
@@ -16029,7 +16029,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <label x="15.24" y="281.94" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="DRMA" gate="G$1" pin="2"/>
+<pinref part="DRM1" gate="G$1" pin="2"/>
 <wire x1="134.62" y1="-68.58" x2="132.08" y2="-68.58" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="-68.58" x2="132.08" y2="-76.2" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
@@ -16063,23 +16063,23 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <junction x="132.08" y="-121.92"/>
 </segment>
 <segment>
-<pinref part="IC6" gate="P" pin="GND"/>
+<pinref part="IC2" gate="P" pin="GND"/>
 <wire x1="17.78" y1="-101.6" x2="10.16" y2="-101.6" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-101.6" x2="10.16" y2="-106.68" width="0.1524" layer="91"/>
 <pinref part="GND5" gate="1" pin="GND"/>
-<pinref part="C14" gate="G$1" pin="2"/>
+<pinref part="C12" gate="G$1" pin="2"/>
 <wire x1="10.16" y1="-106.68" x2="10.16" y2="-111.76" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="-106.68" x2="10.16" y2="-106.68" width="0.1524" layer="91"/>
 <junction x="10.16" y="-106.68"/>
-<pinref part="IC6" gate="A" pin="G"/>
+<pinref part="IC2" gate="A" pin="G"/>
 <wire x1="12.7" y1="-93.98" x2="10.16" y2="-93.98" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-93.98" x2="10.16" y2="-101.6" width="0.1524" layer="91"/>
 <junction x="10.16" y="-101.6"/>
 </segment>
 <segment>
-<pinref part="C21" gate="G$1" pin="2"/>
+<pinref part="C4" gate="G$1" pin="2"/>
 <wire x1="83.82" y1="-139.7" x2="83.82" y2="-142.24" width="0.1524" layer="91"/>
-<pinref part="C22" gate="G$1" pin="2"/>
+<pinref part="C6" gate="G$1" pin="2"/>
 <wire x1="83.82" y1="-142.24" x2="88.9" y2="-142.24" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="-142.24" x2="93.98" y2="-142.24" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="-142.24" x2="99.06" y2="-142.24" width="0.1524" layer="91"/>
@@ -16087,25 +16087,25 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="104.14" y1="-142.24" x2="109.22" y2="-142.24" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="-142.24" x2="114.3" y2="-142.24" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="-142.24" x2="114.3" y2="-139.7" width="0.1524" layer="91"/>
-<pinref part="C15" gate="G$1" pin="2"/>
+<pinref part="C3" gate="G$1" pin="2"/>
 <wire x1="88.9" y1="-139.7" x2="88.9" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="88.9" y="-142.24"/>
-<pinref part="C16" gate="G$1" pin="2"/>
+<pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="93.98" y1="-139.7" x2="93.98" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="93.98" y="-142.24"/>
-<pinref part="C19" gate="G$1" pin="2"/>
+<pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="99.06" y1="-139.7" x2="99.06" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="99.06" y="-142.24"/>
-<pinref part="C20" gate="G$1" pin="2"/>
+<pinref part="C8" gate="G$1" pin="2"/>
 <wire x1="104.14" y1="-139.7" x2="104.14" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="104.14" y="-142.24"/>
-<pinref part="C23" gate="G$1" pin="2"/>
+<pinref part="C7" gate="G$1" pin="2"/>
 <wire x1="109.22" y1="-139.7" x2="109.22" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="109.22" y="-142.24"/>
 <pinref part="GND6" gate="1" pin="GND"/>
 <wire x1="114.3" y1="-144.78" x2="114.3" y2="-142.24" width="0.1524" layer="91"/>
 <junction x="114.3" y="-142.24"/>
-<pinref part="C24" gate="G$1" pin="2"/>
+<pinref part="C5" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="-142.24" x2="119.38" y2="-142.24" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="-142.24" x2="119.38" y2="-139.7" width="0.1524" layer="91"/>
 </segment>
@@ -16121,16 +16121,16 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </segment>
 <segment>
 <pinref part="GND8" gate="1" pin="GND"/>
-<pinref part="C6" gate="G$1" pin="2"/>
+<pinref part="C18" gate="G$1" pin="2"/>
 <wire x1="76.2" y1="109.22" x2="76.2" y2="111.76" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
 <segment>
-<pinref part="R4" gate="G$1" pin="2"/>
-<pinref part="GATA" gate="G$1" pin="4"/>
+<pinref part="R15" gate="G$1" pin="2"/>
+<pinref part="CLK2" gate="G$1" pin="4"/>
 <wire x1="81.28" y1="27.94" x2="83.82" y2="27.94" width="0.1524" layer="91"/>
-<pinref part="C4" gate="G$1" pin="1"/>
+<pinref part="C16" gate="G$1" pin="1"/>
 <wire x1="83.82" y1="27.94" x2="134.62" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="-38.1" x2="83.82" y2="27.94" width="0.1524" layer="91"/>
 <junction x="83.82" y="27.94"/>
@@ -16138,10 +16138,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$6" class="0">
 <segment>
-<pinref part="R3" gate="G$1" pin="2"/>
+<pinref part="R16" gate="G$1" pin="2"/>
 <pinref part="GATE2" gate="G$1" pin="4"/>
 <wire x1="81.28" y1="20.32" x2="88.9" y2="20.32" width="0.1524" layer="91"/>
-<pinref part="C3" gate="G$1" pin="1"/>
+<pinref part="C17" gate="G$1" pin="1"/>
 <wire x1="88.9" y1="20.32" x2="134.62" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="-38.1" x2="88.9" y2="20.32" width="0.1524" layer="91"/>
 <junction x="88.9" y="20.32"/>
@@ -16149,10 +16149,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="R2" gate="G$1" pin="2"/>
+<pinref part="R14" gate="G$1" pin="2"/>
 <pinref part="GATE1" gate="G$1" pin="4"/>
 <wire x1="81.28" y1="12.7" x2="93.98" y2="12.7" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="1"/>
+<pinref part="C15" gate="G$1" pin="1"/>
 <wire x1="93.98" y1="12.7" x2="134.62" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="-38.1" x2="93.98" y2="12.7" width="0.1524" layer="91"/>
 <junction x="93.98" y="12.7"/>
@@ -16160,10 +16160,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$8" class="0">
 <segment>
-<pinref part="R1" gate="G$1" pin="2"/>
-<pinref part="SYNC1" gate="G$1" pin="4"/>
+<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="CLK1" gate="G$1" pin="4"/>
 <wire x1="81.28" y1="5.08" x2="99.06" y2="5.08" width="0.1524" layer="91"/>
-<pinref part="C1" gate="G$1" pin="1"/>
+<pinref part="C14" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="5.08" x2="134.62" y2="5.08" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="-38.1" x2="99.06" y2="5.08" width="0.1524" layer="91"/>
 <junction x="99.06" y="5.08"/>
@@ -16171,8 +16171,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$12" class="0">
 <segment>
-<pinref part="IC2" gate="A" pin="QA"/>
-<pinref part="R4" gate="G$1" pin="1"/>
+<pinref part="IC3" gate="A" pin="QA"/>
+<pinref part="R15" gate="G$1" pin="1"/>
 <wire x1="71.12" y1="27.94" x2="68.58" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="27.94" x2="68.58" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="22.86" x2="38.1" y2="22.86" width="0.1524" layer="91"/>
@@ -16180,24 +16180,24 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="IC2" gate="A" pin="QB"/>
-<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="IC3" gate="A" pin="QB"/>
+<pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="20.32" x2="71.12" y2="20.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
 <segment>
-<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="R13" gate="G$1" pin="1"/>
 <wire x1="66.04" y1="5.08" x2="71.12" y2="5.08" width="0.1524" layer="91"/>
-<pinref part="IC2" gate="A" pin="QD"/>
+<pinref part="IC3" gate="A" pin="QD"/>
 <wire x1="38.1" y1="15.24" x2="66.04" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="15.24" x2="66.04" y2="5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$16" class="0">
 <segment>
-<pinref part="R2" gate="G$1" pin="1"/>
-<pinref part="IC2" gate="A" pin="QC"/>
+<pinref part="R14" gate="G$1" pin="1"/>
+<pinref part="IC3" gate="A" pin="QC"/>
 <wire x1="38.1" y1="17.78" x2="68.58" y2="17.78" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="17.78" x2="68.58" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="12.7" x2="71.12" y2="12.7" width="0.1524" layer="91"/>
@@ -16211,8 +16211,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <junction x="-91.44" y="78.74"/>
 </segment>
 <segment>
-<pinref part="OK1" gate="G$1" pin="VO"/>
-<pinref part="R8" gate="G$1" pin="1"/>
+<pinref part="IC7" gate="G$1" pin="VO"/>
+<pinref part="R27" gate="G$1" pin="1"/>
 <wire x1="-15.24" y1="287.02" x2="-12.7" y2="287.02" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="287.02" x2="-5.08" y2="287.02" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="287.02" x2="-12.7" y2="297.18" width="0.1524" layer="91"/>
@@ -16223,10 +16223,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$21" class="0">
 <segment>
-<pinref part="IC3" gate="G$1" pin="SCL"/>
+<pinref part="IC4" gate="G$1" pin="SCL"/>
 <pinref part="IC1" gate="G$1" pin="RCO/SCL/SCK"/>
 <wire x1="15.24" y1="78.74" x2="-2.54" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="R19" gate="G$1" pin="2"/>
+<pinref part="R22" gate="G$1" pin="2"/>
 <wire x1="-2.54" y1="78.74" x2="-48.26" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="-2.54" y1="81.28" x2="-2.54" y2="78.74" width="0.1524" layer="91"/>
 <junction x="-2.54" y="78.74"/>
@@ -16236,9 +16236,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <net name="N$22" class="0">
 <segment>
 <pinref part="IC1" gate="G$1" pin="RC1/SDA/SDI"/>
-<pinref part="IC3" gate="G$1" pin="SDA"/>
+<pinref part="IC4" gate="G$1" pin="SDA"/>
 <wire x1="-48.26" y1="76.2" x2="0" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="R18" gate="G$1" pin="2"/>
+<pinref part="R21" gate="G$1" pin="2"/>
 <wire x1="0" y1="76.2" x2="15.24" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="0" y1="81.28" x2="0" y2="76.2" width="0.1524" layer="91"/>
 <junction x="0" y="76.2"/>
@@ -16247,9 +16247,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="R27" gate="G$1" pin="2"/>
+<pinref part="R17" gate="G$1" pin="2"/>
 <wire x1="121.92" y1="106.68" x2="124.46" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="A" pin="OUT"/>
+<pinref part="IC5" gate="A" pin="OUT"/>
 <wire x1="121.92" y1="114.3" x2="124.46" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="106.68" x2="124.46" y2="114.3" width="0.1524" layer="91"/>
 <junction x="124.46" y="114.3"/>
@@ -16259,9 +16259,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="R22" gate="G$1" pin="2"/>
+<pinref part="R20" gate="G$1" pin="2"/>
 <wire x1="121.92" y1="91.44" x2="124.46" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="B" pin="OUT"/>
+<pinref part="IC5" gate="B" pin="OUT"/>
 <wire x1="121.92" y1="99.06" x2="124.46" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="91.44" x2="124.46" y2="99.06" width="0.1524" layer="91"/>
 <junction x="124.46" y="99.06"/>
@@ -16271,9 +16271,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$4" class="0">
 <segment>
-<pinref part="IC4" gate="C" pin="OUT"/>
+<pinref part="IC5" gate="C" pin="OUT"/>
 <wire x1="121.92" y1="83.82" x2="127" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="R21" gate="G$1" pin="2"/>
+<pinref part="R26" gate="G$1" pin="2"/>
 <wire x1="121.92" y1="76.2" x2="127" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="127" y1="76.2" x2="127" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="NOTE1CV" gate="G$1" pin="4"/>
@@ -16283,9 +16283,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$5" class="0">
 <segment>
-<pinref part="IC4" gate="D" pin="OUT"/>
+<pinref part="IC5" gate="D" pin="OUT"/>
 <wire x1="121.92" y1="68.58" x2="127" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="R26" gate="G$1" pin="2"/>
+<pinref part="R23" gate="G$1" pin="2"/>
 <wire x1="121.92" y1="60.96" x2="127" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="127" y1="60.96" x2="127" y2="68.58" width="0.1524" layer="91"/>
 <pinref part="NOTE2CV" gate="G$1" pin="4"/>
@@ -16295,103 +16295,103 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$25" class="0">
 <segment>
-<pinref part="R27" gate="G$1" pin="1"/>
+<pinref part="R17" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="106.68" x2="104.14" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="106.68" x2="104.14" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="A" pin="-IN"/>
+<pinref part="IC5" gate="A" pin="-IN"/>
 <wire x1="104.14" y1="111.76" x2="106.68" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="R28" gate="G$1" pin="2"/>
+<pinref part="R18" gate="G$1" pin="2"/>
 <wire x1="101.6" y1="106.68" x2="104.14" y2="106.68" width="0.1524" layer="91"/>
 <junction x="104.14" y="106.68"/>
 </segment>
 </net>
 <net name="N$26" class="0">
 <segment>
-<pinref part="R22" gate="G$1" pin="1"/>
+<pinref part="R20" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="91.44" x2="104.14" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="91.44" x2="104.14" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="B" pin="-IN"/>
+<pinref part="IC5" gate="B" pin="-IN"/>
 <wire x1="104.14" y1="96.52" x2="106.68" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="R23" gate="G$1" pin="2"/>
+<pinref part="R19" gate="G$1" pin="2"/>
 <wire x1="101.6" y1="91.44" x2="104.14" y2="91.44" width="0.1524" layer="91"/>
 <junction x="104.14" y="91.44"/>
 </segment>
 </net>
 <net name="N$27" class="0">
 <segment>
-<pinref part="R21" gate="G$1" pin="1"/>
+<pinref part="R26" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="76.2" x2="104.14" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="76.2" x2="104.14" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="C" pin="-IN"/>
+<pinref part="IC5" gate="C" pin="-IN"/>
 <wire x1="104.14" y1="81.28" x2="106.68" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="R20" gate="G$1" pin="2"/>
+<pinref part="R25" gate="G$1" pin="2"/>
 <wire x1="101.6" y1="76.2" x2="104.14" y2="76.2" width="0.1524" layer="91"/>
 <junction x="104.14" y="76.2"/>
 </segment>
 </net>
 <net name="N$28" class="0">
 <segment>
-<pinref part="R26" gate="G$1" pin="1"/>
+<pinref part="R23" gate="G$1" pin="1"/>
 <wire x1="111.76" y1="60.96" x2="104.14" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="60.96" x2="104.14" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="D" pin="-IN"/>
+<pinref part="IC5" gate="D" pin="-IN"/>
 <wire x1="104.14" y1="66.04" x2="106.68" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="R25" gate="G$1" pin="2"/>
+<pinref part="R24" gate="G$1" pin="2"/>
 <wire x1="101.6" y1="60.96" x2="104.14" y2="60.96" width="0.1524" layer="91"/>
 <junction x="104.14" y="60.96"/>
 </segment>
 </net>
 <net name="VOUTA" class="0">
 <segment>
-<pinref part="IC3" gate="G$1" pin="VOUTA"/>
+<pinref part="IC4" gate="G$1" pin="VOUTA"/>
 <wire x1="45.72" y1="71.12" x2="60.96" y2="71.12" width="0.1524" layer="91"/>
 <label x="58.42" y="71.12" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="B" pin="+IN"/>
+<pinref part="IC5" gate="B" pin="+IN"/>
 <wire x1="106.68" y1="101.6" x2="96.52" y2="101.6" width="0.1524" layer="91"/>
 <label x="96.52" y="101.6" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="VOUTB" class="0">
 <segment>
-<pinref part="IC3" gate="G$1" pin="VOUTB"/>
+<pinref part="IC4" gate="G$1" pin="VOUTB"/>
 <wire x1="45.72" y1="73.66" x2="60.96" y2="73.66" width="0.1524" layer="91"/>
 <label x="58.42" y="73.66" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="A" pin="+IN"/>
+<pinref part="IC5" gate="A" pin="+IN"/>
 <wire x1="106.68" y1="116.84" x2="96.52" y2="116.84" width="0.1524" layer="91"/>
 <label x="96.52" y="116.84" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="VOUTC" class="0">
 <segment>
-<pinref part="IC3" gate="G$1" pin="VOUTC"/>
+<pinref part="IC4" gate="G$1" pin="VOUTC"/>
 <wire x1="45.72" y1="76.2" x2="60.96" y2="76.2" width="0.1524" layer="91"/>
 <label x="58.42" y="76.2" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="D" pin="+IN"/>
+<pinref part="IC5" gate="D" pin="+IN"/>
 <wire x1="106.68" y1="71.12" x2="96.52" y2="71.12" width="0.1524" layer="91"/>
 <label x="96.52" y="71.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="VOUTD" class="0">
 <segment>
-<pinref part="IC3" gate="G$1" pin="VOUTD"/>
+<pinref part="IC4" gate="G$1" pin="VOUTD"/>
 <wire x1="45.72" y1="78.74" x2="60.96" y2="78.74" width="0.1524" layer="91"/>
 <label x="58.42" y="78.74" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="C" pin="+IN"/>
+<pinref part="IC5" gate="C" pin="+IN"/>
 <wire x1="106.68" y1="86.36" x2="96.52" y2="86.36" width="0.1524" layer="91"/>
 <label x="96.52" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SR_DAT" class="0">
 <segment>
-<pinref part="IC2" gate="A" pin="SER"/>
+<pinref part="IC3" gate="A" pin="SER"/>
 <wire x1="12.7" y1="22.86" x2="5.08" y2="22.86" width="0.1524" layer="91"/>
 <label x="5.08" y="22.86" size="1.778" layer="95"/>
 </segment>
@@ -16409,7 +16409,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="SR_CLK" class="0">
 <segment>
-<pinref part="IC2" gate="A" pin="SCK"/>
+<pinref part="IC3" gate="A" pin="SCK"/>
 <wire x1="12.7" y1="17.78" x2="5.08" y2="17.78" width="0.1524" layer="91"/>
 <label x="5.08" y="17.78" size="1.778" layer="95"/>
 </segment>
@@ -16419,14 +16419,14 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="IC1" gate="G$1" pin="RA4/SDO"/>
 </segment>
 <segment>
-<pinref part="IC6" gate="A" pin="SCK"/>
+<pinref part="IC2" gate="A" pin="SCK"/>
 <wire x1="12.7" y1="-76.2" x2="5.08" y2="-76.2" width="0.1524" layer="91"/>
 <label x="5.08" y="-76.2" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SR_RCK" class="0">
 <segment>
-<pinref part="IC2" gate="A" pin="RCK"/>
+<pinref part="IC3" gate="A" pin="RCK"/>
 <wire x1="12.7" y1="10.16" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
 <label x="5.08" y="10.16" size="1.778" layer="95"/>
 </segment>
@@ -16436,7 +16436,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="IC1" gate="G$1" pin="RA5"/>
 </segment>
 <segment>
-<pinref part="IC6" gate="A" pin="RCK"/>
+<pinref part="IC2" gate="A" pin="RCK"/>
 <wire x1="12.7" y1="-83.82" x2="5.08" y2="-83.82" width="0.1524" layer="91"/>
 <label x="5.08" y="-83.82" size="1.778" layer="95"/>
 </segment>
@@ -16453,28 +16453,28 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$35" class="0">
 <segment>
-<pinref part="R14" gate="G$1" pin="1"/>
-<pinref part="PWR" gate="G$1" pin="C"/>
+<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="L3" gate="G$1" pin="C"/>
 <wire x1="-30.48" y1="10.16" x2="-30.48" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$36" class="0">
 <segment>
-<pinref part="R13" gate="G$1" pin="1"/>
-<pinref part="ACT" gate="G$1" pin="C"/>
+<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="L1" gate="G$1" pin="C"/>
 <wire x1="-22.86" y1="10.16" x2="-22.86" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$37" class="0">
 <segment>
-<pinref part="R12" gate="G$1" pin="1"/>
-<pinref part="STS" gate="G$1" pin="C"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<pinref part="L2" gate="G$1" pin="C"/>
 <wire x1="-15.24" y1="10.16" x2="-15.24" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="ACT_LED" class="0">
 <segment>
-<pinref part="ACT" gate="G$1" pin="A"/>
+<pinref part="L1" gate="G$1" pin="A"/>
 <wire x1="-22.86" y1="20.32" x2="-22.86" y2="27.94" width="0.1524" layer="91"/>
 <label x="-22.86" y="25.4" size="1.778" layer="95" rot="R90"/>
 </segment>
@@ -16487,7 +16487,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="STATUS_LED" class="0">
 <segment>
-<pinref part="STS" gate="G$1" pin="A"/>
+<pinref part="L2" gate="G$1" pin="A"/>
 <wire x1="-15.24" y1="20.32" x2="-15.24" y2="27.94" width="0.1524" layer="91"/>
 <label x="-15.24" y="25.4" size="1.778" layer="95" rot="R90"/>
 </segment>
@@ -16500,40 +16500,40 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="VDD" class="0">
 <segment>
-<pinref part="PWR" gate="G$1" pin="A"/>
+<pinref part="L3" gate="G$1" pin="A"/>
 <wire x1="-30.48" y1="20.32" x2="-30.48" y2="27.94" width="0.1524" layer="91"/>
 <label x="-33.02" y="27.94" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC2" gate="P" pin="VCC"/>
+<pinref part="IC3" gate="P" pin="VCC"/>
 <wire x1="33.02" y1="-7.62" x2="38.1" y2="-7.62" width="0.1524" layer="91"/>
 <wire x1="38.1" y1="-7.62" x2="38.1" y2="-12.7" width="0.1524" layer="91"/>
 <label x="35.56" y="-22.86" size="1.778" layer="95"/>
-<pinref part="C8" gate="G$1" pin="1"/>
+<pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="-12.7" x2="38.1" y2="-20.32" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="-12.7" x2="38.1" y2="-12.7" width="0.1524" layer="91"/>
 <junction x="38.1" y="-12.7"/>
 </segment>
 <segment>
-<pinref part="IC2" gate="A" pin="SCL"/>
+<pinref part="IC3" gate="A" pin="SCL"/>
 <wire x1="12.7" y1="15.24" x2="5.08" y2="15.24" width="0.1524" layer="91"/>
 <label x="5.08" y="15.24" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="VDD"/>
+<pinref part="IC4" gate="G$1" pin="VDD"/>
 <wire x1="15.24" y1="81.28" x2="7.62" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="81.28" x2="7.62" y2="88.9" width="0.1524" layer="91"/>
 <label x="5.08" y="96.52" size="1.778" layer="95"/>
-<pinref part="C17" gate="G$1" pin="2"/>
+<pinref part="C9" gate="G$1" pin="2"/>
 <wire x1="7.62" y1="88.9" x2="7.62" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="88.9" x2="7.62" y2="88.9" width="0.1524" layer="91"/>
 <junction x="7.62" y="88.9"/>
 </segment>
 <segment>
-<pinref part="R19" gate="G$1" pin="1"/>
+<pinref part="R22" gate="G$1" pin="1"/>
 <wire x1="-2.54" y1="91.44" x2="-2.54" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="-2.54" y1="93.98" x2="0" y2="93.98" width="0.1524" layer="91"/>
-<pinref part="R18" gate="G$1" pin="1"/>
+<pinref part="R21" gate="G$1" pin="1"/>
 <wire x1="0" y1="93.98" x2="0" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="0" y1="93.98" x2="2.54" y2="93.98" width="0.1524" layer="91"/>
 <label x="-2.54" y="93.98" size="1.778" layer="95"/>
@@ -16545,7 +16545,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-91.44" y1="88.9" x2="-99.06" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="-99.06" y1="88.9" x2="-99.06" y2="96.52" width="0.1524" layer="91"/>
 <label x="-101.6" y="101.6" size="1.778" layer="95"/>
-<pinref part="C9" gate="G$1" pin="2"/>
+<pinref part="C19" gate="G$1" pin="2"/>
 <wire x1="-99.06" y1="96.52" x2="-99.06" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="-73.66" y1="96.52" x2="-99.06" y2="96.52" width="0.1524" layer="91"/>
 <junction x="-99.06" y="96.52"/>
@@ -16556,9 +16556,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <junction x="-91.44" y="88.9"/>
 </segment>
 <segment>
-<pinref part="OK1" gate="G$1" pin="VCC"/>
+<pinref part="IC7" gate="G$1" pin="VCC"/>
 <wire x1="-15.24" y1="292.1" x2="12.7" y2="292.1" width="0.1524" layer="91"/>
-<pinref part="R8" gate="G$1" pin="2"/>
+<pinref part="R27" gate="G$1" pin="2"/>
 <wire x1="12.7" y1="292.1" x2="15.24" y2="292.1" width="0.1524" layer="91"/>
 <wire x1="5.08" y1="287.02" x2="12.7" y2="287.02" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="287.02" x2="12.7" y2="292.1" width="0.1524" layer="91"/>
@@ -16566,50 +16566,50 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <label x="15.24" y="292.1" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC5" gate="G$1" pin="VOUT"/>
+<pinref part="IC6" gate="G$1" pin="VOUT"/>
 <wire x1="-45.72" y1="208.28" x2="-43.18" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="208.28" x2="-38.1" y2="208.28" width="0.1524" layer="91"/>
 <junction x="-43.18" y="208.28"/>
-<pinref part="C12" gate="G$1" pin="2"/>
+<pinref part="C11" gate="G$1" pin="2"/>
 <wire x1="-38.1" y1="208.28" x2="-30.48" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="203.2" x2="-43.18" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="203.2" x2="-38.1" y2="208.28" width="0.1524" layer="91"/>
 <junction x="-38.1" y="208.28"/>
 <label x="-30.48" y="208.28" size="1.778" layer="95"/>
-<pinref part="C5" gate="G$1" pin="+"/>
+<pinref part="C20" gate="G$1" pin="+"/>
 </segment>
 <segment>
-<pinref part="IC6" gate="P" pin="VCC"/>
+<pinref part="IC2" gate="P" pin="VCC"/>
 <wire x1="33.02" y1="-101.6" x2="38.1" y2="-101.6" width="0.1524" layer="91"/>
 <wire x1="38.1" y1="-101.6" x2="38.1" y2="-106.68" width="0.1524" layer="91"/>
 <label x="35.56" y="-116.84" size="1.778" layer="95"/>
-<pinref part="C14" gate="G$1" pin="1"/>
+<pinref part="C12" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="-106.68" x2="38.1" y2="-114.3" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="-106.68" x2="38.1" y2="-106.68" width="0.1524" layer="91"/>
 <junction x="38.1" y="-106.68"/>
 </segment>
 <segment>
-<pinref part="IC6" gate="A" pin="SCL"/>
+<pinref part="IC2" gate="A" pin="SCL"/>
 <wire x1="12.7" y1="-78.74" x2="5.08" y2="-78.74" width="0.1524" layer="91"/>
 <label x="5.08" y="-78.74" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="R5" gate="G$1" pin="1"/>
+<pinref part="R4" gate="G$1" pin="1"/>
 <wire x1="-119.38" y1="88.9" x2="-119.38" y2="99.06" width="0.1524" layer="91"/>
 <label x="-121.92" y="99.06" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="VIN" class="0">
 <segment>
-<pinref part="IC5" gate="G$1" pin="VIN"/>
+<pinref part="IC6" gate="G$1" pin="VIN"/>
 <wire x1="-71.12" y1="208.28" x2="-73.66" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C11" gate="G$1" pin="+"/>
+<pinref part="C21" gate="G$1" pin="+"/>
 <wire x1="-73.66" y1="208.28" x2="-81.28" y2="208.28" width="0.1524" layer="91"/>
 <wire x1="-81.28" y1="203.2" x2="-81.28" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C18" gate="G$1" pin="2"/>
+<pinref part="C10" gate="G$1" pin="2"/>
 <wire x1="-73.66" y1="203.2" x2="-73.66" y2="208.28" width="0.1524" layer="91"/>
 <junction x="-73.66" y="208.28"/>
-<pinref part="D3" gate="1" pin="C"/>
+<pinref part="D2" gate="1" pin="C"/>
 <wire x1="-86.36" y1="208.28" x2="-81.28" y2="208.28" width="0.1524" layer="91"/>
 <junction x="-81.28" y="208.28"/>
 <wire x1="-81.28" y1="208.28" x2="-81.28" y2="223.52" width="0.1524" layer="91"/>
@@ -16617,10 +16617,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <label x="-63.5" y="223.52" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="P" pin="V+"/>
+<pinref part="IC5" gate="P" pin="V+"/>
 <wire x1="88.9" y1="121.92" x2="88.9" y2="124.46" width="0.1524" layer="91"/>
 <label x="83.82" y="127" size="1.778" layer="95"/>
-<pinref part="C6" gate="G$1" pin="1"/>
+<pinref part="C18" gate="G$1" pin="1"/>
 <wire x1="88.9" y1="124.46" x2="88.9" y2="127" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="119.38" x2="76.2" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="124.46" x2="88.9" y2="124.46" width="0.1524" layer="91"/>
@@ -16629,7 +16629,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$40" class="0">
 <segment>
-<pinref part="D3" gate="1" pin="A"/>
+<pinref part="D2" gate="1" pin="A"/>
 <wire x1="-91.44" y1="208.28" x2="-119.38" y2="208.28" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="BARREL"/>
 </segment>
@@ -16637,7 +16637,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <net name="N$29" class="0">
 <segment>
 <pinref part="MIDI_IN" gate="G$1" pin="4"/>
-<pinref part="R7" gate="G$1" pin="1"/>
+<pinref part="R29" gate="G$1" pin="1"/>
 <wire x1="-73.66" y1="292.1" x2="-63.5" y2="292.1" width="0.1524" layer="91"/>
 <pinref part="MIDI" gate="G$1" pin="4"/>
 <wire x1="-63.5" y1="292.1" x2="-60.96" y2="292.1" width="0.1524" layer="91"/>
@@ -16648,10 +16648,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$30" class="0">
 <segment>
-<pinref part="R7" gate="G$1" pin="2"/>
-<pinref part="OK1" gate="G$1" pin="A"/>
+<pinref part="R29" gate="G$1" pin="2"/>
+<pinref part="IC7" gate="G$1" pin="A"/>
 <wire x1="-50.8" y1="292.1" x2="-43.18" y2="292.1" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="P$2"/>
+<pinref part="D1" gate="G$1" pin="P$2"/>
 <wire x1="-43.18" y1="292.1" x2="-40.64" y2="292.1" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="290.068" x2="-43.18" y2="292.1" width="0.1524" layer="91"/>
 <junction x="-43.18" y="292.1"/>
@@ -16659,14 +16659,14 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$31" class="0">
 <segment>
-<pinref part="OK1" gate="G$1" pin="C"/>
+<pinref part="IC7" gate="G$1" pin="C"/>
 <wire x1="-40.64" y1="281.94" x2="-43.18" y2="281.94" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="281.94" x2="-66.04" y2="281.94" width="0.1524" layer="91"/>
 <wire x1="-66.04" y1="281.94" x2="-101.6" y2="281.94" width="0.1524" layer="91"/>
 <wire x1="-101.6" y1="281.94" x2="-101.6" y2="292.1" width="0.1524" layer="91"/>
 <pinref part="MIDI_IN" gate="G$1" pin="5"/>
 <wire x1="-101.6" y1="292.1" x2="-99.06" y2="292.1" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="P$1"/>
+<pinref part="D1" gate="G$1" pin="P$1"/>
 <wire x1="-43.18" y1="284.988" x2="-43.18" y2="281.94" width="0.1524" layer="91"/>
 <junction x="-43.18" y="281.94"/>
 <pinref part="MIDI" gate="G$1" pin="3"/>
@@ -16677,8 +16677,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$42" class="0">
 <segment>
-<pinref part="OK1" gate="G$1" pin="VB"/>
-<pinref part="R10" gate="G$1" pin="1"/>
+<pinref part="IC7" gate="G$1" pin="VB"/>
+<pinref part="R28" gate="G$1" pin="1"/>
 <wire x1="-15.24" y1="289.56" x2="-5.08" y2="289.56" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -16691,10 +16691,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="R32" gate="G$1" pin="2"/>
-<pinref part="DRMA" gate="G$1" pin="4"/>
+<pinref part="R8" gate="G$1" pin="2"/>
+<pinref part="DRM1" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-66.04" x2="83.82" y2="-66.04" width="0.1524" layer="91"/>
-<pinref part="C21" gate="G$1" pin="1"/>
+<pinref part="C4" gate="G$1" pin="1"/>
 <wire x1="83.82" y1="-66.04" x2="134.62" y2="-66.04" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="-132.08" x2="83.82" y2="-66.04" width="0.1524" layer="91"/>
 <junction x="83.82" y="-66.04"/>
@@ -16702,10 +16702,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$23" class="0">
 <segment>
-<pinref part="R33" gate="G$1" pin="2"/>
+<pinref part="R7" gate="G$1" pin="2"/>
 <pinref part="DRM2" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-73.66" x2="88.9" y2="-73.66" width="0.1524" layer="91"/>
-<pinref part="C15" gate="G$1" pin="1"/>
+<pinref part="C3" gate="G$1" pin="1"/>
 <wire x1="88.9" y1="-73.66" x2="134.62" y2="-73.66" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="-132.08" x2="88.9" y2="-73.66" width="0.1524" layer="91"/>
 <junction x="88.9" y="-73.66"/>
@@ -16713,10 +16713,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$24" class="0">
 <segment>
-<pinref part="R17" gate="G$1" pin="2"/>
+<pinref part="R6" gate="G$1" pin="2"/>
 <pinref part="DRM3" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-81.28" x2="93.98" y2="-81.28" width="0.1524" layer="91"/>
-<pinref part="C16" gate="G$1" pin="1"/>
+<pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="93.98" y1="-81.28" x2="134.62" y2="-81.28" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="-132.08" x2="93.98" y2="-81.28" width="0.1524" layer="91"/>
 <junction x="93.98" y="-81.28"/>
@@ -16724,10 +16724,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$32" class="0">
 <segment>
-<pinref part="R24" gate="G$1" pin="2"/>
+<pinref part="R5" gate="G$1" pin="2"/>
 <pinref part="DRM4" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-88.9" x2="99.06" y2="-88.9" width="0.1524" layer="91"/>
-<pinref part="C19" gate="G$1" pin="1"/>
+<pinref part="C1" gate="G$1" pin="1"/>
 <wire x1="99.06" y1="-88.9" x2="134.62" y2="-88.9" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="-132.08" x2="99.06" y2="-88.9" width="0.1524" layer="91"/>
 <junction x="99.06" y="-88.9"/>
@@ -16735,10 +16735,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$33" class="0">
 <segment>
-<pinref part="R29" gate="G$1" pin="2"/>
+<pinref part="R12" gate="G$1" pin="2"/>
 <pinref part="DRM5" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-96.52" x2="104.14" y2="-96.52" width="0.1524" layer="91"/>
-<pinref part="C20" gate="G$1" pin="1"/>
+<pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="104.14" y1="-96.52" x2="134.62" y2="-96.52" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="-132.08" x2="104.14" y2="-96.52" width="0.1524" layer="91"/>
 <junction x="104.14" y="-96.52"/>
@@ -16746,10 +16746,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$39" class="0">
 <segment>
-<pinref part="R30" gate="G$1" pin="2"/>
+<pinref part="R11" gate="G$1" pin="2"/>
 <pinref part="DRM6" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-104.14" x2="109.22" y2="-104.14" width="0.1524" layer="91"/>
-<pinref part="C23" gate="G$1" pin="1"/>
+<pinref part="C7" gate="G$1" pin="1"/>
 <wire x1="109.22" y1="-104.14" x2="134.62" y2="-104.14" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="-132.08" x2="109.22" y2="-104.14" width="0.1524" layer="91"/>
 <junction x="109.22" y="-104.14"/>
@@ -16757,10 +16757,10 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$41" class="0">
 <segment>
-<pinref part="R31" gate="G$1" pin="2"/>
+<pinref part="R10" gate="G$1" pin="2"/>
 <pinref part="DRM7" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-111.76" x2="114.3" y2="-111.76" width="0.1524" layer="91"/>
-<pinref part="C22" gate="G$1" pin="1"/>
+<pinref part="C6" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="-111.76" x2="134.62" y2="-111.76" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="-132.08" x2="114.3" y2="-111.76" width="0.1524" layer="91"/>
 <junction x="114.3" y="-111.76"/>
@@ -16768,8 +16768,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$43" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="QA"/>
-<pinref part="R32" gate="G$1" pin="1"/>
+<pinref part="IC2" gate="A" pin="QA"/>
+<pinref part="R8" gate="G$1" pin="1"/>
 <wire x1="58.42" y1="-66.04" x2="53.34" y2="-66.04" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="-66.04" x2="53.34" y2="-71.12" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="-71.12" x2="38.1" y2="-71.12" width="0.1524" layer="91"/>
@@ -16777,24 +16777,24 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$46" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="QB"/>
-<pinref part="R33" gate="G$1" pin="1"/>
+<pinref part="IC2" gate="A" pin="QB"/>
+<pinref part="R7" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="-73.66" x2="58.42" y2="-73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$47" class="0">
 <segment>
-<pinref part="R24" gate="G$1" pin="1"/>
+<pinref part="R5" gate="G$1" pin="1"/>
 <wire x1="50.8" y1="-88.9" x2="58.42" y2="-88.9" width="0.1524" layer="91"/>
-<pinref part="IC6" gate="A" pin="QD"/>
+<pinref part="IC2" gate="A" pin="QD"/>
 <wire x1="38.1" y1="-78.74" x2="50.8" y2="-78.74" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="-78.74" x2="50.8" y2="-88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$48" class="0">
 <segment>
-<pinref part="R17" gate="G$1" pin="1"/>
-<pinref part="IC6" gate="A" pin="QC"/>
+<pinref part="R6" gate="G$1" pin="1"/>
+<pinref part="IC2" gate="A" pin="QC"/>
 <wire x1="38.1" y1="-76.2" x2="53.34" y2="-76.2" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="-76.2" x2="53.34" y2="-81.28" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="-81.28" x2="58.42" y2="-81.28" width="0.1524" layer="91"/>
@@ -16802,37 +16802,37 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$49" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="QF"/>
+<pinref part="IC2" gate="A" pin="QF"/>
 <wire x1="38.1" y1="-83.82" x2="45.72" y2="-83.82" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="-83.82" x2="45.72" y2="-104.14" width="0.1524" layer="91"/>
-<pinref part="R30" gate="G$1" pin="1"/>
+<pinref part="R11" gate="G$1" pin="1"/>
 <wire x1="45.72" y1="-104.14" x2="58.42" y2="-104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$50" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="QG"/>
+<pinref part="IC2" gate="A" pin="QG"/>
 <wire x1="38.1" y1="-86.36" x2="43.18" y2="-86.36" width="0.1524" layer="91"/>
 <wire x1="43.18" y1="-86.36" x2="43.18" y2="-111.76" width="0.1524" layer="91"/>
-<pinref part="R31" gate="G$1" pin="1"/>
+<pinref part="R10" gate="G$1" pin="1"/>
 <wire x1="43.18" y1="-111.76" x2="58.42" y2="-111.76" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$51" class="0">
 <segment>
-<pinref part="R29" gate="G$1" pin="1"/>
+<pinref part="R12" gate="G$1" pin="1"/>
 <wire x1="48.26" y1="-96.52" x2="58.42" y2="-96.52" width="0.1524" layer="91"/>
-<pinref part="IC6" gate="A" pin="QE"/>
+<pinref part="IC2" gate="A" pin="QE"/>
 <wire x1="38.1" y1="-81.28" x2="48.26" y2="-81.28" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="-81.28" x2="48.26" y2="-96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$52" class="0">
 <segment>
-<pinref part="R34" gate="G$1" pin="2"/>
+<pinref part="R9" gate="G$1" pin="2"/>
 <pinref part="DRM8" gate="G$1" pin="4"/>
 <wire x1="68.58" y1="-119.38" x2="119.38" y2="-119.38" width="0.1524" layer="91"/>
-<pinref part="C24" gate="G$1" pin="1"/>
+<pinref part="C5" gate="G$1" pin="1"/>
 <wire x1="119.38" y1="-119.38" x2="134.62" y2="-119.38" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="-132.08" x2="119.38" y2="-119.38" width="0.1524" layer="91"/>
 <junction x="119.38" y="-119.38"/>
@@ -16840,16 +16840,16 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </net>
 <net name="N$53" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="QH"/>
+<pinref part="IC2" gate="A" pin="QH"/>
 <wire x1="38.1" y1="-88.9" x2="40.64" y2="-88.9" width="0.1524" layer="91"/>
 <wire x1="40.64" y1="-88.9" x2="40.64" y2="-119.38" width="0.1524" layer="91"/>
-<pinref part="R34" gate="G$1" pin="1"/>
+<pinref part="R9" gate="G$1" pin="1"/>
 <wire x1="40.64" y1="-119.38" x2="58.42" y2="-119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SR_DAT2" class="0">
 <segment>
-<pinref part="IC6" gate="A" pin="SER"/>
+<pinref part="IC2" gate="A" pin="SER"/>
 <wire x1="12.7" y1="-71.12" x2="5.08" y2="-71.12" width="0.1524" layer="91"/>
 <label x="5.08" y="-71.12" size="1.778" layer="95"/>
 </segment>
@@ -16870,7 +16870,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="IC1" gate="G$1" pin="RC3/SS#"/>
 <pinref part="S1" gate="1" pin="S"/>
 <wire x1="-91.44" y1="73.66" x2="-119.38" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="R5" gate="G$1" pin="2"/>
+<pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="-119.38" y1="73.66" x2="-121.92" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="-119.38" y1="78.74" x2="-119.38" y2="73.66" width="0.1524" layer="91"/>
 <junction x="-119.38" y="73.66"/>
