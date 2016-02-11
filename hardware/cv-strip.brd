@@ -3138,8 +3138,8 @@ design rules under a new name.</description>
 <attribute name="NAME" x="80.518" y="14.859" size="1.27" layer="26" rot="MR180"/>
 <attribute name="VALUE" x="81.788" y="14.351" size="1.27" layer="28" rot="MR270"/>
 </element>
-<element name="ISCP" library="tag-connect" package="TC2030-MCP-NL" value="" x="84.709" y="26.67" smashed="yes" rot="MR270">
-<attribute name="NAME" x="83.439" y="27.305" size="1.27" layer="26" rot="MR270"/>
+<element name="ICSP" library="tag-connect" package="TC2030-MCP-NL" value="" x="84.709" y="26.67" smashed="yes" rot="MR270">
+<attribute name="NAME" x="82.677" y="20.066" size="1.27" layer="26" rot="MR180"/>
 </element>
 <element name="L3" library="led" package="LED3MM" value="" x="128.905" y="35.687" smashed="yes" rot="R270">
 <attribute name="NAME" x="128.016" y="37.973" size="1.27" layer="25" ratio="10"/>
@@ -3213,16 +3213,16 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="33.02" y="32.385" size="1.27" layer="28" rot="MR270"/>
 </element>
 <element name="DRM1" library="jason_eagle6" package="VERTICAL_3_5MM_SOCKET" value="VERTICAL_3_5MM_SOCKET" x="106.68" y="21.59" smashed="yes">
-<attribute name="NAME" x="104.267" y="27.686" size="1.27" layer="21"/>
+<attribute name="NAME" x="104.394" y="27.813" size="1.27" layer="21"/>
 </element>
 <element name="DRM2" library="jason_eagle6" package="VERTICAL_3_5MM_SOCKET" value="VERTICAL_3_5MM_SOCKET" x="119.38" y="21.59" smashed="yes">
-<attribute name="NAME" x="116.967" y="27.432" size="1.27" layer="21"/>
+<attribute name="NAME" x="116.967" y="27.813" size="1.27" layer="21"/>
 </element>
 <element name="DRM3" library="jason_eagle6" package="VERTICAL_3_5MM_SOCKET" value="VERTICAL_3_5MM_SOCKET" x="132.08" y="21.59" smashed="yes">
-<attribute name="NAME" x="129.54" y="27.559" size="1.27" layer="21"/>
+<attribute name="NAME" x="129.54" y="27.813" size="1.27" layer="21"/>
 </element>
 <element name="DRM4" library="jason_eagle6" package="VERTICAL_3_5MM_SOCKET" value="VERTICAL_3_5MM_SOCKET" x="144.78" y="21.59" smashed="yes">
-<attribute name="NAME" x="142.494" y="27.432" size="1.27" layer="21"/>
+<attribute name="NAME" x="142.494" y="27.813" size="1.27" layer="21"/>
 </element>
 <element name="DRM5" library="jason_eagle6" package="VERTICAL_3_5MM_SOCKET" value="VERTICAL_3_5MM_SOCKET" x="106.68" y="8.89" smashed="yes">
 <attribute name="NAME" x="104.14" y="1.27" size="1.27" layer="21"/>
@@ -3355,7 +3355,7 @@ design rules under a new name.</description>
 <contactref element="C17" pad="2"/>
 <contactref element="C15" pad="2"/>
 <contactref element="C14" pad="2"/>
-<contactref element="ISCP" pad="3"/>
+<contactref element="ICSP" pad="3"/>
 <contactref element="IC4" pad="4"/>
 <contactref element="R1" pad="2"/>
 <contactref element="R3" pad="2"/>
@@ -3699,7 +3699,7 @@ design rules under a new name.</description>
 <signal name="SR_DAT">
 <contactref element="IC3" pad="14"/>
 <contactref element="IC1" pad="13"/>
-<contactref element="ISCP" pad="4"/>
+<contactref element="ICSP" pad="4"/>
 <wire x1="90.11" y1="24.13" x2="88.265" y2="24.13" width="0.3048" layer="16"/>
 <via x="88.265" y="24.13" extent="1-16" drill="0.6"/>
 <wire x1="88.265" y1="24.13" x2="82.55" y2="24.13" width="0.3048" layer="1"/>
@@ -3749,7 +3749,7 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$34">
 <contactref element="IC1" pad="4"/>
-<contactref element="ISCP" pad="1"/>
+<contactref element="ICSP" pad="1"/>
 <wire x1="85.344" y1="25.4" x2="86.36" y2="25.4" width="0.3048" layer="16"/>
 <via x="86.36" y="25.4" extent="1-16" drill="0.6"/>
 <wire x1="86.36" y1="25.4" x2="93.091" y2="25.4" width="0.3048" layer="1"/>
@@ -3816,7 +3816,7 @@ design rules under a new name.</description>
 <contactref element="R21" pad="1"/>
 <contactref element="IC1" pad="1"/>
 <contactref element="C19" pad="2"/>
-<contactref element="ISCP" pad="2"/>
+<contactref element="ICSP" pad="2"/>
 <contactref element="IC7" pad="8"/>
 <contactref element="R27" pad="2"/>
 <contactref element="IC6" pad="2"/>
@@ -3886,7 +3886,6 @@ design rules under a new name.</description>
 <wire x1="62.037" y1="33.97" x2="60.775409375" y2="32.708409375" width="0.4064" layer="16"/>
 <wire x1="60.775409375" y1="32.708409375" x2="59.42" y2="31.353" width="0.4064" layer="16"/>
 <wire x1="63.5" y1="33.97" x2="66.04" y2="33.97" width="0.4064" layer="16"/>
-<wire x1="52.2781" y1="31.353" x2="56.007" y2="31.353" width="0.4064" layer="16"/>
 <wire x1="56.007" y1="31.353" x2="59.42" y2="31.353" width="0.4064" layer="16"/>
 <wire x1="56.073" y1="29.464" x2="56.073" y2="31.287" width="0.4064" layer="16"/>
 <wire x1="56.073" y1="31.287" x2="56.007" y2="31.353" width="0.4064" layer="16"/>
@@ -3894,6 +3893,7 @@ design rules under a new name.</description>
 <wire x1="60.775409375" y1="32.708409375" x2="58.477590625" y2="32.708409375" width="0.8128" layer="1"/>
 <wire x1="58.477590625" y1="32.708409375" x2="57.15" y2="34.036" width="0.8128" layer="1"/>
 <wire x1="57.15" y1="34.036" x2="57.15" y2="41.275" width="0.8128" layer="1"/>
+<wire x1="52.2781" y1="31.353" x2="56.007" y2="31.353" width="0.3048" layer="16"/>
 </signal>
 <signal name="VIN">
 <contactref element="IC6" pad="3"/>
@@ -4125,7 +4125,7 @@ design rules under a new name.</description>
 <signal name="SR_DAT2">
 <contactref element="IC2" pad="14"/>
 <contactref element="IC1" pad="12"/>
-<contactref element="ISCP" pad="5"/>
+<contactref element="ICSP" pad="5"/>
 <wire x1="90.11" y1="22.86" x2="85.344" y2="22.86" width="0.3048" layer="16"/>
 <via x="96.52" y="1.27" extent="1-16" drill="0.6"/>
 <via x="91.821" y="22.86" extent="1-16" drill="0.6"/>

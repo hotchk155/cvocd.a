@@ -15649,7 +15649,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="C14" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="C16" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
-<part name="ISCP" library="tag-connect" deviceset="TC2030" device="-MCP-NL"/>
+<part name="ICSP" library="tag-connect" deviceset="TC2030" device="-MCP-NL"/>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
 <part name="GND19" library="supply1" deviceset="GND" device=""/>
 <part name="L3" library="led" deviceset="LED" device="3MM"/>
@@ -15770,7 +15770,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <instance part="C16" gate="G$1" x="83.82" y="-40.64"/>
 <instance part="GND16" gate="1" x="114.3" y="-53.34"/>
 <instance part="IC5" gate="P" x="88.9" y="114.3"/>
-<instance part="ISCP" gate="G$1" x="-124.46" y="48.26" rot="MR0"/>
+<instance part="ICSP" gate="G$1" x="-124.46" y="48.26" rot="MR0"/>
 <instance part="GND18" gate="1" x="-93.98" y="33.02"/>
 <instance part="GND19" gate="1" x="7.62" y="58.42"/>
 <instance part="L3" gate="G$1" x="-30.48" y="17.78"/>
@@ -15964,7 +15964,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="114.3" y1="-50.8" x2="114.3" y2="-48.26" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="ISCP" gate="G$1" pin="VSS(GND)"/>
+<pinref part="ICSP" gate="G$1" pin="VSS(GND)"/>
 <wire x1="-111.76" y1="50.8" x2="-93.98" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="-93.98" y1="50.8" x2="-93.98" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="GND18" gate="1" pin="GND"/>
@@ -16400,7 +16400,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="IC1" gate="G$1" pin="RA0/ICSPDAT"/>
 <wire x1="-48.26" y1="86.36" x2="-45.72" y2="86.36" width="0.1524" layer="91"/>
 <junction x="-48.26" y="86.36"/>
-<pinref part="ISCP" gate="G$1" pin="ICSP_DAT/PGD"/>
+<pinref part="ICSP" gate="G$1" pin="ICSP_DAT/PGD"/>
 <wire x1="-111.76" y1="48.26" x2="-45.72" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="-45.72" y1="86.36" x2="-33.02" y2="86.36" width="0.1524" layer="91"/>
 <junction x="-45.72" y="86.36"/>
@@ -16446,7 +16446,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <pinref part="IC1" gate="G$1" pin="RA3/MCLR#/VPP"/>
 <wire x1="-91.44" y1="81.28" x2="-93.98" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="-93.98" y1="81.28" x2="-93.98" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="ISCP" gate="G$1" pin="VPP/MCLR"/>
+<pinref part="ICSP" gate="G$1" pin="VPP/MCLR"/>
 <wire x1="-93.98" y1="55.88" x2="-111.76" y2="55.88" width="0.1524" layer="91"/>
 <junction x="-91.44" y="81.28"/>
 </segment>
@@ -16549,7 +16549,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-99.06" y1="96.52" x2="-99.06" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="-73.66" y1="96.52" x2="-99.06" y2="96.52" width="0.1524" layer="91"/>
 <junction x="-99.06" y="96.52"/>
-<pinref part="ISCP" gate="G$1" pin="VDD"/>
+<pinref part="ICSP" gate="G$1" pin="VDD"/>
 <wire x1="-111.76" y1="53.34" x2="-99.06" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="-99.06" y1="53.34" x2="-99.06" y2="88.9" width="0.1524" layer="91"/>
 <junction x="-99.06" y="88.9"/>
@@ -16858,7 +16858,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <wire x1="-43.18" y1="83.82" x2="-48.26" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RA1/ICPCLK"/>
 <junction x="-48.26" y="83.82"/>
-<pinref part="ISCP" gate="G$1" pin="ICSP_CLK/PGC"/>
+<pinref part="ICSP" gate="G$1" pin="ICSP_CLK/PGC"/>
 <wire x1="-111.76" y1="45.72" x2="-43.18" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="-43.18" y1="83.82" x2="-33.02" y2="83.82" width="0.1524" layer="91"/>
 <junction x="-43.18" y="83.82"/>
@@ -16884,68 +16884,68 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 </sheets>
 <errors>
 <approved hash="104,1,-48.26,88.9,IC1,VSS,GND,,,"/>
-<approved hash="104,1,45.72,81.28,IC3,VSS,GND,,,"/>
-<approved hash="104,1,33.02,-7.62,IC2P,VCC,VDD,,,"/>
-<approved hash="104,1,88.9,121.92,IC4P,V+,VIN,,,"/>
-<approved hash="104,1,88.9,106.68,IC4P,V-,GND,,,"/>
+<approved hash="104,1,45.72,81.28,IC4,VSS,GND,,,"/>
+<approved hash="104,1,33.02,-7.62,IC3P,VCC,VDD,,,"/>
+<approved hash="104,1,88.9,121.92,IC5P,V+,VIN,,,"/>
+<approved hash="104,1,88.9,106.68,IC5P,V-,GND,,,"/>
 <approved hash="104,1,-111.76,50.8,ISCP,VSS(GND),GND,,,"/>
-<approved hash="104,1,33.02,-101.6,IC6P,VCC,VDD,,,"/>
+<approved hash="104,1,33.02,-101.6,IC2P,VCC,VDD,,,"/>
 <approved hash="106,1,-91.44,76.2,MIDI_OUT,,,,,"/>
-<approved hash="113,1,76.2,13.6948,R2,,,,,"/>
-<approved hash="113,1,76.2,6.07483,R1,,,,,"/>
-<approved hash="113,1,76.2,28.9348,R4,,,,,"/>
-<approved hash="113,1,76.2,21.3148,R3,,,,,"/>
-<approved hash="113,1,-1.54517,86.36,R19,,,,,"/>
-<approved hash="113,1,0.994831,86.36,R18,,,,,"/>
-<approved hash="113,1,116.84,107.675,R27,,,,,"/>
-<approved hash="113,1,116.84,92.4348,R22,,,,,"/>
-<approved hash="113,1,116.84,77.1948,R21,,,,,"/>
-<approved hash="113,1,116.84,61.9548,R26,,,,,"/>
-<approved hash="113,1,96.52,107.675,R28,,,,,"/>
-<approved hash="113,1,96.52,92.4348,R23,,,,,"/>
-<approved hash="113,1,96.52,77.1948,R20,,,,,"/>
-<approved hash="113,1,96.52,61.9548,R25,,,,,"/>
-<approved hash="113,1,26.67,-14.3713,C8,,,,,"/>
-<approved hash="113,1,29.21,86.5191,C17,,,,,"/>
-<approved hash="113,1,-69.85,94.8487,C9,,,,,"/>
-<approved hash="113,1,90.5713,-41.91,C3,,,,,"/>
-<approved hash="113,1,95.6513,-41.91,C2,,,,,"/>
-<approved hash="113,1,100.731,-41.91,C1,,,,,"/>
-<approved hash="113,1,85.4913,-41.91,C4,,,,,"/>
+<approved hash="113,1,76.2,13.6948,R14,,,,,"/>
+<approved hash="113,1,76.2,6.07483,R13,,,,,"/>
+<approved hash="113,1,76.2,28.9348,R15,,,,,"/>
+<approved hash="113,1,76.2,21.3148,R16,,,,,"/>
+<approved hash="113,1,-1.54517,86.36,R22,,,,,"/>
+<approved hash="113,1,0.994831,86.36,R21,,,,,"/>
+<approved hash="113,1,116.84,107.675,R17,,,,,"/>
+<approved hash="113,1,116.84,92.4348,R20,,,,,"/>
+<approved hash="113,1,116.84,77.1948,R26,,,,,"/>
+<approved hash="113,1,116.84,61.9548,R23,,,,,"/>
+<approved hash="113,1,96.52,107.675,R18,,,,,"/>
+<approved hash="113,1,96.52,92.4348,R19,,,,,"/>
+<approved hash="113,1,96.52,77.1948,R25,,,,,"/>
+<approved hash="113,1,96.52,61.9548,R24,,,,,"/>
+<approved hash="113,1,26.67,-15.0809,C13,,,,,"/>
+<approved hash="113,1,29.21,87.2287,C9,,,,,"/>
+<approved hash="113,1,-69.85,94.1391,C19,,,,,"/>
+<approved hash="113,1,91.2809,-41.91,C17,,,,,"/>
+<approved hash="113,1,96.3609,-41.91,C15,,,,,"/>
+<approved hash="113,1,101.441,-41.91,C14,,,,,"/>
+<approved hash="113,1,86.2009,-41.91,C16,,,,,"/>
 <approved hash="113,1,-120.46,49.53,ISCP,,,,,"/>
-<approved hash="113,1,-30.1583,16.51,PWR,,,,,"/>
-<approved hash="113,1,-22.5383,16.51,ACT,,,,,"/>
-<approved hash="113,1,-29.4852,5.08,R14,,,,,"/>
-<approved hash="113,1,-21.8652,5.08,R13,,,,,"/>
-<approved hash="113,1,-14.2452,5.08,R12,,,,,"/>
-<approved hash="113,1,-14.9183,16.51,STS,,,,,"/>
-<approved hash="113,1,-106.917,205.609,JP1,,,,,"/>
-<approved hash="113,1,-79.3061,199.39,C11,,,,,"/>
-<approved hash="113,1,-76.0409,199.39,C18,,,,,"/>
-<approved hash="113,1,-45.5609,199.39,C12,,,,,"/>
-<approved hash="113,1,-55.88,293.095,R7,,,,,"/>
-<approved hash="113,1,0,288.015,R8,,,,,"/>
-<approved hash="113,1,0,290.555,R10,,,,,"/>
-<approved hash="113,1,63.5,-80.2852,R17,,,,,"/>
-<approved hash="113,1,63.5,-87.9052,R24,,,,,"/>
-<approved hash="113,1,63.5,-95.5252,R29,,,,,"/>
-<approved hash="113,1,63.5,-103.145,R30,,,,,"/>
-<approved hash="113,1,63.5,-110.765,R31,,,,,"/>
-<approved hash="113,1,63.5,-65.0452,R32,,,,,"/>
-<approved hash="113,1,63.5,-72.6652,R33,,,,,"/>
-<approved hash="113,1,26.67,-109.061,C14,,,,,"/>
-<approved hash="113,1,91.2809,-135.89,C15,,,,,"/>
-<approved hash="113,1,96.3609,-135.89,C16,,,,,"/>
-<approved hash="113,1,101.441,-135.89,C19,,,,,"/>
-<approved hash="113,1,106.521,-135.89,C20,,,,,"/>
-<approved hash="113,1,86.2009,-135.89,C21,,,,,"/>
-<approved hash="113,1,116.681,-135.89,C22,,,,,"/>
-<approved hash="113,1,111.601,-135.89,C23,,,,,"/>
-<approved hash="113,1,63.5,-118.385,R34,,,,,"/>
-<approved hash="113,1,121.761,-135.89,C24,,,,,"/>
-<approved hash="113,1,-36.742,199.39,C5,,,,,"/>
+<approved hash="113,1,-30.1583,16.51,L3,,,,,"/>
+<approved hash="113,1,-22.5383,16.51,L1,,,,,"/>
+<approved hash="113,1,-29.4852,5.08,R1,,,,,"/>
+<approved hash="113,1,-21.8652,5.08,R3,,,,,"/>
+<approved hash="113,1,-14.2452,5.08,R2,,,,,"/>
+<approved hash="113,1,-14.9183,16.51,L2,,,,,"/>
+<approved hash="113,1,-79.2124,199.39,C21,,,,,"/>
+<approved hash="113,1,-76.0409,199.39,C10,,,,,"/>
+<approved hash="113,1,-45.4672,199.39,C11,,,,,"/>
+<approved hash="113,1,-55.88,293.095,R29,,,,,"/>
+<approved hash="113,1,0,288.015,R27,,,,,"/>
+<approved hash="113,1,0,290.555,R28,,,,,"/>
+<approved hash="113,1,63.5,-80.2852,R6,,,,,"/>
+<approved hash="113,1,63.5,-87.9052,R5,,,,,"/>
+<approved hash="113,1,63.5,-95.5252,R12,,,,,"/>
+<approved hash="113,1,63.5,-103.145,R11,,,,,"/>
+<approved hash="113,1,63.5,-110.765,R10,,,,,"/>
+<approved hash="113,1,63.5,-65.0452,R8,,,,,"/>
+<approved hash="113,1,63.5,-72.6652,R7,,,,,"/>
+<approved hash="113,1,26.67,-109.061,C12,,,,,"/>
+<approved hash="113,1,90.5713,-135.89,C3,,,,,"/>
+<approved hash="113,1,95.6513,-135.89,C2,,,,,"/>
+<approved hash="113,1,100.731,-135.89,C1,,,,,"/>
+<approved hash="113,1,105.811,-135.89,C8,,,,,"/>
+<approved hash="113,1,85.4913,-135.89,C4,,,,,"/>
+<approved hash="113,1,115.971,-135.89,C6,,,,,"/>
+<approved hash="113,1,110.891,-135.89,C7,,,,,"/>
+<approved hash="113,1,63.5,-118.385,R9,,,,,"/>
+<approved hash="113,1,121.051,-135.89,C5,,,,,"/>
+<approved hash="113,1,-36.0324,199.39,C20,,,,,"/>
 <approved hash="113,1,-127,75.8105,S1,,,,,"/>
-<approved hash="113,1,-118.385,83.82,R5,,,,,"/>
+<approved hash="113,1,-118.385,83.82,R4,,,,,"/>
+<approved hash="113,1,78.5809,115.57,C18,,,,,"/>
 </errors>
 </schematic>
 </drawing>
