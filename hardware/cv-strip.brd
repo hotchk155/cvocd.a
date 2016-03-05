@@ -26,29 +26,29 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
-<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
-<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
-<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
-<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
-<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="yes" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="yes" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
-<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
@@ -68,8 +68,8 @@
 <layer number="102" name="Vscore" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="103" name="tMap" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="104" name="Name" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="105" name="tPlate" color="7" fill="1" visible="no" active="yes"/>
-<layer number="106" name="bPlate" color="7" fill="1" visible="no" active="yes"/>
+<layer number="105" name="tPlate" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="106" name="bPlate" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="107" name="Crop" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="108" name="fp8" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="109" name="fp9" color="7" fill="1" visible="yes" active="yes"/>
@@ -159,6 +159,7 @@
 <text x="38.735" y="32.766" size="3.048" layer="25" font="vector">converter</text>
 <text x="57.531" y="30.607" size="2.032" layer="25" font="vector">rev 1</text>
 <text x="30.734" y="7.366" size="2.032" layer="25" font="vector" rot="R90">hotchk155</text>
+<hole x="90.678" y="31.678" drill="3.2"/>
 </plain>
 <libraries>
 <library name="jason_eagle6">
@@ -3115,7 +3116,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="88.392" y="3.683" size="1.27" layer="28" rot="MR180"/>
 </element>
 <element name="C9" library="rcl" package="C0805" value="" x="87.122" y="29.718" smashed="yes" rot="MR0">
-<attribute name="NAME" x="89.789" y="31.115" size="1.27" layer="26" rot="MR0"/>
+<attribute name="NAME" x="88.773" y="27.178" size="1.27" layer="26" rot="MR0"/>
 <attribute name="VALUE" x="88.392" y="27.178" size="1.27" layer="28" rot="MR0"/>
 </element>
 <element name="C19" library="rcl" package="C0805" value="" x="57.023" y="29.464" smashed="yes" rot="MR0">
@@ -3181,11 +3182,11 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="78.994" y="32.258" size="1.27" layer="28" rot="MR180"/>
 </element>
 <element name="C11" library="rcl" package="C0805" value="" x="92.71" y="27.559" smashed="yes" rot="MR180">
-<attribute name="NAME" x="90.424" y="30.099" size="1.27" layer="26" rot="MR180"/>
+<attribute name="NAME" x="94.869" y="28.321" size="1.27" layer="26" rot="MR180"/>
 <attribute name="VALUE" x="91.44" y="30.099" size="1.27" layer="28" rot="MR180"/>
 </element>
 <element name="D2" library="jasons_stuff" package="DO-VERT" value="1N4004" x="88.9" y="36.83" smashed="yes" rot="R90">
-<attribute name="NAME" x="90.043" y="34.417" size="1.27" layer="25" ratio="10" rot="R180"/>
+<attribute name="NAME" x="88.011" y="34.798" size="1.27" layer="25" ratio="10" rot="R180"/>
 </element>
 <element name="MIDI_IN" library="jason_eagle6" package="EDGEDIN" value="DIN5PIN" x="16.51" y="35.052" smashed="yes">
 <attribute name="NAME" x="10.033" y="29.972" size="1.778" layer="25" ratio="10" rot="R90"/>
@@ -3464,9 +3465,9 @@ design rules under a new name.</description>
 <signal name="N$13">
 <contactref element="IC3" pad="1"/>
 <contactref element="R16" pad="1"/>
-<wire x1="82.9056" y1="3.175" x2="80.137" y2="3.175" width="0.3048" layer="16"/>
-<wire x1="80.137" y1="3.175" x2="79.121" y2="2.159" width="0.3048" layer="16"/>
-<wire x1="79.121" y1="2.159" x2="59.944" y2="2.159" width="0.3048" layer="16"/>
+<wire x1="82.9056" y1="3.175" x2="77.597" y2="3.175" width="0.3048" layer="16"/>
+<wire x1="77.597" y1="3.175" x2="76.581" y2="2.159" width="0.3048" layer="16"/>
+<wire x1="76.581" y1="2.159" x2="59.944" y2="2.159" width="0.3048" layer="16"/>
 <wire x1="59.944" y1="2.159" x2="57.658" y2="4.445" width="0.3048" layer="16"/>
 <wire x1="57.658" y1="4.445" x2="57.658" y2="12.004" width="0.3048" layer="16"/>
 </signal>

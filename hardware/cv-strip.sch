@@ -15713,7 +15713,6 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <sheets>
 <sheet>
 <plain>
-<text x="-96.52" y="320.04" size="5.08" layer="91">POLARITY TBC</text>
 </plain>
 <instances>
 <instance part="VEL1CV" gate="G$1" x="152.4" y="99.06" rot="R180"/>
@@ -16888,7 +16887,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <approved hash="104,1,33.02,-7.62,IC3P,VCC,VDD,,,"/>
 <approved hash="104,1,88.9,121.92,IC5P,V+,VIN,,,"/>
 <approved hash="104,1,88.9,106.68,IC5P,V-,GND,,,"/>
-<approved hash="104,1,-111.76,50.8,ISCP,VSS(GND),GND,,,"/>
+<approved hash="104,1,-111.76,50.8,ICSP,VSS(GND),GND,,,"/>
 <approved hash="104,1,33.02,-101.6,IC2P,VCC,VDD,,,"/>
 <approved hash="106,1,-91.44,76.2,MIDI_OUT,,,,,"/>
 <approved hash="113,1,76.2,13.6948,R14,,,,,"/>
@@ -16912,7 +16911,7 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <approved hash="113,1,96.3609,-41.91,C15,,,,,"/>
 <approved hash="113,1,101.441,-41.91,C14,,,,,"/>
 <approved hash="113,1,86.2009,-41.91,C16,,,,,"/>
-<approved hash="113,1,-120.46,49.53,ISCP,,,,,"/>
+<approved hash="113,1,-120.46,49.53,ICSP,,,,,"/>
 <approved hash="113,1,-30.1583,16.51,L3,,,,,"/>
 <approved hash="113,1,-22.5383,16.51,L1,,,,,"/>
 <approved hash="113,1,-29.4852,5.08,R1,,,,,"/>
