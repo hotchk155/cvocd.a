@@ -15625,25 +15625,25 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="R15" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R16" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
-<part name="R22" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R21" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R22" library="rcl" deviceset="R-EU_" device="R0805" value="4k7"/>
+<part name="R21" library="rcl" deviceset="R-EU_" device="R0805" value="4k7"/>
 <part name="GND12" library="supply1" deviceset="GND" device=""/>
 <part name="IC5" library="linear" deviceset="LM324" device="D"/>
-<part name="R17" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R20" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R26" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R23" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R18" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R19" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R25" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R24" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R17" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R20" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R26" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R23" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R18" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R19" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R25" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
+<part name="R24" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="C13" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
-<part name="C9" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C19" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C9" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
+<part name="C19" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="C17" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="C14" library="rcl" deviceset="C-EU" device="C0805"/>
@@ -15671,8 +15671,8 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="IC7" library="optocoupler" deviceset="6N138" device=""/>
 <part name="R29" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="D1" library="jasons_stuff" deviceset="0805DIODE" device=""/>
-<part name="R27" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="R28" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R27" library="rcl" deviceset="R-EU_" device="R0805" value="1k5"/>
+<part name="R28" library="rcl" deviceset="R-EU_" device="R0805" value="1k5"/>
 <part name="DRM1" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM2" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
 <part name="DRM3" library="jason_eagle6" deviceset="VERTICAL_3_5MM_SOCKET" device=""/>
@@ -15704,9 +15704,9 @@ Siemens, Hewlett-Packard, Texas Instuments, Sharp, Motorola&lt;p&gt;
 <part name="C5" library="rcl" deviceset="C-EU" device="C0805"/>
 <part name="C20" library="resistor" deviceset="CPOL-EU" device="E2.5-5"/>
 <part name="S1" library="switch-omron" deviceset="10-XX" device=""/>
-<part name="R4" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="R4" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
-<part name="C18" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C18" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="U$2" library="jason_eagle6" deviceset="PWR_SOCKET_2_1MM" device=""/>
 </parts>
