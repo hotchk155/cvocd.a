@@ -6,5 +6,9 @@ Active Config=Debug
 Last Ext=c
 Config=1
 [Files]
-Count=1
+Count=5
 File0=cv-strip.c
+File1=cv-strip.h
+File2=gate.c
+File3=note_stack.c
+File4=cv.c
