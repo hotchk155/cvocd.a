@@ -5,10 +5,19 @@ Active Compiler=BoostC
 Active Config=Debug
 Last Ext=c
 Config=1
+Type=0
+Warnings=1
+Model=0
 [Files]
 Count=5
 File0=cv-strip.c
 File1=cv-strip.h
-File2=gate.c
-File3=note_stack.c
-File4=cv.c
+File2=cv.c
+File3=gate.c
+File4=note_stack.c
+[Tools]
+BoostDir=C:\Program Files (x86)\SourceBoost\
+Programmer=
+PrefixWithBuildThreadNum=0
+[Debugger]
+DebugFromMain=1

@@ -10,48 +10,16 @@
 // INCLUDES
 //
 #include <system.h>
-#include "cv_strip.h"
+#include <rand.h>
+#include "cv-strip.h"
 
-//
-// CONSTANTS
-//
-enum {
-	PRIORITY_NEW,		// gives priority to newest note
-	PRIORITY_LOW,		// gives priority to lowest note
-	PRIORITY_HIGH,		// gives priority to highest note
-	PRIORITY_OLD,		// gives priority to oldest note
-	PRIORITY_RANDOM		// randomly prioritises notes	
-};
-
-#define SZ_NOTE_STACK 12	// max notes in a single stack
-#define NUM_NOTE_STACKS 4	// number of stacks supported
-
-//
-// STRUCT DEFS
-//
-typedef struct {
-	byte priority;		// how notes are prioritised when assigned to outputs
-	byte chan;			// midi channel
-	byte note_min;		// lowest note
-	byte note_max;		// highest note
-	byte vel_min;		// minimum velocity threshold
-	byte vel_accent;	// accent velocity level
-	byte bend_range;	// pitch bend range (+/- semitones)
-		
-	// STATE
-	byte note[SZ_NOTE_STACK];	// the notes held in the stack
-	char count;					// number of held notes
-	byte out[4];				// the stack output notes
-	int bend;					// pitch bend
-	byte vel;					// note velocity	
-} NOTE_STACK;
 
 //
 // PRIVATE DATA
 //
 
 // the note stacks
-static NOTE_STACK g_note_stack[NUM_NOTE_STACKS];
+NOTE_STACK g_stack[NUM_NOTE_STACKS];
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -74,11 +42,12 @@ static byte add_note(NOTE_STACK *pstack, byte note) {
 	// check if note is already in the stack
 	for(pos = 0; pos < pstack->count-1; ++pos) {
 		if(pstack->note[pos] == note) { 
+			// move note to front of stack
 			for(i = pos; i > 0; --i) {
 				pstack->note[i] = pstack->note[i-1];
 			}
 			pstack->note[0] = note;
-			return;
+			return 1;
 		}
 	}
 	
@@ -121,7 +90,7 @@ static byte remove_note(NOTE_STACK *pstack, byte note)
 // RECALCULATE NOTE STACK OUTPUTS
 static byte recalc_outputs(NOTE_STACK *pstack, byte stack_id)
 {
-	byte i,j,len,flag,pos;
+	byte i,j,len,flag,pos = 0;
 	byte new_out[4];
 	byte result = 0;
 	new_out[0] = NO_NOTE_OUT;
@@ -133,16 +102,18 @@ static byte recalc_outputs(NOTE_STACK *pstack, byte stack_id)
 	if(pstack->count > 1) {
 	
 		// get minimum of held note count and output count
-		len = pstack->count;
-		if(len > NUM_NOTE_STACK_OUTS) {
-			len = NUM_NOTE_STACK_OUTS
+		if(pstack->count > 4) {
+			len = 4;
+		}
+		else {
+			len = pstack->count;
 		}
 		
 		switch(pstack->priority) {
 		
 		//////////////////////////////////////////////////////////
 		// NEW NOTE PRIORITY - just copy out front notes
-		case PRIORITY_NEW;
+		case PRIORITY_NEW:
 			for(i=0; i<len; ++i) {
 				new_out[i] = pstack->note[i];
 			}
@@ -219,7 +190,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, byte stack_id)
 			for(i=0; i<len; ++i) {
 				flag = 1;
 				while(flag) { // looking for a note position we've not used
-					pos = random(pstack->count)
+					pos = rand()%pstack->count;
 					flag = 0;
 					for(j=0; j<i; ++j) {
 						if(new_out[j] == pos) { // already got this one
@@ -230,7 +201,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, byte stack_id)
 				}
 			}
 			// replace the note positions with the note values
-			for(i=0; i<NUM_NOTE_STACK_OUTS; ++i) {
+			for(i=0; i<4; ++i) {
 				new_out[i] = pstack->note[new_out[i]];
 			}			
 			break;
@@ -273,7 +244,7 @@ void stack_midi_note(byte chan, byte note, byte vel)
 	
 	// iterate over the note stacks
 	for(i=0; i<NUM_NOTE_STACKS; ++i) {
-		NOTE_STACK pstack = &g_note_stack[i];		
+		NOTE_STACK *pstack = &g_stack[i];		
 		
 		// Check the channel
 		switch(pstack->chan) {
@@ -335,7 +306,7 @@ void stack_bend(byte chan, byte hi, byte lo)
 	char i;
 	int bend = (int)hi<<7|(lo&0x7F)-8192;	
 	for(i=0; i<NUM_NOTE_STACKS; ++i) {
-		NOTE_STACK pstack = &g_note_stack[i];		
+		NOTE_STACK *pstack = &g_stack[i];		
 		
 		// Check the channel
 		switch(pstack->chan) {

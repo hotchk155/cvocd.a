@@ -12,6 +12,7 @@
 #include <system.h>
 #include <rand.h>
 #include <eeprom.h>
+#include "cv-strip.h"
 
 // PIC CONFIG BITS
 // - RESET INPUT DISABLED
@@ -21,10 +22,6 @@
 #pragma DATA _CONFIG2, _WRT_OFF & _PLLEN_OFF & _STVREN_ON & _BORV_19 & _LVP_OFF
 #pragma CLOCK_FREQ 16000000
 
-//
-// TYPE DEFS
-//
-typedef unsigned char byte;
 
 //
 // MACRO DEFS
@@ -53,7 +50,7 @@ volatile byte rx_tail = 0;
 byte midi_status;
 byte midi_num_params;
 byte midi_params[2];
-char midi_params;
+char midi_param;
 
 
 char ledTime = 0;
@@ -263,7 +260,7 @@ void main()
 			case MIDI_SYNCH_START:
 			case MIDI_SYNCH_CONTINUE:
 			case MIDI_SYNCH_STOP:
-				gate_clock(msg);
+				gate_midi_clock(msg);
 				break;		
 			// MIDI NOTE ON
 			case 0x80:

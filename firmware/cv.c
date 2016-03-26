@@ -8,6 +8,7 @@
 
 // INCLUDE FILES
 #include <system.h>
+#include <memory.h>
 #include "cv-strip.h"
 
 // MACRO DEFS
@@ -17,33 +18,32 @@
 enum {
 	CV_OFF,
 	CV_NOTE,
-	CV_VEL,
-	CV_CC
+	CV_VEL,	
+	CV_MIDI_CC
 };
 
 typedef struct {
+	byte mode;	// CV_xxx enum
 	byte stack_id;
 	byte out;
 } T_CV_EVENT;
 
 typedef struct {
+	byte mode;	// CV_xxx enum
 	byte chan;
 	byte cc;
 } T_CV_MIDI_CC;
 
-typedef struct {
-	byte mode;	// CV_xxx enum
-	union {
-		T_CV_EVENT 		event;
-		T_CV_MIDI_CC 	cc;
-	}
+typedef union {
+	T_CV_EVENT 		event;
+	T_CV_MIDI_CC 	cc;
 } CV_OUT;
 
 // cache of raw DAC data
 int g_dac[4] = {0};
 
 // CV status
-CV_OUT g_cv[4] = {0};
+CV_OUT g_cv[4];
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ static void i2c_begin_write(byte address) {
 	pir1.3 = 0; // clear SSP1IF
 	ssp1con2.0 = 1; // signal start condition
 	while(!pir1.3); // wait for it to complete
-	i2cWrite(address<<1); // address + WRITE(0) bit
+	i2c_send(address<<1); // address + WRITE(0) bit
 }
 
 ////////////////////////////////////////////////////////////
@@ -164,26 +164,27 @@ static void write_cc(byte which, long value)
 // HANDLE AN EVENT FROM A NOTE STACK
 void cv_event(byte event, byte stack_id)
 {
-	byte i, output_id;
+	byte output_id;
+	NOTE_STACK *pstack;
 	
 	// for each CV output
-	for(i=0; i<4; ++i) {
+	for(byte i=0; i<4; ++i) {
 		CV_OUT *pcv = &g_cv[i];
 		
 		// is it listening to the stack sending the event?
 		if(pcv->event.stack_id == stack_id) {
-			NOTE_STACK *pstack = &g_stack[i];
+			pstack = &g_stack[i];
 			
 			// check the mode			
-			switch(pcv->mode)
+			switch(pcv->event.mode)
 			{
 			case CV_NOTE:	// Note on will set output note CV
 				switch(event) {
-					case EV_NOTEA:
-					case EV_NOTEB:
-					case EV_NOTEC:
-					case EV_NOTED:
-						output_id = event - EV_NOTEA;
+					case EV_NOTE_A:
+					case EV_NOTE_B:
+					case EV_NOTE_C:
+					case EV_NOTE_D:
+						output_id = event - EV_NOTE_A;
 						if(pcv->event.out == output_id) {			
 							write_note(i, pstack->out[output_id], pstack->bend);
 						}
@@ -192,15 +193,16 @@ void cv_event(byte event, byte stack_id)
 				break;
 			case CV_VEL:	// Note on will set output velocity CV
 				switch(event) {
-					case EV_NOTEA:
-					case EV_NOTEB:
-					case EV_NOTEC:
-					case EV_NOTED:
+					case EV_NOTE_A:
+					case EV_NOTE_B:
+					case EV_NOTE_C:
+					case EV_NOTE_D:
 						write_vel(i, pstack->vel);
 						break;
 				}
 				break;
 			}
+		}
 	}
 }
 
@@ -208,12 +210,11 @@ void cv_event(byte event, byte stack_id)
 // HANDLE A MIDI CC
 void cv_midi_cc(byte chan, byte cc, byte value)
 {
-	byte i
-	for(i=0; i<4; ++i) {
+	for(byte i=0; i<4; ++i) {
 		CV_OUT *pcv = &g_cv[i];
 		
 		// is this CV output configured for CC?
-		if(pcv->mode != CV_CC) {
+		if(pcv->event.mode != CV_MIDI_CC) {
 			continue;
 		}		
 
@@ -232,7 +233,7 @@ void cv_midi_cc(byte chan, byte cc, byte value)
 				}
 				break;
 			default:
-				if(chan != pstack->chan) {
+				if(chan != pcv->cc.chan) {
 					continue;
 				}
 				break;
@@ -247,6 +248,7 @@ void cv_midi_cc(byte chan, byte cc, byte value)
 // INITIALISE CV MODULE
 void cv_init() 
 {
-	memset(g_dac, 0, sizeof g_dac);
+	memset(g_dac, 0, sizeof(g_dac));
+	memset(g_cv, 0, sizeof(g_cv));
 	i2c_init();
 }

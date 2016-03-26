@@ -28,6 +28,26 @@
 #define SRB_DRM7 	0x4000
 #define SRB_DRM8 	0x8000
 
+// initial CC "last value" 
+#define NO_VALUE 	0xFF
+
+// Names of available gates
+enum {
+	GATE_A = 0,
+	GATE_B,
+	GATE_DRM1,
+	GATE_DRM2,
+	GATE_DRM3,
+	GATE_DRM4,
+	GATE_DRM5,
+	GATE_DRM6,
+	GATE_DRM7,
+	GATE_DRM8,
+	GATE_CLKA,
+	GATE_CLKB,
+	NUM_GATE_OUTS
+};
+
 // List of modes for a gate output to be triggered
 enum {
 	GATE_OFF,
@@ -48,24 +68,23 @@ enum {
 	GATE_MIDI_TRANSPORT,
 };
 
-// Types of clock trigger
-enum 
-{
-	GATE_CLOCK_TICK,		// triggered by divided tick count
-	GATE_CLOCK_RUNNING		// triggered by MIDI clock running state
-};
-
 //
 // STRUCT DEFS
 //
 
 // Structure to hold mapping of a note stack event to a gate
 typedef struct {
+	byte mode;			// type of trigger - GATE_xxx enum
+	byte counter;		// (STATE) pulse duration counter
+	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte stack_id;	// index of the note stack
 } T_GATE_EVENT;
 
 // Structure to hold mapping of a raw MIDI note to a gate
 typedef struct {
+	byte mode;			// type of trigger - GATE_xxx enum
+	byte counter;		// (STATE) pulse duration counter
+	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte chan;			// midi channel
 	byte note;			// note range: lowest note
 	byte note_max;		// note range: highest note (0 if there is only one note)
@@ -74,6 +93,9 @@ typedef struct {
 
 // Structure to hold mapping of a raw MIDI CC to a gate
 typedef struct {
+	byte mode;			// type of trigger - GATE_xxx enum
+	byte counter;		// (STATE) pulse duration counter
+	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte chan;			// midi channel
 	byte cc;			// CC number
 	byte threshold;		// threshold for gate ON
@@ -82,22 +104,19 @@ typedef struct {
 
 // Structure to hold mapping of MIDI clock to a gate
 typedef struct {
-	byte type;			// type of event - GATE_CLOCK_xxx
+	byte mode;			// type of trigger - GATE_xxx enum
+	byte counter;		// (STATE) pulse duration counter
+	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte div;			// clock divider (@24ppqn)
 	byte ticks;			// (STATE) number of ticks counted
 } T_GATE_MIDI_CLOCK;
 
 // The gate out structure which combines the above
-typedef struct {
-	byte mode;			// type of trigger - GATE_xxx enum
-	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
-	union {
-		T_GATE_EVENT 		event;
-		T_GATE_MIDI_NOTE 	note;
-		T_GATE_MIDI_CC 		cc;
-		T_GATE_MIDI_CLOCK	clock;
-	}
-	byte counter;		// (STATE) pulse duration counter
+typedef union {
+	T_GATE_EVENT 		event;
+	T_GATE_MIDI_NOTE 	note;
+	T_GATE_MIDI_CC 		cc;
+	T_GATE_MIDI_CLOCK	clock;
 } GATE_OUT;
 
 //
@@ -135,11 +154,11 @@ static void load_gates(unsigned int d) {
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
-static void trigger(GATE_CONFIG *pgate, byte index, byte type)
+static void trigger(GATE_OUT *pgate, byte which_gate, byte trigger_enabled)
 {
 	// get appropriate shift register bit
 	unsigned int gate_bit = 0;
-	switch(which) {
+	switch(which_gate) {
 		case GATE_A: 	gate_bit = SRB_GATA; break;
 		case GATE_B: 	gate_bit = SRB_GATB; break;
 		case GATE_DRM1: gate_bit = SRB_DRM1; break;
@@ -157,13 +176,13 @@ static void trigger(GATE_CONFIG *pgate, byte index, byte type)
 	
 	// apply bit change to shift register data
 	unsigned int new_data = g_sr_data;
-	if(type) {
+	if(trigger_enabled) {
 		new_data = g_sr_data|gate_bit;
-		pgate->counter = pgate->duration;
+		pgate->event.counter = pgate->event.duration;
 	}
 	else {
 		new_data = g_sr_data & ~gate_bit;
-		pgate->counter = 0;
+		pgate->event.counter = 0;
 	}
 	
 	// reload shift registers if data changed
@@ -183,74 +202,70 @@ static void trigger(GATE_CONFIG *pgate, byte index, byte type)
 // HANDLE EVENT FROM A NOTE STACK
 void gate_event(byte event, byte stack_id)
 {
-	byte i;
-	
 	// iterate thru gate outputs
-	for(i=0; i<NUM_GATE_OUTS; ++i) {	
-		GATE_OUT *pgate = &g_gate[i];
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {	
+		GATE_OUT *pgate = &g_gate[which_gate];
 		
 		// check this output is watching this note stack
 		if(pgate->event.stack_id != stack_id)
 			continue;
 			
 		// check the mode of this gate against the event
-		switch(pgate->mode) {
+		switch(pgate->event.mode) {
 			case GATE_NOTE_ON: // Any note on/changed
 				if(EV_NOTE_ON == event) {
-					trigger(pgate, i, true);
+					trigger(pgate, which_gate, true);
 				}
-				else if(EV_NOTE_OFF == event) {
-					trigger(pgate, i, false);
+				else if(EV_NOTES_OFF == event) {
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_OFF: // All notes off
-				if(EV_NOTE_OFF == event) {
-					trigger(pgate, i, true);
+				if(EV_NOTES_OFF == event) {
+					trigger(pgate, which_gate, true);
 				}
 				else if(EV_NOTE_ON == event) {
-					trigger(pgate, i, false);
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_ACCENT: // Any note on with velocity above threshold
 				if(EV_NOTE_ON == event) {
-					if(g_stack[stack_id].vel >= g_accent_vel) {
-						trigger(pgate, i, true);
-					}
+					trigger(pgate, which_gate, (g_stack[stack_id].vel >= g_accent_vel));
 				}
-				else if(EV_NOTE_OFF == event) {					
-					trigger(pgate, i, false);
+				else if(EV_NOTES_OFF == event) {					
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_GATEA: // Note present at output A
 				if(event == EV_NOTE_A) {
-					trigger(pgate, i, true);
+					trigger(pgate, which_gate, true);
 				}
 				else if(event == EV_NO_NOTE_A) {
-					trigger(pgate, i, false);
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_GATEB: // Note present at output B
 				if(event == EV_NOTE_B) {
-					trigger(pgate, i, true);
+					trigger(pgate, which_gate, true);
 				}
 				else if(event == EV_NO_NOTE_B) {
-					trigger(pgate, i, false);
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_GATEC: // Note present at output C
 				if(event == EV_NOTE_C) {
-					trigger(pgate, i, true);
+					trigger(pgate, which_gate, true);
 				}
 				else if(event == EV_NO_NOTE_C) {
-					trigger(pgate, i, false);
+					trigger(pgate, which_gate, false);
 				}
 				break;
 			case GATE_NOTE_GATED: // Note present at output D
 				if(event == EV_NOTE_D) {
-					trigger(pgate, i, true);
+					trigger(pgate, which_gate, true);
 				}
 				else if(event == EV_NO_NOTE_D) {
-					trigger(pgate, i, false);
+					trigger(pgate, which_gate, false);
 				}
 				break;
 		}
@@ -263,11 +278,11 @@ void gate_event(byte event, byte stack_id)
 void gate_midi_note(byte chan, byte note, byte vel) 
 {
 	// for each gate output
-	for(i=0; i<NUM_GATE_OUTS; ++i) {
-		GATE_OUT *pgate = &g_gate[i];
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {
+		GATE_OUT *pgate = &g_gate[which_gate];
 		
 		// does this gate respond to midi note?
-		if(pgate->mode != GATE_MIDI_NOTE)
+		if(pgate->event.mode != GATE_MIDI_NOTE)
 			continue;
 			
 		// does the MIDI channel match?
@@ -287,23 +302,24 @@ void gate_midi_note(byte chan, byte note, byte vel)
 		}
 
 		// is the note in range
-		if(!note_max && note != note_min) {
-			continue;
+		if(pgate->note.note_max) {
+			if(note < pgate->note.note || note > pgate->note.note_max) {
+				continue;
+			}
 		}
-		if(note < note_min) {
-			continue;
-		}		
-		if(note_max && note > note_max) {
-			continue;
+		else {
+			if(note != pgate->note.note) {
+				continue;
+			}
 		}
 		
 		// is this a note off or note on with velocity above threshold?
-		if(vel && vel < vel_min) {
+		if(vel && vel < pgate->note.vel_min) {
 			continue;
 		}		
 		
 		// trigger (for note on) or untrigger (for note off)
-		gate_trigger(pgate, i, !!vel);
+		trigger(pgate, which_gate, !!vel);
 	}			
 }
 
@@ -312,11 +328,11 @@ void gate_midi_note(byte chan, byte note, byte vel)
 void gate_midi_cc(byte chan, byte cc, byte value) 
 {
 	// for each gate output
-	for(i=0; i<NUM_GATE_OUTS; ++i) {
-		GATE_OUT *pgate = &g_gate[i];
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {
+		GATE_OUT *pgate = &g_gate[which_gate];
 		
 		// does this gate respond to CC?
-		if(pgate->mode != GATE_MIDI_CC)
+		if(pgate->event.mode != GATE_MIDI_CC)
 			continue;
 		
 		// is this the correct CC?	
@@ -342,19 +358,21 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				
 		// has the value just gone above threshold?
 		if(value >= pgate->cc.threshold &&
-			( pgate->last_value < pgate->cc.threshold || last_value == NO_VALUE)) {
+			( pgate->cc.last_value < pgate->cc.threshold || 
+				pgate->cc.last_value == NO_VALUE)) {
 			
 			// trigger gate
-			gate_trigger(pgate, true);
-			pgate->last_value = value;		
+			trigger(pgate, which_gate, true);
+			pgate->cc.last_value = value;		
 		}
 		// has the value just gone below threshold?
 		else if(value < pgate->cc.threshold &&
-			( pgate->last_value >= pgate->cc.threshold || last_value == NO_VALUE)) {
+			( pgate->cc.last_value >= pgate->cc.threshold || 
+				pgate->cc.last_value == NO_VALUE)) {
 			
 			// untrigger gate
-			gate_trigger(pgate, false);
-			pgate->last_value = value;		
+			trigger(pgate, which_gate, false);
+			pgate->cc.last_value = value;		
 		}
 	}			
 }
@@ -364,20 +382,16 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 void gate_midi_clock(byte msg)
 {
 	// for each gate
-	for(i=0; i<NUM_GATE_OUTS; ++i) {
-		GATE_OUT *pgate = &g_gate[i];
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {
+		GATE_OUT *pgate = &g_gate[which_gate];
 		
 		// does this gate respond to clock?
-		if(pgate->mode != GATE_MIDI_CLOCK)
-			continue;
-
-		// handle clock message
-		switch(pgate->clock.type) {
-		case GATE_CLOCK_TICK: // Gate responds to divided clock tick
+		switch(pgate->event.mode) {
+		case GATE_MIDI_CLOCK:
 			switch(msg) {
 			case MIDI_SYNCH_TICK: // CLOCK TICK
 				if(++pgate->clock.ticks >= pgate->clock.div) {
-					gate_trigger(pgate, true);
+					trigger(pgate, which_gate, true);
 					pgate->clock.ticks = 0;
 				}
 				break;				
@@ -386,16 +400,16 @@ void gate_midi_clock(byte msg)
 				break;
 			}
 			break;
-		case GATE_CLOCK_RUNNING: // Gate responds to MIDI transport
+		case GATE_MIDI_TRANSPORT:
 			switch(msg) {
 			case MIDI_SYNCH_START:	
-				gate_trigger(pgate, true);
+				trigger(pgate, which_gate, true);
 				break;
 			case MIDI_SYNCH_CONTINUE:
-				gate_trigger(pgate, true);
+				trigger(pgate, which_gate, true);
 				break;
 			case MIDI_SYNCH_STOP:
-				gate_trigger(pgate, false);
+				trigger(pgate, which_gate, false);
 				break;
 			}
 			break;
@@ -406,11 +420,11 @@ void gate_midi_clock(byte msg)
 ////////////////////////////////////////////////////////////
 // MANAGE GATE TIMEOUTS
 void gate_run() {
-	for(i=0; i<NUM_GATE_OUTS; ++i) {
-		GATE_CONFIG *pgate = &g_gate[i];
-		if(pgate->counter) {
-			if(!--pgate->counter) {
-				trigger(pgate, i, false);
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {
+		GATE_OUT *pgate = &g_gate[which_gate];
+		if(pgate->event.counter) {
+			if(!--pgate->event.counter) {
+				trigger(pgate, which_gate, false);
 			}
 		}
 	}
@@ -425,21 +439,21 @@ void gate_init() {
 	load_gates(g_sr_data);
 	
 	// initialise state info
-	for(i=0; i<NUM_GATE_OUTS; ++i) {
-		GATE_OUT *pgate = &g_gate[i];
-		pgate->counter = 0;
-		switch(pgate->mode) {
-			GATE_MIDI_CC:
-				pgate->cc.last_value = NO_VALUE;
-				break;
-			GATE_MIDI_CLOCK:
-				pgate->clock.ticks = 0;
-				break;
-			GATE_OFF:
-			GATE_MIDI_NOTE:
-			GATE_MIDI_TRANSPORT:
-			default:
-				break;
+	for(byte which_gate=0; which_gate<NUM_GATE_OUTS; ++which_gate) {
+		GATE_OUT *pgate = &g_gate[which_gate];
+		pgate->event.counter = 0;
+		switch(pgate->event.mode) {
+		case GATE_MIDI_CC:
+			pgate->cc.last_value = NO_VALUE;
+			break;
+		case GATE_MIDI_CLOCK:
+			pgate->clock.ticks = 0;
+			break;
+		case GATE_OFF:
+		case GATE_MIDI_NOTE:
+		case GATE_MIDI_TRANSPORT:
+		default:
+			break;
 		}
 	}
 }
