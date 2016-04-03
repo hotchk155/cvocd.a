@@ -6,6 +6,12 @@
 //
 ////////////////////////////////////////////////////
 
+/*
+TODO: 
+S-Gate support
+CV tuning
+*/
+
 //
 // HEADER FILES
 //
@@ -32,12 +38,6 @@
 #define SZ_RXBUFFER_MASK 		0x3F	// mask to keep an index within range of buffer
 
 //
-// GLOBAL DATA
-//
-byte g_chan = 0; // default MIDI channel
-byte g_accent_vel = VEL_ACCENT; // accent velocity
-
-//
 // LOCAL DATA
 //
 
@@ -47,16 +47,24 @@ volatile byte rx_head = 0;
 volatile byte rx_tail = 0;
 
 // MIDI input state
-byte midi_status;
-byte midi_num_params;
+byte midi_status = 0;
+byte midi_num_params = 0;
 byte midi_params[2];
-char midi_param;
+char midi_param = 0;
 
-
-char ledTime = 0;
+byte midi_ticks = 0;
 
 // once per millisecond tick flag
 volatile byte ms_tick = 0;
+
+//
+// GLOBAL DATA
+//
+char g_led_1_timeout = 0;
+char g_led_2_timeout = 0;
+
+
+
 
 ////////////////////////////////////////////////////////////
 // INTERRUPT SERVICE ROUTINE
@@ -82,6 +90,7 @@ void interrupt( void )
 			rx_buffer[rx_head] = b;
 			rx_head = next_head;
 		}
+//		LED_1_PULSE(LED_PULSE_MIDI_IN);
 		pir1.5 = 0;
 	}
 	
@@ -157,7 +166,8 @@ byte midi_in()
 		
 		// read the character out of buffer
 		byte ch = rx_buffer[rx_tail];
-		rx_tail = (rx_tail + 1)%SZ_RXBUFFER_MASK;
+		++rx_tail;
+		rx_tail&=SZ_RXBUFFER_MASK;
 
 		// REALTIME MESSAGE
 		if((ch & 0xf0) == 0xf0)
@@ -216,20 +226,56 @@ byte midi_in()
 	return 0;
 }
 
+
+/*
+////////////////////////////////////////////////////////////
+// CONFIGURATION
+byte cfg(byte module, byte param, byte value) {
+	switch(module) {
+		case P_ID_GLOBAL:
+			return global_cfg(param, value);			
+		case P_ID_INPUT1:
+		case P_ID_INPUT2:
+		case P_ID_INPUT3:
+		case P_ID_INPUT4:
+			return stack_cfg(module-P_ID_INPUT1, param, value);			
+		case P_ID_CV1:
+		case P_ID_CV2:
+		case P_ID_CV3:
+		case P_ID_CV4:
+			return cv_cfg(module-P_ID_CV1, param, value);			
+		case P_ID_GATE1:
+		case P_ID_GATE2:
+		case P_ID_GATE3:
+		case P_ID_GATE4:
+		case P_ID_GATE5:
+		case P_ID_GATE6:
+		case P_ID_GATE7:
+		case P_ID_GATE8:
+		case P_ID_GATE9:
+		case P_ID_GATE10:
+		case P_ID_GATE11:
+		case P_ID_GATE12:	
+			return gate_cfg(module-P_ID_GATE1, param, value);			
+	}
+	return 0;
+}
+*/
 ////////////////////////////////////////////////////////////
 // MAIN
 void main()
 { 	
+	int bend;
+	
 	// osc control / 16MHz / internal
 	osccon = 0b01111010;
 
-	// configure io
-	trisa = 0b00000000;              	
-    trisc = 0b00110000;   	
-	ansela = 0b00000000;
-	anselc = 0b00000000;
-	porta=0;
-	portc=0;
+	trisa 	= TRIS_A;              	
+    trisc 	= TRIS_C;   	
+	ansela 	= 0b00000000;
+	anselc 	= 0b00000000;
+	porta 	= 0b00000000;
+	portc 	= 0b00000000;
 
 	// initialise the various modules
 	uart_init();
@@ -243,35 +289,65 @@ void main()
 	intcon.6 = 1; //PEIE
 
 
+	g_led_1_timeout = 200;
+	g_led_2_timeout = 200;
+	//P_LED1 = 1;
+	//P_LED2 = 1;
+
 	// App loop
+	byte x;
 	for(;;)
 	{
 		// run the gate timeouts every millisecond
 		if(ms_tick) {
-			gate_run();
 			ms_tick = 0;
+			gate_run();
+			//if(g_led_1_timeout) {
+			//	if(!--g_led_1_timeout) {
+			//		P_LED1 = 0;
+			//	}
+			//}
+			if(g_led_2_timeout) {
+				if(!--g_led_2_timeout) {
+					P_LED2 = 0;
+				}
+			}
+			P_LED1 = !!(x&0x80);
+			++x;
 		}
 		
 		// poll for incoming MIDI data
 		byte msg = midi_in();		
 		switch(msg & 0xF0) {
+		/*
 			// REALTIME CLOCK MESSAGE
 			case MIDI_SYNCH_TICK:
+				if(!midi_ticks) {
+					LED_2_PULSE( LED_PULSE_MIDI_TICK);
+				}
+				if(++midi_ticks>23) {
+					midi_ticks = 0;
+				}
+				gate_midi_clock(msg);
+				break;
 			case MIDI_SYNCH_START:
+				midi_ticks = 0;
+				// fall thru
 			case MIDI_SYNCH_CONTINUE:
 			case MIDI_SYNCH_STOP:
 				gate_midi_clock(msg);
-				break;		
-			// MIDI NOTE ON
-			case 0x80:
-				stack_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
-				gate_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
-				break;
+				break;		*/
 			// MIDI NOTE OFF
-			case 0x90:
+			case 0x80:
 				stack_midi_note(msg&0x0F, midi_params[0], 0);
-				gate_midi_note(msg&0x0F, midi_params[0], 0);
+				//gate_midi_note(msg&0x0F, midi_params[0], 0);
 				break;
+			// MIDI NOTE ON
+			case 0x90:
+				stack_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
+				//gate_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
+				break;
+/*				
 			// CONTINUOUS CONTROLLER
 			case 0xB0: 
 				cv_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
@@ -279,9 +355,11 @@ void main()
 				break;
 			// PITCH BEND
 			case 0xE0: 
-				stack_bend(msg&0x0F, midi_params[0], midi_params[1]);
-				break;
-		}				
+				bend = (int)midi_params[0]<<7|(midi_params[1]&0x7F)-8192;	
+				cv_midi_bend(msg&0x0F, bend);
+				stack_midi_bend(msg&0x0F, bend);
+				break;*/
+		}
 	}
 }
 
