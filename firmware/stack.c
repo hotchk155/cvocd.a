@@ -6,6 +6,8 @@
 //
 ////////////////////////////////////////////////////////////
 
+//TODO ACCENT
+
 //
 // INCLUDES
 //
@@ -283,7 +285,6 @@ void stack_midi_note(byte chan, byte note, byte vel)
 				recalc_outputs(pstack, pcfg, i);
 				
 			}
-			//cv_event(EV_NOTE_ON, i);
 			//gate_event(EV_NOTE_ON, i);
 		}
 		else {
@@ -301,6 +302,7 @@ void stack_midi_note(byte chan, byte note, byte vel)
 
 ////////////////////////////////////////////////////////////
 // HANDLE MIDI PITCH BEND
+// bend is the raw unscaled midi value
 void stack_midi_bend(byte chan, int bend) 
 {	
 	char i;
@@ -311,54 +313,13 @@ void stack_midi_bend(byte chan, int bend)
 		// does the MIDI channel match?
 		if(!IS_CHAN(pcfg->chan, chan))
 			continue;
-			
-		pstack->bend = ((int)((pcfg->bend_range * (bend - 8192.0)/8192.0))) << 8;		
-	}
-}
 
-////////////////////////////////////////////////////////////
-// CONFIGURE A PARAMETER OF A NOTE STACK
-byte stack_cfg(byte which_stack, byte param, byte value) {	
-/*
-	if(which_stack >= NUM_NOTE_STACKS) {
-		return 0;
+		long new_bend = ((int)((pcfg->bend_range * (bend - 8192.0)/8192.0))) << 8;		
+		if(pstack->bend != new_bend) {
+			pstack->bend = new_bend;
+			cv_event(EV_BEND, i);
+		}
 	}
-	NOTE_STACK *pstack = &g_stack[which_stack];		
-	switch(param) {
-		case P_CHAN:
-			if(value == CHAN_OMNI || value == CHAN_GLOBAL) {
-				pstack->chan = value;
-				return 1;
-			}
-			else if(value >= 1 && value <= 16) {
-				pstack->chan = value-1;
-				return 1;
-			}		
-			break;
-		case P_NOTE_SINGLE:
-			pstack->note_min = value & 0x7F;
-			pstack->note_max = value & 0x7F;
-			return 1;
-		case P_NOTE_RANGE_FROM:
-			pstack->note_min = value & 0x7F;
-			return 1;
-		case P_NOTE_RANGE_TO:
-			pstack->note_max = value & 0x7F;
-			return 1;
-		case P_VEL_MIN:
-			pstack->note_min = value & 0x7F;
-			return 1;
-		case P_PB_RANGE:
-			pstack->bend_range = value;
-			return 1;
-		case P_PRTY:
-			if(value<P_PRTY_MAX) {
-				pstack->priority = value;
-				return 1;
-			}
-			break;
-	}*/
-	return 0;
 }
 
 // RESET NOTE STACK STATE
@@ -387,5 +348,70 @@ void stack_init()
 		g_stack_cfg[i].priority = PRIORITY_NEW;		
 	}
 	stack_reset();
-	g_stack_cfg[0].chan = 0;
+//	g_stack_cfg[0].chan = 0;
 }
+
+////////////////////////////////////////////////////////////
+// CONFIGURE A PARAMETER OF A NOTE STACK
+byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
+{
+	if(which_stack >= NUM_NOTE_STACKS) 
+		return 0;		
+	NOTE_STACK_CFG *pcfg = &g_stack_cfg[which_stack];		
+	
+	// Check the config parm
+	switch(param_lo) {
+	
+	//////////////////////////////////////////////////
+	// SELECT MIDI CHANNEL
+	case NRPNL_CHAN:
+		switch(value_hi) {
+		case NRPVH_CHAN_OMNI:
+			pcfg->chan = CHAN_OMNI;
+			return 1;
+		case NRPVH_CHAN_GLOBAL:
+			pcfg->chan = CHAN_GLOBAL;
+			return 1;
+		default:
+		case NRPVH_CHAN_SPECIFIC:
+			if(value_lo >= 1 && value_lo <= 16) {
+				pcfg->chan = value_lo-1;
+				return 1;
+			}		
+			break;
+		}
+		break;	
+
+	//////////////////////////////////////////////////
+	// SELECT MIDI NOTE RANGE
+	case NRPNL_NOTE_MIN:
+		pcfg->note_min = value_lo;
+		return 1;
+	case NRPNL_NOTE_MAX:
+		pcfg->note_max = value_lo;
+		return 1;	
+
+	//////////////////////////////////////////////////
+	// SELECT MIN VELOCITY THRESHOLD
+	case NRPNL_VEL_MIN:
+		pcfg->vel_min = value_lo;
+		return 1;	
+
+	//////////////////////////////////////////////////
+	// SELECT PITCH BEND RANGE
+	case NRPNL_PB_RANGE:
+		pcfg->bend_range = value_lo;
+		return 1;	
+
+	//////////////////////////////////////////////////
+	// SELECT NOTE PRIORITY
+	case NRPNL_PRIORITY:
+		if(value_lo<PRIORITY_MAX) {
+			pcfg->priority = value_lo;
+			return 1;
+		}
+		break;
+	}
+	return 0;
+}
+

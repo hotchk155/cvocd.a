@@ -29,8 +29,10 @@ enum {
 	CV_DISABLE = 0,	// disabled
 	CV_NOTE,	// mapped to note input
 	CV_VEL,		// mapped to note input velocity
-	CV_MIDI_PB,	// mapped to midi pitch bend
-	CV_MIDI_CC	// mapped to midi CC
+	CV_PB,		// mapped to note input pitch bend
+	CV_MIDI_CC,	// mapped to midi CC
+	CV_MIDI_BPM, // mapped to midi CC
+	CV_VOLTS	
 };
 
 typedef struct {
@@ -48,13 +50,23 @@ typedef struct {
 
 typedef struct {
 	byte mode;	// CV_xxx enum
-	byte chan;
 } T_CV_MIDI_PB;
+
+typedef struct {
+	byte mode;	// CV_xxx enum
+} T_CV_MIDI_BPM;
+
+typedef struct {
+	byte mode;	// CV_xxx enum
+	byte volts;	
+} T_CV_VOLTS;
 
 typedef union {
 	T_CV_EVENT 		event;
 	T_CV_MIDI_CC 	cc;
 	T_CV_MIDI_PB 	pb;
+	T_CV_MIDI_BPM	bpm;
+	T_CV_VOLTS		volts;
 } CV_OUT;
 
 // calibration constants
@@ -149,14 +161,18 @@ void cv_write_dac(byte which, int value) {
 		map +/-127 to +/-0.05
 		.0004
 	*/
-	if(g_cal_gain[which]) {
-		value *= (1.0 + (0.0004 * g_cal_gain[which]));
-	}
-	value += g_cal_ofs[which];
+	//if(g_cal_gain[which]) {
+//		value *= (1.0 + (0.0004 * g_cal_gain[which]));
+//	}
+//	value += g_cal_ofs[which];
 	if(value < 0) 
 		value = 0;
 	if(value > 4095) 
 		value = 4095;
+		
+	// check the value has actually changed
+	if(value == g_dac[which]) 
+		return;
 		
 	// store new channel value
 	g_dac[which] = value;
@@ -198,14 +214,17 @@ void cv_write_vel(byte which, long value) {
 ////////////////////////////////////////////////////////////
 // WRITE A 7-BIT CC VALUE TO A CV OUTPUT
 void cv_write_cc(byte which, long value) {
-//TODO: scaling
-	value *= 500;
-	value /= 12;	
+	if(value > 127) 
+		value = 127;
+	if(value < 0) 
+		value = 0;
+	value *= 20;
 	cv_write_dac(which, value);
 }
 
 ////////////////////////////////////////////////////////////
-// WRITE A 7-BIT PITCH BEND VALUE TO A CV OUTPUT
+// WRITE PITCH BEND VALUE TO A CV OUTPUT
+// pitch bend value is MIDI notes * 256
 void cv_write_bend(byte which, long value) {
 //TODO: scaling
 	value >>= 2;
@@ -213,6 +232,11 @@ void cv_write_bend(byte which, long value) {
 	cv_write_dac(which, value);
 }
 
+////////////////////////////////////////////////////////////
+// WRITE VOLTS
+void cv_write_volts(byte which, byte value) {
+	cv_write_dac(which, (int)value * 500);
+}
 
 ////////////////////////////////////////////////////////////
 // HANDLE AN EVENT FROM A NOTE STACK
@@ -267,7 +291,15 @@ void cv_event(byte event, byte stack_id) {
 						break;
 				}
 				break;
-			}
+			
+			/////////////////////////////////////////////
+			// CV OUTPUT TIED TO PITCH BEND
+			case CV_PB:	
+				if(event == EV_BEND) {
+					cv_write_bend(which_cv, pstack->bend);
+				}
+				break;
+			};
 		}
 	}
 }
@@ -295,109 +327,93 @@ void cv_midi_cc(byte chan, byte cc, byte value) {
 	}
 }
 
- 
 ////////////////////////////////////////////////////////////
-// HANDLE A MIDI PITCH BEND
-void cv_midi_bend(byte chan, int bend) {	
+// HANDLE BPM
+// BPM is upscaled by 256
+void cv_midi_bpm(long value) {
 	for(byte which_cv=0; which_cv<CV_MAX; ++which_cv) {
 		CV_OUT *pcv = &g_cv[which_cv];
-
-		// is this CV output configured for CC?
-		if(pcv->event.mode != CV_MIDI_PB) {
+		if(pcv->event.mode != CV_MIDI_BPM) {
 			continue;
 		}		
-		if(!IS_CHAN(pcv->pb.chan,chan)) {
-			continue;
-		}		
-		// OK update the output
-		cv_write_bend(which_cv, bend);
+		cv_write_dac(which_cv, (int)(value/30));
 	}
-}
-
+}					
+ 
 ////////////////////////////////////////////////////////////
 // CONFIGURE A CV OUTPUT
 // return nonzero if any change was made
-byte cv_cfg(byte which_cv, byte param, byte value) {
+byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo) 
+{
 	if(which_cv>CV_MAX)
 		return 0;
 	CV_OUT *pcv = &g_cv[which_cv];
-	switch(param) {
-	//////////////////////////////////////////////////////////
-	// DISABLE A CV OUTPUT
-	case P_DISABLE:
-		pcv->event.mode = CV_DISABLE;
-		return 1;
-	//////////////////////////////////////////////////////////
-	// CONFIGURE CV OUTPUT FOR INPUT STACK
-	case P_INPUT1:
-	case P_INPUT2:
-	case P_INPUT3:
-	case P_INPUT4:
-		pcv->event.stack_id = param - P_INPUT1;		
-		pcv->event.out = 0; 
-		if(value == P_INPUT_VELOCITY) {
-			pcv->event.mode = CV_VEL;
+	
+	switch(param_lo) {
+	// SELECT SOURCE
+	case NRPNL_SRC:
+		switch(value_hi) {				
+		case NRPVH_SRC_VOLTS:	// REFERENCE VOLTAGE
+			pcv->event.mode = CV_VOLTS;
+			pcv->volts.volts = value_lo;
+			cv_write_volts(which_cv, value_lo); 
 			return 1;
-		}
-		else {
-			pcv->event.mode = CV_NOTE;
-			switch(value) {
-				case P_INPUT_NOTEA:
-				case P_INPUT_NOTEB:
-				case P_INPUT_NOTEC:
-				case P_INPUT_NOTED:
-					pcv->event.out = value - P_INPUT_NOTEA;
-					return 1;
-			}
-		}
-		break;
-	//////////////////////////////////////////////////////////
-	// CONFIGURE CV OUTPUT FOR MIDI INPUT
-	case P_MIDI:
-		switch(value) {
-			case P_MIDI_CC:				
-				pcv->cc.mode = CV_MIDI_CC;
-				pcv->cc.chan = CHAN_GLOBAL;
-				pcv->cc.cc = 1;
+		case NRPVH_SRC_DISABLE:	// DISABLE
+			cv_write_volts(which_cv, 0); 
+			pcv->event.mode = CV_DISABLE;
+			return 1;
+		case NRPVH_SRC_MIDITICK: // BPM
+			pcv->event.mode = CV_MIDI_BPM;
+			return 1;
+		case NRPVH_SRC_MIDICC: // CC
+			pcv->event.mode = CV_MIDI_CC;
+			pcv->cc.chan = CHAN_GLOBAL;
+			pcv->cc.cc = value_lo;
+			return 1;					
+		case NRPVH_SRC_STACK1: // NOTE STACK 
+		case NRPVH_SRC_STACK2:
+		case NRPVH_SRC_STACK3:
+		case NRPVH_SRC_STACK4:
+			pcv->event.stack_id = value_hi - NRPVH_SRC_STACK1;		
+			switch(value_lo) {
+			case NRPVL_SRC_NOTE1:	// NOTE PITCH
+			case NRPVL_SRC_NOTE2:
+			case NRPVL_SRC_NOTE3:
+			case NRPVL_SRC_NOTE4:
+				pcv->event.mode = CV_NOTE;
+				pcv->event.out = value_lo - NRPVL_SRC_NOTE1;
+				pcv->event.transpose = 0;
+				return 1;				
+			case NRPVL_SRC_VEL:		// NOTE VELOCITY
+				pcv->event.mode = CV_VEL;
 				return 1;
-			case P_MIDI_PB:				
-				pcv->pb.mode = CV_MIDI_PB;
-				pcv->pb.chan = CHAN_GLOBAL;
-				return 1;
-		}
-		break;
-	//////////////////////////////////////////////////////////
-	// CONFIGURE MIDI CHANNEL ON CV OUTPUT
-	case P_CHAN:
-		if(value == CHAN_OMNI || value == CHAN_GLOBAL) {
-			if(pcv->event.mode == P_MIDI_CC) {
-				pcv->cc.chan = value;
-				return 1;
-			}
-			else if(pcv->event.mode == P_MIDI_PB) {
-				pcv->pb.chan = value;
-				return 1;
-			}
-		}
-		else if(value >= 1 && value <= 16) {
-			if(pcv->event.mode == P_MIDI_CC) {
-				pcv->cc.chan = value-1;
-				return 1;
-			}
-			else if(pcv->event.mode == P_MIDI_PB) {
-				pcv->pb.chan = value-1;
+			case NRPVL_SRC_PB:		// PITCH BEND
+				pcv->event.mode = CV_PB;
 				return 1;
 			}
 		}
 		break;
-	//////////////////////////////////////////////////////////
-	// CONFIGURE MIDI CC ON CV OUTPUT
-	case P_CC:
-		if(pcv->event.mode == P_MIDI_CC && value > 0 && value < 128) {
-			pcv->cc.cc = value;
+	// SELECT TRANSPOSE AMOUNT
+	case NRPNL_TRANSPOSE:
+		if(CV_NOTE == pcv->event.mode) {
+			pcv->event.transpose = value_lo - 64;
 			return 1;
 		}
 		break;
+	case NRPNL_CV_OFFSET:
+	case NRPNL_CV_GAIN:
+		if(CV_VOLTS == pcv->event.mode) {			
+			char val = value_hi? value_lo : -value_lo;
+			if(param_lo == NRPNL_CV_OFFSET) {
+				g_cal_ofs[which_cv] = val;
+			}
+			else {
+				g_cal_gain[which_cv] = val;
+			}
+			//TODO: EEPROM
+			cv_write_volts(which_cv, pcv->volts.volts); 
+		}
+		break;		
 	}
 	return 0;
 }
@@ -413,6 +429,9 @@ void cv_init() {
 	g_cv[0].event.mode = CV_NOTE;
 	g_cv[0].event.stack_id = 0;
 	g_cv[0].event.out = 0;	
+	
+	g_cv[1].event.mode = CV_MIDI_BPM;
+	
 }
 
 

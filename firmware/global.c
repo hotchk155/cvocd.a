@@ -16,12 +16,14 @@
 // GLOBAL DATA
 //
 byte g_chan = DEFAULT_MIDI_CHANNEL; // default MIDI channel
-byte g_accent_vel = DEFAULT_ACCENT_VELOCITY; // accent velocity
+//byte g_accent_vel = DEFAULT_ACCENT_VELOCITY; // accent velocity
 byte g_gate_duration = DEFAULT_GATE_DURATION; // default gate duration
 
 ////////////////////////////////////////////////////////////
 // CONFIGURE A GLOBAL SETTING
-byte global_cfg(byte param, byte value) {
+byte global_nrpn(byte param_lo, byte value_hi, byte value_lo)
+{
+/*
 	switch(param) {
 		// GLOBAL DEFAULT MIDI CHANNEL
 		case P_CHAN:			
@@ -39,7 +41,7 @@ byte global_cfg(byte param, byte value) {
 		case P_DURATION:
 			g_gate_duration = value;
 			return 1;
-	}
+	}*/
 	return 0;
 }
 

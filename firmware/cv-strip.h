@@ -24,11 +24,17 @@
 
 #define LED_PULSE_MIDI_IN 2
 #define LED_PULSE_MIDI_TICK 10
+#define LED_PULSE_MIDI_BEAT 100
 
 #define MIDI_SYNCH_TICK     	0xf8
 #define MIDI_SYNCH_START    	0xfa
 #define MIDI_SYNCH_CONTINUE 	0xfb
 #define MIDI_SYNCH_STOP     	0xfc
+
+#define MIDI_CC_NRPN_HI 		99
+#define MIDI_CC_NRPN_LO 		98
+#define MIDI_CC_DATA_HI 		6
+#define MIDI_CC_DATA_LO 		38
 
 #define SZ_NOTE_STACK 5	// max notes in a single stack
 #define NUM_NOTE_STACKS 4	// number of stacks supported
@@ -40,6 +46,7 @@
 // Check if MIDI channel mychan matches chan - taking into account GLOBAL and OMNI modes
 #define IS_CHAN(mychan, chan) (((chan) == (mychan)) || (CHAN_OMNI == (mychan)) || \
  ((CHAN_GLOBAL == (mychan)) && (g_chan == (chan))))
+
 
 // Check if a note matches a min-max range. If max==0 then it must exactly equal min
 #define IS_NOTE_MATCH(mymin, mymax, note) (!(mymax)?((note)==(mymin)):((note)>=(mymin) && (note)<=(mymax)))
@@ -62,9 +69,6 @@ enum {
 	GATE_DUR_GLOBAL = 0x80
 };
 
-enum {
-	VEL_ACC_GLOBAL = 0x7F
-};
 
 // special channels
 enum {
@@ -72,6 +76,8 @@ enum {
 	CHAN_GLOBAL = 0x81,
 	CHAN_DISABLE = 0xFF
 };
+
+
 
 // Events from note stack
 enum {
@@ -84,7 +90,8 @@ enum {
 	EV_NO_NOTE_C,
 	EV_NO_NOTE_D,
 	EV_NOTES_OFF,
-	EV_NOTE_ON
+	EV_NOTE_ON,
+	EV_BEND
 };
 
 // note stack note priority orders
@@ -94,7 +101,8 @@ enum {
 	PRIORITY_HIGH,		// gives priority to highest note
 	PRIORITY_OLD,		// gives priority to oldest note
 	PRIORITY_RANDOM,	// randomly prioritises notes	
-	PRIORITY_PLAYORDER	// work as queue 
+	PRIORITY_PLAYORDER,	// work as queue 
+	PRIORITY_MAX
 };
 
 /*
@@ -107,100 +115,112 @@ enum {
 #define CV_MAX		4
 #define GATE_MAX	12
 
+
 /////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION ID'S
+// NRPN VALUES FOR CONFIGURATION
+
+// Parameter Number High Byte 
 enum {
-	P_ID_GLOBAL,	// Global settings
-	P_ID_INPUT1,	// Note stack settings
-	P_ID_INPUT2,
-	P_ID_INPUT3,
-	P_ID_INPUT4,
-	P_ID_CV1,		// CV output settings
-	P_ID_CV2,
-	P_ID_CV3,
-	P_ID_CV4,
-	P_ID_GATE1,		// Gate output settings
-	P_ID_GATE2,
-	P_ID_GATE3,
-	P_ID_GATE4,
-	P_ID_GATE5,
-	P_ID_GATE6,
-	P_ID_GATE7,
-	P_ID_GATE8,
-	P_ID_GATE9,
-	P_ID_GATE10,
-	P_ID_GATE11,
-	P_ID_GATE12,
-	P_ID_MAX
+	// global settings
+	NRPNH_GLOBAL 	= 1,	
+	// note stacks
+	NRPNH_STACK1 	= 11,
+	NRPNH_STACK2 	= 12,
+	NRPNH_STACK3 	= 13,
+	NRPNH_STACK4 	= 14,
+	// cv's
+	NRPNH_CV1		= 21,
+	NRPNH_CV2		= 22,
+	NRPNH_CV3		= 23,
+	NRPNH_CV4		= 24,
+	// gates
+	NRPNH_GATE1 	= 31,
+	NRPNH_GATE2 	= 32,
+	NRPNH_GATE3 	= 33,
+	NRPNH_GATE4 	= 34,
+	NRPNH_GATE5 	= 35,
+	NRPNH_GATE6 	= 36,
+	NRPNH_GATE7 	= 37,
+	NRPNH_GATE8 	= 38,
+	NRPNH_GATE9 	= 39,
+	NRPNH_GATE10	= 40,
+	NRPNH_GATE11	= 41,
+	NRPNH_GATE12	= 42
 };
 
-
-
+// Parameter Number Low Byte 
 enum {
-	// Parameters for configuring source of an output
-	P_DISABLE,	// output is disabled
-	P_INPUT1,	// output source is input stack #1
-	P_INPUT2,	// output source is input stack #2
-	P_INPUT3,	// output source is input stack #3
-	P_INPUT4,	// output source is input stack #4
-	P_MIDI,		// output source is MIDI
+	NRPNL_SRC			= 1,
+	NRPNL_CHAN			= 2,
+	NRPNL_NOTE_MIN  	= 3,
+	NRPNL_NOTE_MAX  	= 4,
+	NRPNL_VEL_MIN  		= 5,
+	NRPNL_VEL_ACCENT	= 6,
+	NRPNL_PB_RANGE		= 7,
+	NRPNL_PRIORITY		= 8,	
+	NRPNL_GATE_DUR		= 9,
+	NRPNL_NEGATE		= 10,
+	NRPNL_THRESHOLD		= 11,
+	NRPNL_TRANSPOSE		= 12,
+	NRPNL_CV_OFFSET		= 126,
+	NRPNL_CV_GAIN		= 127
+};
+
+// Parameter Value High Byte
+enum {
+	NRPVH_SRC_DISABLE		= 0,
+
+	NRPVH_SRC_MIDINOTE		= 1,
+	NRPVH_SRC_MIDICC		= 2,
+
+	NRPVH_SRC_STACK1		= 11,
+	NRPVH_SRC_STACK2		= 12,
+	NRPVH_SRC_STACK3		= 13,
+	NRPVH_SRC_STACK4		= 14,
+
+	NRPVH_SRC_MIDITICK		= 20,
+	NRPVH_SRC_MIDITICKRUN	= 21,
+	NRPVH_SRC_MIDIRUN		= 22,
+	NRPVH_SRC_MIDISTART		= 23,
+	NRPVH_SRC_MIDICONT		= 24,
+	NRPVH_SRC_MIDISTOP		= 25,
+
+	NRPVH_SRC_VOLTS			= 127,
 	
-	// parameters for configuring output, input or global
-	P_CHAN,				// midi channel (1-16)
-	P_CHAN_OMNI,		// midi channel OMNI
-	P_CHAN_GLOBAL,		// midi channel global 
-	P_PRTY,				// note priority
-	P_NOTE_SINGLE,		// midi note (single)
-	P_NOTE_RANGE_FROM,	// midi note (range, min)
-	P_NOTE_RANGE_TO,	// midi note (range, max)
-	P_VEL_MIN,			// midi velocity (min)
-	P_VEL_ACCENT,
-	P_VEL_ACCENT_GLOBAL,
-	P_CC,				// CC number
-	P_CC_THRESHOLD,		// CC switching threshold
-	P_PB_RANGE,			// pitch bend
-	P_DURATION,			// gate duration (ms) or 0 for continuous
-	P_DURATION_GLOBAL,	// 
-	P_DIV				// clock divider		
-};
-
-// values for P_INPUTx
-enum {
-	P_INPUT_NOTEA,			// output is note A from input stack
-	P_INPUT_NOTEB,			// output is note B from input stack
-	P_INPUT_NOTEC,			// output is note C from input stack
-	P_INPUT_NOTED,			// output is note D from input stack
-	P_INPUT_VELOCITY,		// output is note velocity from input stack
-	P_INPUT_NOTE_ON,		// output trigger is when any notes are active on stack
-	P_INPUT_NOTE_ACCENT,	// output trigger is when note hit with accent velocity
-	P_INPUT_NOTES_OFF,		// output trigger is when all notes are off
-};
-
-// values for P_MIDIx
-enum {	
-	P_MIDI_NOTE,			// tied to a MIDI note
-	P_MIDI_CC,				// tied to a MIDI cc
-	P_MIDI_PB,				// tied to MIDI pitch bend
-	P_MIDI_TICK,			// tied to MIDI clock ticks
-	P_MIDI_RUN_TICK,		// tied to gated MIDI clock ticks
-	P_MIDI_RUN,				// tied to MIDI clock run state
-	P_MIDI_START,			// tied to MIDI start event
-	P_MIDI_STOP,			// tied to MIDI stop
-	P_MIDI_STARTCONT		// tied to MIDI start/continue
-};	
+	NRPVH_CHAN_SPECIFIC		= 0,
+	NRPVH_CHAN_OMNI			= 1,
+	NRPVH_CHAN_GLOBAL		= 2,
 	
-// Parameter values for P_PRTY
-enum {
-	P_PRTY_NEW,
-	P_PRTY_LOW,
-	P_PRTY_HIGH,
-	P_PRTY_OLD,	
-	P_PRTY_RANDOM,
-	P_PRTY_PLAYORDER,
-	P_PRTY_MAX
+	NRPVH_DUR_INF			= 0,
+	NRPVH_DUR_MS			= 1,
+	NRPVH_DUR_GLOBAL		= 2,
 };
+
+// Parameter Value Low Byte
+enum {
+	NRPVL_SRC_NO_NOTES			= 0,
+	NRPVL_SRC_NOTE1				= 1,
+	NRPVL_SRC_NOTE2				= 2,
+	NRPVL_SRC_NOTE3				= 3,
+	NRPVL_SRC_NOTE4				= 4,
+	NRPVL_SRC_ANY_NOTES			= 5,
+
+	NRPVL_SRC_NO_NOTES_TRG		= 10,
+	NRPVL_SRC_NOTE1_TRG			= 11,
+	NRPVL_SRC_NOTE2_TRG			= 12,
+	NRPVL_SRC_NOTE3_TRG			= 13,
+	NRPVL_SRC_NOTE4_TRG			= 14,
+	NRPVL_SRC_ANY_NOTES_TRG		= 15,
+	
+	NRPVL_SRC_VEL				= 20,
+	NRPVL_SRC_PB				= 21,		
+};
+
+
+
 
 // Parameter values for P_DIV
+/*
 enum {
   P_DIV_1    = 96,
   P_DIV_2D   = 72,
@@ -216,7 +236,7 @@ enum {
   P_DIV_16   = 6,
   P_DIV_16T  = 4,
   P_DIV_32   = 3	
-};
+};*/
 
 //
 // STRUCT DEFS
@@ -237,7 +257,7 @@ typedef struct {
 	byte note[SZ_NOTE_STACK];	// the notes held in the stack
 	char count;					// number of held notes
 	byte out[4];				// the stack output notes
-	int bend;					// pitch bend
+	long bend;					// pitch bend
 	byte vel;					// note velocity	
 } NOTE_STACK;
 
@@ -249,20 +269,18 @@ extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
 extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 
 extern byte g_chan;
-extern byte g_accent_vel;
 extern byte g_gate_duration;
 
-byte cfg(byte module, byte param, byte value);
+void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo);
 
 // EXPORTED FUNCTIONS FROM GLOBAL MODULE
 void global_init();
-byte global_cfg(byte param, byte value);
-
+byte global_nrpn(byte param_lo, byte value_hi, byte value_lo);
 
 // EXPORTED FUNCTIONS FROM NOTE STACK MODULE
 void stack_midi_note(byte chan, byte note, byte vel);
 void stack_midi_bend(byte chan, int bend);
-byte stack_cfg(byte which_stack, byte param, byte value);
+byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo);
 void stack_init();
 
 // PUBLIC FUNCTIONS FROM GATES MODULE
@@ -274,16 +292,20 @@ void gate_run();
 void gate_init();
 void gate_reset();
 void gate_trigger(byte which_gate, byte trigger_enabled);
-byte gate_cfg(byte which_gate, byte param, byte value);
+byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo);
 
 // PUBLIC FUNCTIONS FROM CV MODULE
 void cv_event(byte event, byte stack_id);
 void cv_midi_cc(byte chan, byte cc, byte value);
 void cv_midi_bend(byte chan, int bend);
+void cv_midi_bpm(long value);
 void cv_init(); 
-byte cv_cfg(byte which_cv, byte param, byte value);
+byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);
 void cv_write_dac(byte which, int value);
 void cv_write_note(byte which, byte midi_note, int pitch_bend);
 void cv_write_vel(byte which, long value);
 void cv_write_cc(byte which, long value);
 void cv_write_bend(byte which, long value);
+
+// PRESETS
+void preset1();

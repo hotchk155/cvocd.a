@@ -56,6 +56,7 @@ byte midi_ticks = 0;
 
 // once per millisecond tick flag
 volatile byte ms_tick = 0;
+volatile int millis = 0;
 
 //
 // GLOBAL DATA
@@ -77,6 +78,7 @@ void interrupt( void )
 	{
 		tmr0 = TIMER_0_INIT_SCALAR;
 		ms_tick = 1;
+		++millis;
 		intcon.2 = 0;		
 	}		
 	
@@ -90,7 +92,7 @@ void interrupt( void )
 			rx_buffer[rx_head] = b;
 			rx_head = next_head;
 		}
-//		LED_1_PULSE(LED_PULSE_MIDI_IN);
+		LED_1_PULSE(LED_PULSE_MIDI_IN);
 		pir1.5 = 0;
 	}
 	
@@ -226,46 +228,51 @@ byte midi_in()
 	return 0;
 }
 
-
-/*
 ////////////////////////////////////////////////////////////
-// CONFIGURATION
-byte cfg(byte module, byte param, byte value) {
-	switch(module) {
-		case P_ID_GLOBAL:
-			return global_cfg(param, value);			
-		case P_ID_INPUT1:
-		case P_ID_INPUT2:
-		case P_ID_INPUT3:
-		case P_ID_INPUT4:
-			return stack_cfg(module-P_ID_INPUT1, param, value);			
-		case P_ID_CV1:
-		case P_ID_CV2:
-		case P_ID_CV3:
-		case P_ID_CV4:
-			return cv_cfg(module-P_ID_CV1, param, value);			
-		case P_ID_GATE1:
-		case P_ID_GATE2:
-		case P_ID_GATE3:
-		case P_ID_GATE4:
-		case P_ID_GATE5:
-		case P_ID_GATE6:
-		case P_ID_GATE7:
-		case P_ID_GATE8:
-		case P_ID_GATE9:
-		case P_ID_GATE10:
-		case P_ID_GATE11:
-		case P_ID_GATE12:	
-			return gate_cfg(module-P_ID_GATE1, param, value);			
+// CONFIGURATION BY NRPN
+void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
+	byte result = 0;
+	switch(param_hi) {
+		case NRPNH_GLOBAL:
+			result = global_nrpn(param_lo, value_hi, value_lo);
+			break;
+		case NRPNH_STACK1:
+		case NRPNH_STACK2:
+		case NRPNH_STACK3:
+		case NRPNH_STACK4:
+			result = stack_nrpn(param_hi-NRPNH_STACK1, param_lo, value_hi, value_lo);
+			break;
+		case NRPNH_GATE1:
+		case NRPNH_GATE2:
+		case NRPNH_GATE3:
+		case NRPNH_GATE4:
+		case NRPNH_GATE5:
+		case NRPNH_GATE6:
+		case NRPNH_GATE7:
+		case NRPNH_GATE8:
+		case NRPNH_GATE9:
+		case NRPNH_GATE10:
+		case NRPNH_GATE11:
+		case NRPNH_GATE12:
+			result = gate_nrpn(param_hi-NRPNH_GATE1, param_lo, value_hi, value_lo);
+			break;
+		case NRPNH_CV1:
+		case NRPNH_CV2:
+		case NRPNH_CV3:
+		case NRPNH_CV4:
+			result = cv_nrpn(param_hi-NRPNH_CV1, param_lo, value_hi, value_lo);
+			break;
 	}
-	return 0;
 }
-*/
+
 ////////////////////////////////////////////////////////////
 // MAIN
 void main()
 { 	
 	int bend;
+	byte nrpn_hi = 0;
+	byte nrpn_lo = 0;
+	byte nrpn_value_hi = 0;
 	
 	// osc control / 16MHz / internal
 	osccon = 0b01111010;
@@ -281,8 +288,9 @@ void main()
 	uart_init();
 	timer_init();	
 	stack_init();
-	gate_init();
+	gate_init();	
 	cv_init(); 
+	preset1();	
 
 	// enable interrupts	
 	intcon.7 = 1; //GIE
@@ -295,48 +303,67 @@ void main()
 	//P_LED2 = 1;
 
 	// App loop
-	byte x;
+	long tick_time = 0; // milliseconds between ticks x 256
 	for(;;)
 	{
 		// run the gate timeouts every millisecond
 		if(ms_tick) {
 			ms_tick = 0;
 			gate_run();
-			//if(g_led_1_timeout) {
-			//	if(!--g_led_1_timeout) {
-			//		P_LED1 = 0;
-			//	}
-			//}
+			if(g_led_1_timeout) {
+				if(!--g_led_1_timeout) {
+					P_LED1 = 0;
+				}
+			}
 			if(g_led_2_timeout) {
 				if(!--g_led_2_timeout) {
 					P_LED2 = 0;
 				}
 			}
-			P_LED1 = !!(x&0x80);
-			++x;
+		//	P_LED1 = !!(x&0x80);
+//			++x;
 		}
 		
 		// poll for incoming MIDI data
 		byte msg = midi_in();		
 		switch(msg & 0xF0) {
-		/*
-			// REALTIME CLOCK MESSAGE
-			case MIDI_SYNCH_TICK:
-				if(!midi_ticks) {
-					LED_2_PULSE( LED_PULSE_MIDI_TICK);
-				}
-				if(++midi_ticks>23) {
+			// REALTIME MESSAGE
+			case 0xF0:
+				switch(msg) {
+				case MIDI_SYNCH_TICK:
+					if(millis) {						 
+						tick_time *= 7;
+						tick_time >>= 3; // divide by 8
+						// tick_time = 7/8 * tick_time + millis
+						// .. crude smoothing of values. The result
+						// is upscaled x 8
+						tick_time += millis;
+						millis = 0;
+					}
+					if(!midi_ticks) {
+						LED_2_PULSE(LED_PULSE_MIDI_BEAT);						
+						if(tick_time) {
+							// bpm = 2500/tick period(ms)
+							// tick_time is upscaled x 8
+							// parameter needs to be upscale x 256
+							cv_midi_bpm(((long)2500*8*256)/tick_time);
+						}
+					}
+					if(++midi_ticks>=24) {
+						midi_ticks = 0;
+					}
+					gate_midi_clock(msg);
+					break;
+				case MIDI_SYNCH_START:
 					midi_ticks = 0;
+					// fall thru
+				case MIDI_SYNCH_CONTINUE:
+				case MIDI_SYNCH_STOP:
+					gate_midi_clock(msg);
+					break;	
 				}
-				gate_midi_clock(msg);
 				break;
-			case MIDI_SYNCH_START:
-				midi_ticks = 0;
-				// fall thru
-			case MIDI_SYNCH_CONTINUE:
-			case MIDI_SYNCH_STOP:
-				gate_midi_clock(msg);
-				break;		*/
+					
 			// MIDI NOTE OFF
 			case 0x80:
 				stack_midi_note(msg&0x0F, midi_params[0], 0);
@@ -347,18 +374,37 @@ void main()
 				stack_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
 				//gate_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
 				break;
-/*				
+				
 			// CONTINUOUS CONTROLLER
 			case 0xB0: 
-				cv_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
-				gate_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
+				switch(midi_params[0]) {
+					case MIDI_CC_NRPN_HI:
+						nrpn_hi = midi_params[1];
+						nrpn_lo = 0;
+						nrpn_value_hi = 0;
+						break;
+					case MIDI_CC_NRPN_LO:
+						nrpn_lo = midi_params[1];
+						nrpn_value_hi = 0;
+						break;
+					case MIDI_CC_DATA_HI:
+						nrpn_value_hi = midi_params[1];
+						break;
+					case MIDI_CC_DATA_LO:
+						nrpn(nrpn_hi, nrpn_lo, nrpn_value_hi, midi_params[1]);
+						break;
+					default:
+						cv_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
+						gate_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
+						break;
+				}
 				break;
+				
 			// PITCH BEND
 			case 0xE0: 
 				bend = (int)midi_params[0]<<7|(midi_params[1]&0x7F)-8192;	
-				cv_midi_bend(msg&0x0F, bend);
 				stack_midi_bend(msg&0x0F, bend);
-				break;*/
+				break;
 		}
 	}
 }
