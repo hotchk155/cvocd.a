@@ -106,6 +106,18 @@ enum {
 };
 
 /*
+idea
+2 notes - 
+lowest mapped to synth A
+highest mapped to synth B
+when highest note is released, synth B must not drop to low note
+when lowest note is release, synth A must not rise to high note
+need a split point
+
+*/
+
+
+/*
 +---+---+---+---+	+---+---+---+---+
 |CV0|CV1|GT0|GT1|	|GT4|GT5|GT6|GT7|
 +---+---+---+---+	+---+---+---+---+

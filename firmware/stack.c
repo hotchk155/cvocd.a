@@ -178,9 +178,9 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 				else if(new_out[3] == NO_NOTE_OUT || pstack->note[i] < new_out[3]) {
 					new_out[3] = pstack->note[i];
 				}		
-			}
+			}			
 			break;
-			
+
 		//////////////////////////////////////////////////////////
 		// RANDOMISED PRIORITY - use random notes from list of held
 		// notes, ensuring no note used no more that once
@@ -215,6 +215,8 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 			new_out[0] = pstack->note[0];					
 			break;
 	
+	
+
 		//////////////////////////////////////////////////////////
 		// NEW NOTE PRIORITY - just copy out front notes
 		case PRIORITY_NEW:
