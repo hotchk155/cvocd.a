@@ -34,37 +34,43 @@ CV tuning
 //
 
 #define TIMER_0_INIT_SCALAR		5		// Timer 0 is an 8 bit timer counting at 250kHz
-#define SZ_RXBUFFER 			64		// size of MIDI receive buffer (power of 2)
-#define SZ_RXBUFFER_MASK 		0x3F	// mask to keep an index within range of buffer
+
 
 //
 // LOCAL DATA
 //
-
 // define the buffer used to receive MIDI input
+#define SZ_RXBUFFER 			64		// size of MIDI receive buffer (power of 2)
+#define SZ_RXBUFFER_MASK 		0x3F	// mask to keep an index within range of buffer
 volatile byte rx_buffer[SZ_RXBUFFER];
 volatile byte rx_head = 0;
 volatile byte rx_tail = 0;
 
 // MIDI input state
-byte midi_status = 0;
-byte midi_num_params = 0;
-byte midi_params[2];
-char midi_param = 0;
+byte midi_status = 0;		// current MIDI message status (running status)
+byte midi_num_params = 0;	// number of parameters needed by current MIDI message
+byte midi_params[2];		// parameter values of current MIDI message
+char midi_param = 0;		// number of params currently received
+byte midi_ticks = 0;		// number of MIDI clock ticks received
 
-byte midi_ticks = 0;
-
-// once per millisecond tick flag
-volatile byte ms_tick = 0;
-volatile int millis = 0;
+volatile byte ms_tick = 0;	// once per millisecond tick flag
+volatile int millis = 0;	// millisecond counter
 
 //
 // GLOBAL DATA
 //
-char g_led_1_timeout = 0;
-char g_led_2_timeout = 0;
+volatile byte g_cv_dac_pending;
+volatile unsigned int g_sr_data = 0;		// gate data to load to shift registers
+volatile byte g_sr_data_pending = 0;		// indicates if any gate data is pending
+volatile unsigned int g_sync_sr_data = 0;	// additional gate bits, synced to CV load
+volatile byte g_sync_sr_data_pending = 0;	// indicates if any synched gate data is pending
 
+volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];	// transmit buffer for i2c
+volatile byte g_i2c_tx_buf_index = 0;		// index of next byte to send over i2c
+volatile byte g_i2c_tx_buf_len = 0;			// total number of bytes in buffer
 
+char g_led_1_timeout = 0;					// ms after which LED1 is turned off
+char g_led_2_timeout = 0;					// ms after which LED1 is turned off
 
 
 ////////////////////////////////////////////////////////////
@@ -83,7 +89,7 @@ void interrupt( void )
 	}		
 	
 	/////////////////////////////////////////////////////
-	// SERIAL PORT RECEIVE
+	// UART RECEIVE
 	if(pir1.5)
 	{	
 		byte b = rcreg;
@@ -95,7 +101,84 @@ void interrupt( void )
 		LED_1_PULSE(LED_PULSE_MIDI_IN);
 		pir1.5 = 0;
 	}
+
+	/////////////////////////////////////////////////////
+	// I2C INTERRUPT
+	if(pir1.3) 
+	{
+		pir1.3 = 0;
+		if(g_i2c_tx_buf_index < g_i2c_tx_buf_len) {
+			// send next data byte
+			ssp1buf = g_i2c_tx_buf[g_i2c_tx_buf_index++];
+		}
+		else if(g_i2c_tx_buf_index == g_i2c_tx_buf_len) {
+			++g_i2c_tx_buf_index;			
+			ssp1con2.2 = 1; // send stop condition
+		}
+		else {			
+			// check if there is any synchronised gate data
+			if(g_sync_sr_data_pending) {
+				g_sr_data |= g_sync_sr_data;	// set the new gates
+				g_sync_sr_data = 0;				// no syncronised data pending now..
+				g_sync_sr_data_pending = 0;		
+				g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
+			}			
+			pie1.3 = 0; // we're done - disable the I2C interrupt
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////
+// I2C MASTER INIT
+static void i2c_init() {
+	// disable output drivers on i2c pins
+	trisc.0 = 1;
+	trisc.1 = 1;
 	
+	//ssp1con1.7 = 
+	//ssp1con1.6 = 
+	ssp1con1.5 = 1; // Enable synchronous serial port
+	ssp1con1.4 = 1; // Enable SCL
+	ssp1con1.3 = 1; // }
+	ssp1con1.2 = 0; // }
+	ssp1con1.1 = 0; // }
+	ssp1con1.0 = 0; // } I2C Master with clock = Fosc/(4(SSPxADD+1))
+	
+	ssp1stat.7 = 1;	// slew rate disabled	
+	ssp1add = 19;	// 100kHz baud rate
+}
+
+////////////////////////////////////////////////////////////
+// I2C WRITE BYTE TO BUS
+void i2c_send(byte data) {
+	ssp1buf = data;
+	while((ssp1con2 & 0b00011111) || // SEN, RSEN, PEN, RCEN or ACKEN
+		(ssp1stat.2)); // data transmit in progress	
+}
+
+////////////////////////////////////////////////////////////
+// I2C START WRITE MESSAGE TO A SLAVE
+void i2c_begin_write(byte address) {
+	pir1.3 = 0; // clear SSP1IF
+	ssp1con2.0 = 1; // signal start condition
+	while(!pir1.3); // wait for it to complete
+	i2c_send(address<<1); // address + WRITE(0) bit
+}
+
+////////////////////////////////////////////////////////////
+// I2C FINISH MESSAGE
+void i2c_end() {
+	pir1.3 = 0; // clear SSP1IF
+	ssp1con2.2 = 1; // signal stop condition
+	while(!pir1.3); // wait for it to complete
+}
+
+////////////////////////////////////////////////////////////
+// I2C ASYNC SEND
+void i2c_send_async() {
+	pir1.3 = 0; // clear interrupt flag
+	pie1.3 = 1; // enable the interrupt
+	ssp1con2.0 = 1; // signal start condition					
 }
 
 ////////////////////////////////////////////////////////////
@@ -145,6 +228,24 @@ void uart_init()
 	spbrgh = 0;		// brg high byte
 	spbrg = 31;		// brg low byte (31250)	
 	
+}
+
+////////////////////////////////////////////////////////////
+// LOAD GATE SHIFT REGISTER
+void sr_write() {
+	unsigned int d = g_sr_data;
+	unsigned int m1 = 0x0080;
+	unsigned int m2 = 0x8000;
+	P_SRLAT = 0;
+	while(m1) {
+		P_SRCLK = 0;
+		P_SRDAT1 = !!(d&m1);
+		P_SRDAT2 = !!(d&m2);
+		P_SRCLK = 1;
+		m1>>=1;
+		m2>>=1;
+	}
+	P_SRLAT = 1;
 }
 
 ////////////////////////////////////////////////////////////
@@ -286,6 +387,7 @@ void main()
 
 	// initialise the various modules
 	uart_init();
+	i2c_init();	
 	timer_init();	
 	stack_init();
 	gate_init();	
@@ -299,113 +401,131 @@ void main()
 
 	g_led_1_timeout = 200;
 	g_led_2_timeout = 200;
+	g_cv_dac_pending = 0;
+
 	//P_LED1 = 1;
 	//P_LED2 = 1;
 
 	// App loop
 	long tick_time = 0; // milliseconds between ticks x 256
 	for(;;)
-	{
-		// run the gate timeouts every millisecond
+	{	
+		// once per millisecond tick event
 		if(ms_tick) {
 			ms_tick = 0;
+			
+			// update the gates...
 			gate_run();
+			
+			// update LED1
 			if(g_led_1_timeout) {
 				if(!--g_led_1_timeout) {
 					P_LED1 = 0;
 				}
 			}
+			
+			// update LED2
 			if(g_led_2_timeout) {
 				if(!--g_led_2_timeout) {
 					P_LED2 = 0;
 				}
 			}
-		//	P_LED1 = !!(x&0x80);
-//			++x;
 		}
 		
 		// poll for incoming MIDI data
 		byte msg = midi_in();		
 		switch(msg & 0xF0) {
-			// REALTIME MESSAGE
-			case 0xF0:
-				switch(msg) {
-				case MIDI_SYNCH_TICK:
-					if(millis) {						 
-						tick_time *= 7;
-						tick_time >>= 3; // divide by 8
-						// tick_time = 7/8 * tick_time + millis
-						// .. crude smoothing of values. The result
-						// is upscaled x 8
-						tick_time += millis;
-						millis = 0;
+		// REALTIME MESSAGE
+		case 0xF0:
+			switch(msg) {
+			case MIDI_SYNCH_TICK:
+				if(millis) {						 
+					tick_time *= 7;
+					tick_time >>= 3; // divide by 8
+					// tick_time = 7/8 * tick_time + millis
+					// .. crude smoothing of values. The result
+					// is upscaled x 8
+					tick_time += millis;
+					millis = 0;
+				}
+				if(!midi_ticks) {
+					LED_2_PULSE(LED_PULSE_MIDI_BEAT);						
+					if(tick_time) {
+						// bpm = 2500/tick period(ms)
+						// tick_time is upscaled x 8
+						// parameter needs to be upscale x 256
+						cv_midi_bpm(((long)2500*8*256)/tick_time);
 					}
-					if(!midi_ticks) {
-						LED_2_PULSE(LED_PULSE_MIDI_BEAT);						
-						if(tick_time) {
-							// bpm = 2500/tick period(ms)
-							// tick_time is upscaled x 8
-							// parameter needs to be upscale x 256
-							cv_midi_bpm(((long)2500*8*256)/tick_time);
-						}
-					}
-					if(++midi_ticks>=24) {
-						midi_ticks = 0;
-					}
-					gate_midi_clock(msg);
-					break;
-				case MIDI_SYNCH_START:
+				}
+				if(++midi_ticks>=24) {
 					midi_ticks = 0;
-					// fall thru
-				case MIDI_SYNCH_CONTINUE:
-				case MIDI_SYNCH_STOP:
-					gate_midi_clock(msg);
-					break;	
 				}
+				gate_midi_clock(msg);
 				break;
-					
-			// MIDI NOTE OFF
-			case 0x80:
-				stack_midi_note(msg&0x0F, midi_params[0], 0);
-				//gate_midi_note(msg&0x0F, midi_params[0], 0);
-				break;
-			// MIDI NOTE ON
-			case 0x90:
-				stack_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
-				//gate_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
-				break;
+			case MIDI_SYNCH_START:
+				midi_ticks = 0;
+				// fall thru
+			case MIDI_SYNCH_CONTINUE:
+			case MIDI_SYNCH_STOP:
+				gate_midi_clock(msg);
+				break;	
+			}
+			break;
 				
-			// CONTINUOUS CONTROLLER
-			case 0xB0: 
-				switch(midi_params[0]) {
-					case MIDI_CC_NRPN_HI:
-						nrpn_hi = midi_params[1];
-						nrpn_lo = 0;
-						nrpn_value_hi = 0;
-						break;
-					case MIDI_CC_NRPN_LO:
-						nrpn_lo = midi_params[1];
-						nrpn_value_hi = 0;
-						break;
-					case MIDI_CC_DATA_HI:
-						nrpn_value_hi = midi_params[1];
-						break;
-					case MIDI_CC_DATA_LO:
-						nrpn(nrpn_hi, nrpn_lo, nrpn_value_hi, midi_params[1]);
-						break;
-					default:
-						cv_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
-						gate_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
-						break;
-				}
-				break;
-				
-			// PITCH BEND
-			case 0xE0: 
-				bend = (int)midi_params[0]<<7|(midi_params[1]&0x7F)-8192;	
-				stack_midi_bend(msg&0x0F, bend);
-				break;
+		// MIDI NOTE OFF
+		case 0x80:
+			stack_midi_note(msg&0x0F, midi_params[0], 0);
+			gate_midi_note(msg&0x0F, midi_params[0], 0);
+			break;
+		// MIDI NOTE ON
+		case 0x90:
+			stack_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
+			gate_midi_note(msg&0x0F, midi_params[0], midi_params[1]);
+			break;
+			
+		// CONTINUOUS CONTROLLER
+		case 0xB0: 
+			switch(midi_params[0]) {
+				case MIDI_CC_NRPN_HI:
+					nrpn_hi = midi_params[1];
+					nrpn_lo = 0;
+					nrpn_value_hi = 0;
+					break;
+				case MIDI_CC_NRPN_LO:
+					nrpn_lo = midi_params[1];
+					nrpn_value_hi = 0;
+					break;
+				case MIDI_CC_DATA_HI:
+					nrpn_value_hi = midi_params[1];
+					break;
+				case MIDI_CC_DATA_LO:
+					nrpn(nrpn_hi, nrpn_lo, nrpn_value_hi, midi_params[1]);
+					break;
+				default:
+					cv_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
+					gate_midi_cc(msg&0x0F, midi_params[0], midi_params[1]);
+					break;
+			}
+			break;
+			
+		// PITCH BEND
+		case 0xE0: 
+			bend = (int)midi_params[0]<<7|(midi_params[1]&0x7F)-8192;	
+			stack_midi_bend(msg&0x0F, bend);
+			break;
 		}
+				
+		// check if there is any CV data to send out
+		if(!pie1.3 && g_cv_dac_pending) {
+			cv_dac_prepare(); 
+			i2c_send_async();
+			g_cv_dac_pending = 0; 
+		}				
+		// check if there is any shift register data pending		
+		if(g_sr_data_pending) {
+			g_sr_data_pending = 0;
+			sr_write();
+		}			
 	}
 }
 

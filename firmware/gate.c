@@ -19,6 +19,8 @@
 #define SRB_NOTE2	0x0008
 #define SRB_NOTE3 	0x0002
 #define SRB_NOTE4	0x0001
+
+
 #define SRB_DRM1 	0x0100
 #define SRB_DRM2 	0x0200
 #define SRB_DRM3 	0x0400
@@ -54,10 +56,6 @@ enum {
 	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP	// stop message
 };
 
-
-
-#define GATE_FLAG_INVERT 0x01
-
 //
 // STRUCT DEFS
 //
@@ -69,7 +67,6 @@ typedef struct {
 // Structure to hold mapping of a note stack event to a gate
 typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
-	byte flags;			// Mode flags
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte stack_id;	// index of the note stack
 } T_GATE_EVENT;
@@ -77,7 +74,6 @@ typedef struct {
 // Structure to hold mapping of a raw MIDI note to a gate
 typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
-	byte flags;			// Mode flags
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte chan;			// midi channel
 	byte note;			// note range: lowest note
@@ -88,7 +84,6 @@ typedef struct {
 // Structure to hold mapping of a raw MIDI CC to a gate
 typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
-	byte flags;			// Mode flags
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte chan;			// midi channel
 	byte cc;			// CC number
@@ -98,7 +93,6 @@ typedef struct {
 // Structure to hold mapping of MIDI clock to a gate
 typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
-	byte flags;			// Mode flags
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte div;			// clock divider (@24ppqn)
 } T_GATE_MIDI_CLOCK;
@@ -119,7 +113,8 @@ typedef union {
 static byte midi_clock_running = 0;
 
 // Shift register status
-static unsigned int g_sr_data = 0;
+//static unsigned int g_sr_data = 0;
+//byte g_gate_pending = 0;
 
 // gate config
 static GATE_OUT_CFG g_gate_cfg[GATE_MAX];
@@ -127,34 +122,11 @@ static GATE_OUT_CFG g_gate_cfg[GATE_MAX];
 // Gate status
 static GATE_OUT g_gate[GATE_MAX];
 
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
-// LOAD GATE SHIFT REGISTER
-static void load_gates(unsigned int d) {
-	unsigned int m1 = 0x0080;
-	unsigned int m2 = 0x8000;
-	P_SRLAT = 0;
-	while(m1) {
-		P_SRCLK = 0;
-		P_SRDAT1 = !!(d&m1);
-		P_SRDAT2 = !!(d&m2);
-		P_SRCLK = 1;
-		m1>>=1;
-		m2>>=1;
-	}
-	P_SRLAT = 1;
-}
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
-static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled)
-{
+static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync)
+{	
 	// get appropriate shift register bit
 	unsigned int gate_bit = 0;
 	switch(which_gate) {
@@ -172,16 +144,25 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		case 11: gate_bit = SRB_DRM8; break;
 		default: return;
 	}	
-			
-	// apply bit change to shift register data
-	unsigned int new_data = g_sr_data;
-	if(trigger_enabled) {
-		if(pcfg->event.flags & GATE_FLAG_INVERT) {
-			new_data = g_sr_data & ~gate_bit;
+
+	if(trigger_enabled) { // trigger ON
+		if(sync && g_cv_dac_pending) {
+			// synchronised trigger - set trigger bits to be 
+			// actioned after CV has been updated
+			if(!(g_sync_sr_data & gate_bit)) {
+				g_sync_sr_data |= gate_bit;
+				g_sync_sr_data_pending = 1;	
+			}
 		}
-		else {
-			new_data = g_sr_data | gate_bit;
+		else 
+		{
+			// standard trigger - let rip!
+			if(!(g_sr_data & gate_bit)) {
+				g_sr_data |= gate_bit;
+				g_sr_data_pending = 1;	
+			}
 		}
+		// set duration counter
 		if(GATE_DUR_GLOBAL == pcfg->event.duration) {
 			pgate->counter = g_gate_duration;
 		}
@@ -189,21 +170,13 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 			pgate->counter = pcfg->event.duration;
 		}
 	}
-	else {
-		if(pcfg->event.flags & GATE_FLAG_INVERT) {
-			new_data = g_sr_data | gate_bit;
-		}
-		else {
-			new_data = g_sr_data & ~gate_bit;
+	else { // trigger OFF - no worries about synchronisation
+		if(g_sr_data & gate_bit) {
+			g_sr_data &= ~gate_bit;
+			g_sr_data_pending = 1;	
 		}
 		pgate->counter = 0;
-	}
-	
-	// reload shift registers if data changed
-	if(new_data != g_sr_data) {
-		g_sr_data = new_data;
-		load_gates(g_sr_data);
-	}
+	}	
 }
 
 ////////////////////////////////////////////////////////////
@@ -230,50 +203,50 @@ void gate_event(byte event, byte stack_id)
 		switch(pcfg->event.mode) {
 			case GATE_NOTE_ON: // Any note on/changed
 				if(EV_NOTE_ON == event) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(EV_NOTES_OFF == event) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 			case GATE_NOTES_OFF: // All notes off
 				if(EV_NOTES_OFF == event) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(EV_NOTE_ON == event) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 			case GATE_NOTE_GATEA: // Note present at output A
 				if(event == EV_NOTE_A) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(event == EV_NO_NOTE_A) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 			case GATE_NOTE_GATEB: // Note present at output B
 				if(event == EV_NOTE_B) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(event == EV_NO_NOTE_B) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 			case GATE_NOTE_GATEC: // Note present at output C
 				if(event == EV_NOTE_C) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(event == EV_NO_NOTE_C) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 			case GATE_NOTE_GATED: // Note present at output D
 				if(event == EV_NOTE_D) {
-					trigger(pgate, pcfg, which_gate, true);
+					trigger(pgate, pcfg, which_gate, true, true);
 				}
 				else if(event == EV_NO_NOTE_D) {
-					trigger(pgate, pcfg, which_gate, false);
+					trigger(pgate, pcfg, which_gate, false, true);
 				}
 				break;
 		}
@@ -292,22 +265,20 @@ void gate_midi_note(byte chan, byte note, byte vel)
 		
 		// does this gate respond to midi note?
 		if(pcfg->event.mode != GATE_MIDI_NOTE)
-			continue;
-			
+			continue;			
 		// does the MIDI channel match?
 		if(!IS_CHAN(pcfg->note.chan, chan))
 			continue;			
 		// Does the note match?
 		if(!IS_NOTE_MATCH(pcfg->note.note, pcfg->note.note_max, note))
-			continue;
-			
+			continue;			
 		// is this a note off or note on with velocity above threshold?
 		if(vel && vel < pcfg->note.vel_min) {			
 			continue;
 		}		
 		
 		// trigger (for note on) or untrigger (for note off)
-		trigger(pgate, pcfg, which_gate, !!vel);
+		trigger(pgate, pcfg, which_gate, !!vel, false);
 	}			
 }
 
@@ -339,7 +310,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// trigger gate
-			trigger(pgate, pcfg, which_gate, true);
+			trigger(pgate, pcfg, which_gate, true, false);
 			pgate->value = value;		
 		}
 		// has the value just gone below threshold?
@@ -348,7 +319,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// untrigger gate
-			trigger(pgate, pcfg, which_gate, false);
+			trigger(pgate, pcfg, which_gate, false, false);
 			pgate->value = value;		
 		}
 	}			
@@ -373,7 +344,7 @@ void gate_midi_clock(byte msg) {
 				}
 				pgate = &g_gate[which_gate];			
 				if(!pgate->value) {
-					trigger(pgate, &g_gate_cfg[which_gate], which_gate, true);
+					trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
 				}
 				if(++pgate->value >= pcfg->clock.div) {
 					pgate->value = 0;
@@ -394,10 +365,10 @@ void gate_midi_clock(byte msg) {
 				}// else fall through				
 			case GATE_MIDI_CLOCK_RUN:
 			case GATE_MIDI_CLOCK_STARTCONT:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true);
+				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false);
+				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
 				break;
 			}
 		}
@@ -409,10 +380,10 @@ void gate_midi_clock(byte msg) {
 			pgate = &g_gate[which_gate];			
 			switch(pcfg->event.mode) {				
 			case GATE_MIDI_CLOCK_RUN:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false);
+				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true);
+				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
 				break;
 			}
 		}
@@ -427,7 +398,7 @@ void gate_run() {
 		GATE_OUT *pgate = &g_gate[which_gate];
 		if(pgate->counter) {
 			if(!--pgate->counter) {
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false);
+				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
 			}
 		}
 	}
@@ -438,7 +409,7 @@ void gate_run() {
 void gate_trigger(byte which_gate, byte trigger_enabled)
 {
 	if(which_gate < GATE_MAX) {
-		trigger(&g_gate[which_gate], &g_gate_cfg[which_gate], which_gate, trigger_enabled);
+		trigger(&g_gate[which_gate], &g_gate_cfg[which_gate], which_gate, trigger_enabled, false);
 	}
 }
 
@@ -450,7 +421,7 @@ void gate_reset(byte which_gate) {
 	GATE_OUT *pgate = &g_gate[which_gate];
 	pgate->counter = 0;
 	pgate->value = 0;
-	trigger(pgate, pcfg, which_gate, false);
+	trigger(pgate, pcfg, which_gate, false, false);
 }
 
 ////////////////////////////////////////////////////////////
@@ -462,7 +433,6 @@ void gate_init() {
 		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
 		GATE_OUT *pgate = &g_gate[which_gate];
 		pcfg->event.mode = GATE_DISABLE;
-		pcfg->event.flags = 0;
 		pcfg->event.duration = DEFAULT_GATE_DURATION;
 		gate_reset(which_gate);
 	}
@@ -494,7 +464,6 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	case NRPNL_SRC:	
 	
 		// reset the gate status
-		pcfg->event.flags = 0;
 		gate_reset(which_gate);
 		
 		// High byte of value is the gate event source
@@ -585,7 +554,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 			switch(value_hi) {
 			case NRPVH_CHAN_SPECIFIC:
 				if(value_lo >= 1 && value_lo <= 16) {
-					pcfg->note.chan = value_lo; // relies on alignment of chan member in cc too
+					pcfg->note.chan = value_lo - 1; // relies on alignment of chan member in cc too
 					return 1;
 				}
 				break;
@@ -603,7 +572,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	// SELECT MIDI NOTE 
 	case NRPNL_NOTE_MIN:
 		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.note = param_lo;
+			pcfg->note.note = value_lo;
 			pcfg->note.note_max = 0;
 			return 1;
 		}
@@ -613,7 +582,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	// SELECT MIDI NOTE RANGE
 	case NRPNL_NOTE_MAX:
 		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.note_max = param_lo;
+			pcfg->note.note_max = value_lo;
 			return 1;
 		}
 		break;
@@ -622,7 +591,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	// SELECT MIDI VELOCITY THRESHOLD
 	case NRPNL_VEL_MIN:
 		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.vel_min = param_lo;
+			pcfg->note.vel_min = value_lo;
 			return 1;
 		}
 		break;
@@ -652,17 +621,6 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 		}
 		break;
 
-	////////////////////////////////////////////////////////////////
-	// SELECT GATE NEGATION
-	case NRPNL_NEGATE:
-		if(value_lo) {
-			pcfg->event.flags |= GATE_FLAG_INVERT;
-		}
-		else {
-			pcfg->event.flags &= ~GATE_FLAG_INVERT;
-		}
-		return 1;
-		
 	}	
 	return 0;
 }		

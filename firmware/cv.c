@@ -81,60 +81,12 @@ CV_OUT g_cv[CV_MAX];
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
-// PRIVATE FUNCTIONS
+// 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
-// I2C MASTER INIT
-static void i2c_init() {
-	// disable output drivers on i2c pins
-	trisc.0 = 1;
-	trisc.1 = 1;
-	
-	//ssp1con1.7 = 
-	//ssp1con1.6 = 
-	ssp1con1.5 = 1; // Enable synchronous serial port
-	ssp1con1.4 = 1; // Enable SCL
-	ssp1con1.3 = 1; // }
-	ssp1con1.2 = 0; // }
-	ssp1con1.1 = 0; // }
-	ssp1con1.0 = 0; // } I2C Master with clock = Fosc/(4(SSPxADD+1))
-	
-	ssp1stat.7 = 1;	// slew rate disabled	
-	ssp1add = 19;	// 100kHz baud rate
-}
-
-////////////////////////////////////////////////////////////
-// I2C WRITE BYTE TO BUS
-static void i2c_send(byte data) {
-	ssp1buf = data;
-	while((ssp1con2 & 0b00011111) || // SEN, RSEN, PEN, RCEN or ACKEN
-		(ssp1stat.2)); // data transmit in progress	
-}
-
-////////////////////////////////////////////////////////////
-// I2C START WRITE MESSAGE TO A SLAVE
-static void i2c_begin_write(byte address) {
-	pir1.3 = 0; // clear SSP1IF
-	ssp1con2.0 = 1; // signal start condition
-	while(!pir1.3); // wait for it to complete
-	i2c_send(address<<1); // address + WRITE(0) bit
-}
-
-////////////////////////////////////////////////////////////
-// I2C FINISH MESSAGE
-static void i2c_end() {
-	pir1.3 = 0; // clear SSP1IF
-	ssp1con2.2 = 1; // signal stop condition
-	while(!pir1.3); // wait for it to complete
-}
-
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
+// CONFIGURE THE DAC
 void cv_config_dac() {
 	i2c_begin_write(I2C_ADDRESS);
 	i2c_send(0b10001111); // set each channel to use internal vref
@@ -146,14 +98,41 @@ void cv_config_dac() {
 }
 
 ////////////////////////////////////////////////////////////
-// WRITE TO DAC
-// TODO: Use single DAC write
-void cv_write_dac(byte which, int value) {
-	// constrain to valid range
+// COPY CURRENT OUTPUT VALUES TO TRANSMIT BUFFER FOR DAC
+void cv_dac_prepare() {
 	
-	// 0x00000FFF
-	// 0xFFF00000
-	//
+	/*
+	// send all channels to DAC chip - takes account
+	// of mapping from logical CV 0-3 to actual DAC
+	// channel wired to the appropriate CV output
+	i2c_begin_write(I2C_ADDRESS);
+	i2c_send((g_dac[1]>>8) & 0xF);
+	i2c_send(g_dac[1] & 0xFF);
+	i2c_send((g_dac[3]>>8) & 0xF);
+	i2c_send(g_dac[3] & 0xFF);
+	i2c_send((g_dac[2]>>8) & 0xF);
+	i2c_send(g_dac[2] & 0xFF);
+	i2c_send((g_dac[0]>>8) & 0xF);
+	i2c_send(g_dac[0] & 0xFF);
+	i2c_end();	
+	*/
+	
+	g_i2c_tx_buf[0] = I2C_ADDRESS<<1;
+	g_i2c_tx_buf[1] = ((g_dac[1]>>8) & 0xF);
+	g_i2c_tx_buf[2] = (g_dac[1] & 0xFF);
+	g_i2c_tx_buf[3] = ((g_dac[3]>>8) & 0xF);
+	g_i2c_tx_buf[4] = (g_dac[3] & 0xFF);
+	g_i2c_tx_buf[5] = ((g_dac[2]>>8) & 0xF);
+	g_i2c_tx_buf[6] = (g_dac[2] & 0xFF);
+	g_i2c_tx_buf[7] = ((g_dac[0]>>8) & 0xF);
+	g_i2c_tx_buf[8] = (g_dac[0] & 0xFF);
+	g_i2c_tx_buf_len = 9;
+	g_i2c_tx_buf_index = 0;
+}
+
+////////////////////////////////////////////////////////////
+// STORE AN OUTPUT VALUE READY TO SEND TO DAC
+void cv_update(byte which, int value) {
 	/*
 		want ability to tune gain by +/-5%
 		0.95 .. 1.05 
@@ -171,26 +150,11 @@ void cv_write_dac(byte which, int value) {
 		value = 4095;
 		
 	// check the value has actually changed
-	if(value == g_dac[which]) 
-		return;
-		
-	// store new channel value
-	g_dac[which] = value;
-	
-	// send all channels to DAC chip - takes account
-	// of mapping from logical CV 0-3 to actual DAC
-	// channel wired to the appropriate CV output
-	i2c_begin_write(I2C_ADDRESS);
-	i2c_send((g_dac[1]>>8) & 0xF);
-	i2c_send(g_dac[1] & 0xFF);
-	i2c_send((g_dac[3]>>8) & 0xF);
-	i2c_send(g_dac[3] & 0xFF);
-	i2c_send((g_dac[2]>>8) & 0xF);
-	i2c_send(g_dac[2] & 0xFF);
-	i2c_send((g_dac[0]>>8) & 0xF);
-	i2c_send(g_dac[0] & 0xFF);
-	i2c_end();	
-}
+	if(value != g_dac[which]) {
+		g_dac[which] = value;
+		g_cv_dac_pending = 1;
+	}
+}	
 
 ////////////////////////////////////////////////////////////
 // WRITE A NOTE VALUE TO A CV OUTPUT
@@ -199,7 +163,7 @@ void cv_write_note(byte which, byte midi_note, int pitch_bend) {
 	long value = (((long)midi_note)<<8 + pitch_bend);
 	value *= 500;
 	value /= 12;	
-	cv_write_dac(which, value>>8);
+	cv_update(which, value>>8);
 }
 
 ////////////////////////////////////////////////////////////
@@ -208,7 +172,7 @@ void cv_write_vel(byte which, long value) {
 //TODO: scaling
 	value *= 500;
 	value /= 12;	
-	cv_write_dac(which, value);
+	cv_update(which, value);
 }
 
 ////////////////////////////////////////////////////////////
@@ -219,7 +183,7 @@ void cv_write_cc(byte which, long value) {
 	if(value < 0) 
 		value = 0;
 	value *= 20;
-	cv_write_dac(which, value);
+	cv_update(which, value);
 }
 
 ////////////////////////////////////////////////////////////
@@ -229,13 +193,13 @@ void cv_write_bend(byte which, long value) {
 //TODO: scaling
 	value >>= 2;
 	value += 2048;
-	cv_write_dac(which, value);
+	cv_update(which, value);
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE VOLTS
 void cv_write_volts(byte which, byte value) {
-	cv_write_dac(which, (int)value * 500);
+	cv_update(which, (int)value * 500);
 }
 
 ////////////////////////////////////////////////////////////
@@ -336,7 +300,7 @@ void cv_midi_bpm(long value) {
 		if(pcv->event.mode != CV_MIDI_BPM) {
 			continue;
 		}		
-		cv_write_dac(which_cv, (int)(value/30));
+		cv_update(which_cv, (int)(value/30));
 	}
 }					
  
@@ -423,7 +387,6 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 void cv_init() {
 	memset(g_dac, 0, sizeof(g_dac));
 	memset(g_cv, 0, sizeof(g_cv));
-	i2c_init();
 	cv_config_dac();
 	
 	g_cv[0].event.mode = CV_NOTE;

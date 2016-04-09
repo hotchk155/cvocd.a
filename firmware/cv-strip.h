@@ -20,6 +20,17 @@
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
 
+#define CV_MAX		4
+#define GATE_MAX	12
+
+#define DEFAULT_GATE_NOTE 60
+#define DEFAULT_GATE_CC 1
+#define DEFAULT_GATE_CC_THRESHOLD 64
+#define DEFAULT_GATE_DIV	6
+#define DEFAULT_GATE_DURATION 10
+#define DEFAULT_ACCENT_VELOCITY 127
+#define DEFAULT_MIDI_CHANNEL 0
+
 #define VEL_ACCENT 100
 
 #define LED_PULSE_MIDI_IN 2
@@ -40,6 +51,10 @@
 #define NUM_NOTE_STACKS 4	// number of stacks supported
 #define NO_NOTE_OUT 0xFF 	// special "no note" value
 
+#define I2C_TX_BUF_SZ 12
+
+
+// Utility macros to flash an LED
 #define LED_1_PULSE(ms) { P_LED1 = 1; g_led_1_timeout = ms; }
 #define LED_2_PULSE(ms) { P_LED2 = 1; g_led_2_timeout = ms; }
 
@@ -50,14 +65,6 @@
 
 // Check if a note matches a min-max range. If max==0 then it must exactly equal min
 #define IS_NOTE_MATCH(mymin, mymax, note) (!(mymax)?((note)==(mymin)):((note)>=(mymin) && (note)<=(mymax)))
-
-#define DEFAULT_GATE_NOTE 60
-#define DEFAULT_GATE_CC 1
-#define DEFAULT_GATE_CC_THRESHOLD 64
-#define DEFAULT_GATE_DIV	6
-#define DEFAULT_GATE_DURATION 10
-#define DEFAULT_ACCENT_VELOCITY 127
-#define DEFAULT_MIDI_CHANNEL 0
 
 //
 // TYPE DEFS
@@ -124,8 +131,6 @@ need a split point
 |CV2|CV3|GT2|GT3|	|GT8|GT9|G10|G11|
 +---+---+---+---+	+---+---+---+---+
 */
-#define CV_MAX		4
-#define GATE_MAX	12
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -165,13 +170,14 @@ enum {
 	NRPNL_SRC			= 1,
 	NRPNL_CHAN			= 2,
 	NRPNL_NOTE_MIN  	= 3,
+	NRPNL_NOTE			= NRPNL_NOTE_MIN,
 	NRPNL_NOTE_MAX  	= 4,
 	NRPNL_VEL_MIN  		= 5,
 	NRPNL_VEL_ACCENT	= 6,
 	NRPNL_PB_RANGE		= 7,
 	NRPNL_PRIORITY		= 8,	
 	NRPNL_GATE_DUR		= 9,
-	NRPNL_NEGATE		= 10,
+	//NRPNL_NEGATE		= 10,
 	NRPNL_THRESHOLD		= 11,
 	NRPNL_TRANSPOSE		= 12,
 	NRPNL_CV_OFFSET		= 126,
@@ -273,16 +279,27 @@ typedef struct {
 	byte vel;					// note velocity	
 } NOTE_STACK;
 
+// GLOBAL DATA
 extern char g_led_1_timeout;
 extern char g_led_2_timeout;
-
-// GLOBAL EXPORTED DATA
 extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
 extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
-
 extern byte g_chan;
 extern byte g_gate_duration;
+extern byte g_cv_dac_pending;
+extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
+extern volatile byte g_i2c_tx_buf_index;
+extern volatile byte g_i2c_tx_buf_len;
+extern volatile unsigned int g_sr_data;
+extern volatile unsigned int g_sync_sr_data;
+extern volatile unsigned int g_sync_sr_mask;
+extern volatile byte g_sync_sr_data_pending;
+extern volatile byte g_sr_data_pending;
 
+// EXPORTED FUNCTIONS FROM MAIN FILE
+void i2c_send(byte data);
+void i2c_begin_write(byte address);
+void i2c_end();
 void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo);
 
 // EXPORTED FUNCTIONS FROM GLOBAL MODULE
@@ -305,6 +322,8 @@ void gate_init();
 void gate_reset();
 void gate_trigger(byte which_gate, byte trigger_enabled);
 byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo);
+void gate_update();
+void gate_write();
 
 // PUBLIC FUNCTIONS FROM CV MODULE
 void cv_event(byte event, byte stack_id);
@@ -318,6 +337,7 @@ void cv_write_note(byte which, byte midi_note, int pitch_bend);
 void cv_write_vel(byte which, long value);
 void cv_write_cc(byte which, long value);
 void cv_write_bend(byte which, long value);
+void cv_dac_prepare();
 
 // PRESETS
 void preset1();
