@@ -8,6 +8,8 @@ Config=1
 Type=0
 Warnings=1
 Model=0
+Profiling=0
+Snapshot=0
 [Files]
 Count=7
 File0=cv-strip.c
@@ -23,3 +25,13 @@ Programmer=
 PrefixWithBuildThreadNum=0
 [Debugger]
 DebugFromMain=1
+[Watch]
+Count=0
+[Watchpoint]
+Count=0
+[Register]
+Core=1
+Ports=1
+Interrupt=1
+Eeprom=1
+Misc=1

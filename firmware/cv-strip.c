@@ -10,6 +10,8 @@
 TODO: 
 S-Gate support
 CV tuning
+Sysex
+aftertouch, pressure
 */
 
 //
@@ -35,6 +37,22 @@ CV tuning
 
 #define TIMER_0_INIT_SCALAR		5		// Timer 0 is an 8 bit timer counting at 250kHz
 
+//
+// TYPE DEFS
+//
+
+// States for sysex loading
+enum {
+	SYSEX_NONE,		// no sysex
+	SYSEX_IGNORE,	// sysex in progress, but not for us
+	SYSEX_ID0,		// expect first byte of id
+	SYSEX_ID1,		// expect second byte of id
+	SYSEX_ID2,		// expect third byte of id
+	SYSEX_PARAMH,	// expect high byte of a param number
+	SYSEX_PARAML,	// expect low byte of a param number
+	SYSEX_VALUEH,	// expect high byte of a param value
+	SYSEX_VALUEL	// expect low byte of a param value
+};
 
 //
 // LOCAL DATA
@@ -52,6 +70,7 @@ byte midi_num_params = 0;	// number of parameters needed by current MIDI message
 byte midi_params[2];		// parameter values of current MIDI message
 char midi_param = 0;		// number of params currently received
 byte midi_ticks = 0;		// number of MIDI clock ticks received
+byte sysex_state = SYSEX_NONE;		// whether we are currently inside a sysex block
 
 volatile byte ms_tick = 0;	// once per millisecond tick flag
 volatile int millis = 0;	// millisecond counter
@@ -72,6 +91,9 @@ volatile byte g_i2c_tx_buf_len = 0;			// total number of bytes in buffer
 char g_led_1_timeout = 0;					// ms after which LED1 is turned off
 char g_led_2_timeout = 0;					// ms after which LED1 is turned off
 
+byte nrpn_hi = 0;
+byte nrpn_lo = 0;
+byte nrpn_value_hi = 0;
 
 ////////////////////////////////////////////////////////////
 // INTERRUPT SERVICE ROUTINE
@@ -116,7 +138,9 @@ void interrupt( void )
 			ssp1con2.2 = 1; // send stop condition
 		}
 		else {			
-			// check if there is any synchronised gate data
+			// check if there is any synchronised gate data (This mechanism is designed to trigger
+			// a gate associated with a note only after the CV has been output to the DAC, so the 
+			// gate does not open before the note CV sweeps to the new value)
 			if(g_sync_sr_data_pending) {
 				g_sr_data |= g_sync_sr_data;	// set the new gates
 				g_sync_sr_data = 0;				// no syncronised data pending now..
@@ -249,6 +273,15 @@ void sr_write() {
 }
 
 ////////////////////////////////////////////////////////////
+// RESET STATES
+void all_reset()
+{
+	stack_reset();
+	gate_reset();
+	cv_reset();
+}
+
+////////////////////////////////////////////////////////////
 // GET MESSAGES FROM MIDI INPUT
 byte midi_in()
 {
@@ -275,7 +308,6 @@ byte midi_in()
 		// REALTIME MESSAGE
 		if((ch & 0xf0) == 0xf0)
 		{
-			// only clock messages are of interest
 			switch(ch)
 			{
 			case MIDI_SYNCH_TICK:
@@ -283,11 +315,46 @@ byte midi_in()
 			case MIDI_SYNCH_CONTINUE:
 			case MIDI_SYNCH_STOP:
 				return ch;			
+			case MIDI_SYSEX_BEGIN:
+				sysex_state = SYSEX_ID0; 
+				break;
+			case MIDI_SYSEX_END:
+				switch(sysex_state) {
+				case SYSEX_IGNORE:
+				case SYSEX_NONE: 
+					break;			
+				case SYSEX_PARAMH:
+					P_LED1 = 1; 
+					P_LED2 = 1; 
+					delay_ms(250); 
+					delay_ms(250); 
+					delay_ms(250); 
+					delay_ms(250); 
+					P_LED1 = 0; 
+					P_LED2 = 0; 
+					all_reset();
+					break;
+				default:
+					P_LED1 = 0; 
+					for(char i=0; i<10; ++i) {
+						P_LED2 = 1; 
+						delay_ms(100);
+						P_LED2 = 0; 
+						delay_ms(100);
+					}
+					all_reset();
+					break;
+				}
+				sysex_state = SYSEX_NONE; 
+				break;
 			}
-		}      
-		// CHANNEL STATUS MESSAGE
+		}    
+		// STATUS BYTE
 		else if(!!(ch & 0x80))
 		{
+			// a status byte cancels sysex state
+			sysex_state = SYSEX_NONE;
+		
 			midi_param = 0;
 			midi_status = ch; 
 			switch(ch & 0xF0)
@@ -306,21 +373,39 @@ byte midi_in()
 				break;        
 			}
 		}    
-		else if(midi_status)
+		else 
 		{
-			// gathering parameters
-			midi_params[midi_param++] = ch;
-			if(midi_param >= midi_num_params)
+			switch(sysex_state) 
 			{
-				// we have a complete message.. is it one we care about?
-				midi_param = 0;
-				switch(midi_status&0xF0)
+			// SYSEX MANUFACTURER ID
+			case SYSEX_ID0: sysex_state = (ch == MY_SYSEX_ID0)? SYSEX_ID1 : SYSEX_IGNORE; break;
+			case SYSEX_ID1: sysex_state = (ch == MY_SYSEX_ID1)? SYSEX_ID2 : SYSEX_IGNORE; break;
+			case SYSEX_ID2: sysex_state = (ch == MY_SYSEX_ID2)? SYSEX_PARAMH : SYSEX_IGNORE; break;
+			// CONFIG PARAM DELIVERED BY SYSEX
+			case SYSEX_PARAMH: nrpn_hi = ch; ++sysex_state; break;
+			case SYSEX_PARAML: nrpn_lo = ch; ++sysex_state;break;
+			case SYSEX_VALUEH: nrpn_value_hi = ch; ++sysex_state;break;
+			case SYSEX_VALUEL: nrpn(nrpn_hi, nrpn_lo, nrpn_value_hi, ch); sysex_state = SYSEX_PARAMH; break;
+			case SYSEX_IGNORE: break;			
+			// MIDI DATA
+			case SYSEX_NONE: 
+				if(midi_status)
 				{
-				case 0x80: // note off
-				case 0x90: // note on
-				case 0xE0: // pitch bend
-				case 0xB0: // cc
-					return midi_status; 
+					// gathering parameters
+					midi_params[midi_param++] = ch;
+					if(midi_param >= midi_num_params)
+					{
+						// we have a complete message.. is it one we care about?
+						midi_param = 0;
+						switch(midi_status&0xF0)
+						{
+						case 0x80: // note off
+						case 0x90: // note on
+						case 0xE0: // pitch bend
+						case 0xB0: // cc
+							return midi_status; 
+						}
+					}
 				}
 			}
 		}
@@ -364,6 +449,9 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
 			result = cv_nrpn(param_hi-NRPNH_CV1, param_lo, value_hi, value_lo);
 			break;
 	}
+	if(result) {
+		LED_2_PULSE(LED_PULSE_PARAM);						
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -371,9 +459,6 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
 void main()
 { 	
 	int bend;
-	byte nrpn_hi = 0;
-	byte nrpn_lo = 0;
-	byte nrpn_value_hi = 0;
 	
 	// osc control / 16MHz / internal
 	osccon = 0b01111010;
@@ -402,6 +487,10 @@ void main()
 	g_led_1_timeout = 200;
 	g_led_2_timeout = 200;
 	g_cv_dac_pending = 0;
+
+	nrpn_hi = 0;
+	nrpn_lo = 0;
+	nrpn_value_hi = 0;
 
 	//P_LED1 = 1;
 	//P_LED2 = 1;

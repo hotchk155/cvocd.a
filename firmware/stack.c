@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////
 
 //TODO ACCENT
+//TODO LEGATO
 
 //
 // INCLUDES
@@ -130,6 +131,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 		// in order from highest to lowest
 		//////////////////////////////////////////////////////////
 		case PRIORITY_HIGH:
+		case PRIORITY_HIGH_SPREAD:
 			new_out[0] = pstack->note[0];
 			for(i=1; i<pstack->count; ++i) {				
 				if(pstack->note[i] > new_out[0]) {
@@ -158,6 +160,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 		// in order from highest to lowest
 		//////////////////////////////////////////////////////////
 		case PRIORITY_LOW:
+		case PRIORITY_LOW_SPREAD:
 			new_out[0] = pstack->note[0];
 			for(i=1; i<pstack->count; ++i) {				
 				if(pstack->note[i] < new_out[0]) {
@@ -226,6 +229,23 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 			}			
 			break;
 		}
+		
+		// Spread out the notes if applicable
+		if(pcfg->priority == PRIORITY_LOW_SPREAD || 
+			pcfg->priority == PRIORITY_HIGH_SPREAD) {
+			if(new_out[0] != NO_NOTE_OUT && new_out[1] != NO_NOTE_OUT) {
+				if(new_out[2] == NO_NOTE_OUT) { // #3 will also be empty
+					// AB.. -> A..B
+					new_out[3] = new_out[1];
+					new_out[1] = NO_NOTE_OUT;
+				}						
+				else if(new_out[3] == NO_NOTE_OUT) {
+					// ABC. -> AB.C
+					new_out[3] = new_out[2];
+					new_out[2] = NO_NOTE_OUT;
+				}					
+			}
+		}
 	}
 
 	// now update the note stack outputs based on the new_out array
@@ -258,12 +278,10 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 // HANDLE A MIDI NOTE
 void stack_midi_note(byte chan, byte note, byte vel) 
 {
-	char i;
-	
 	// for each note stack
-	for(i=0; i<NUM_NOTE_STACKS; ++i) {
-		NOTE_STACK *pstack = &g_stack[i];		
-		NOTE_STACK_CFG *pcfg = &g_stack_cfg[i];		
+	for(byte which_stack=0; which_stack<NUM_NOTE_STACKS; ++which_stack) {
+		NOTE_STACK *pstack = &g_stack[which_stack];		
+		NOTE_STACK_CFG *pcfg = &g_stack_cfg[which_stack];		
 
 		// channel matches?
 		if(!IS_CHAN(pcfg->chan, chan))
@@ -281,22 +299,36 @@ void stack_midi_note(byte chan, byte note, byte vel)
 				
 			// store note velocity as stack velocity
 			pstack->vel = vel;
-			
-			// add the note to the stack
-			if(add_note(pstack, note)) {
-				recalc_outputs(pstack, pcfg, i);
+				
+			// if note prioritisation is off then only
+			// a single note needs to be tracked at a 
+			// time...
+			if(pcfg->priority == PRIORITY_OFF) {
+				pstack->out[0] = note;
+				cv_event(EV_NOTE_A, which_stack);
+				gate_event(EV_NOTE_A, which_stack);
+			}
+			// otherwise add the note to the stack
+			else if(add_note(pstack, note)) {
+				recalc_outputs(pstack, pcfg, which_stack);
 				
 			}
-			//gate_event(EV_NOTE_ON, i);
+			gate_event(EV_NOTE_ON, which_stack);
 		}
 		else {
-			// NOTE OFF
-			if(remove_note(pstack, note)) {
-				recalc_outputs(pstack, pcfg, i);
-				//if(!pstack->count) {
+			// no note prioritisation
+			if(pcfg->priority == PRIORITY_OFF) {
+				pstack->out[0] = NO_NOTE_OUT;
+				gate_event(EV_NO_NOTE_A, which_stack);
+				gate_event(EV_NOTES_OFF, which_stack);
+			}
+			// else remove note from the stack
+			else if(remove_note(pstack, note)) {
+				recalc_outputs(pstack, pcfg, which_stack);
+				if(!pstack->count) {
 					// all notes are off
-					//gate_event(EV_NOTES_OFF, i);
-				//}
+					gate_event(EV_NOTES_OFF, which_stack);
+				}
 			}
 		}		
 	}
@@ -346,9 +378,11 @@ void stack_init()
 		g_stack_cfg[i].note_min = 0;
 		g_stack_cfg[i].note_max = 127;
 		g_stack_cfg[i].vel_min = 0;
-		g_stack_cfg[i].bend_range = 12;
-		g_stack_cfg[i].priority = PRIORITY_NEW;		
+		g_stack_cfg[i].bend_range = 12;		
+		g_stack_cfg[i].priority = PRIORITY_OFF;		
 	}
+	g_stack_cfg[0].priority = PRIORITY_NEW;		
+	g_stack_cfg[1].priority = PRIORITY_NEW;		
 	stack_reset();
 //	g_stack_cfg[0].chan = 0;
 }
@@ -413,7 +447,21 @@ byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
 			return 1;
 		}
 		break;
+			
+	//////////////////////////////////////////////////
+	// SET A SPLIT POINT
+	case NRPNL_SPLIT: 
+		if((which_stack == 0 || which_stack == 2) && (value_lo>0 && value_lo<127)) {
+			g_stack_cfg[which_stack+1] = g_stack_cfg[which_stack];
+			g_stack_cfg[which_stack].note_min = 0;
+			g_stack_cfg[which_stack].note_max = value_lo - 1;
+			g_stack_cfg[which_stack+1].note_min = value_lo;
+			g_stack_cfg[which_stack+1].note_max = 127;
+			return 1;
+		}
+		break;
 	}
+		
 	return 0;
 }
 

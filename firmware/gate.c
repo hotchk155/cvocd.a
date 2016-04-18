@@ -95,6 +95,7 @@ typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
 	byte div;			// clock divider (@24ppqn)
+	byte tick_ofs;			// initial clock count
 } T_GATE_MIDI_CLOCK;
 
 // The gate out structure which combines the above
@@ -353,12 +354,18 @@ void gate_midi_clock(byte msg) {
 		}
 		break;
 	// CLOCK START AND CONTINUE
-	case MIDI_SYNCH_START:
+	case MIDI_SYNCH_START:		
 	case MIDI_SYNCH_CONTINUE:
 		midi_clock_running = 1;
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
 			pgate = &g_gate[which_gate];						
-			switch(pcfg->event.mode) {				
+			switch(pcfg->event.mode) {	
+			case GATE_MIDI_CLOCK_TICK:
+			case GATE_MIDI_CLOCK_RUN_TICK:
+				if(msg == MIDI_SYNCH_START) {
+					pgate->value = pcfg->clock.tick_ofs;
+				}
+				break;
 			case GATE_MIDI_CLOCK_START:
 				if(msg != MIDI_SYNCH_START) {
 					break;
@@ -416,14 +423,30 @@ void gate_trigger(byte which_gate, byte trigger_enabled)
 
 ////////////////////////////////////////////////////////////
 // SET DEFAULT GATE STATE
-void gate_reset(byte which_gate) {
+void gate_reset_single(byte which_gate) {
 	GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
 	GATE_OUT *pgate = &g_gate[which_gate];
 	pgate->counter = 0;
-	pgate->value = 0;
+	switch(pcfg->event.mode) {
+		case GATE_MIDI_CLOCK_TICK:
+		case GATE_MIDI_CLOCK_RUN_TICK:
+			pgate->value = pcfg->clock.tick_ofs;
+			break;
+		default:
+			pgate->value = 0;
+			break;
+	}
 	trigger(pgate, pcfg, which_gate, false, false);
 }
 
+////////////////////////////////////////////////////////////
+// SET DEFAULT GATE STATE
+void gate_reset() {
+	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
+		gate_reset_single(which_gate);
+	}
+}
+	
 ////////////////////////////////////////////////////////////
 // SET DEFAULT GATE CONFIG
 void gate_init() {
@@ -434,7 +457,7 @@ void gate_init() {
 		GATE_OUT *pgate = &g_gate[which_gate];
 		pcfg->event.mode = GATE_DISABLE;
 		pcfg->event.duration = DEFAULT_GATE_DURATION;
-		gate_reset(which_gate);
+		gate_reset_single(which_gate);
 	}
 	
 //	g_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
@@ -464,7 +487,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	case NRPNL_SRC:	
 	
 		// reset the gate status
-		gate_reset(which_gate);
+		gate_reset_single(which_gate);
 		
 		// High byte of value is the gate event source
 		switch(value_hi) {		
@@ -536,6 +559,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 		case NRPVH_SRC_MIDICONT:
 		case NRPVH_SRC_MIDISTOP:
 			pcfg->clock.mode = value_hi; // relies on alignment of values!
+			pcfg->clock.tick_ofs = 0;
 			if(value_lo) {
 				pcfg->clock.div = value_lo;
 			}
@@ -621,6 +645,15 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 		}
 		break;
 
+	////////////////////////////////////////////////////////////////
+	// SELECT CLOCK COUNT INITIAL VALUE
+	case NRPNL_TICK_OFS:
+		if(pcfg->event.mode == GATE_MIDI_CLOCK_TICK || 
+			pcfg->event.mode == GATE_MIDI_CLOCK_RUN_TICK) {
+			pcfg->clock.tick_ofs = value_lo;
+			return 1;
+		}
+		break;
 	}	
 	return 0;
 }		

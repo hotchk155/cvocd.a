@@ -4,7 +4,7 @@
 //
 // CONTROL VOLTAGE OUTPUTS
 //
-//TODO: voltage scaling for CC 
+//TODO: voltage scaling for CC  and velocity
 //TODO: allow 4V double res mode
 ////////////////////////////////////////////////////////////
 
@@ -32,11 +32,12 @@ enum {
 	CV_PB,		// mapped to note input pitch bend
 	CV_MIDI_CC,	// mapped to midi CC
 	CV_MIDI_BPM, // mapped to midi CC
-	CV_VOLTS	
+	CV_TEST			// mapped to test voltage	
 };
 
 typedef struct {
 	byte mode;	// CV_xxx enum
+	byte volts;	
 	byte stack_id;
 	byte out;
 	char transpose;	// note offset 
@@ -44,29 +45,32 @@ typedef struct {
 
 typedef struct {
 	byte mode;	// CV_xxx enum
+	byte volts;	
 	byte chan;
 	byte cc;
 } T_CV_MIDI_CC;
 
 typedef struct {
 	byte mode;	// CV_xxx enum
+	byte volts;	
 } T_CV_MIDI_PB;
 
 typedef struct {
 	byte mode;	// CV_xxx enum
+	byte volts;	
 } T_CV_MIDI_BPM;
 
 typedef struct {
 	byte mode;	// CV_xxx enum
 	byte volts;	
-} T_CV_VOLTS;
+} T_CV_TEST;
 
 typedef union {
 	T_CV_EVENT 		event;
 	T_CV_MIDI_CC 	cc;
 	T_CV_MIDI_PB 	pb;
 	T_CV_MIDI_BPM	bpm;
-	T_CV_VOLTS		volts;
+	T_CV_TEST		test;
 } CV_OUT;
 
 // calibration constants
@@ -99,24 +103,7 @@ void cv_config_dac() {
 
 ////////////////////////////////////////////////////////////
 // COPY CURRENT OUTPUT VALUES TO TRANSMIT BUFFER FOR DAC
-void cv_dac_prepare() {
-	
-	/*
-	// send all channels to DAC chip - takes account
-	// of mapping from logical CV 0-3 to actual DAC
-	// channel wired to the appropriate CV output
-	i2c_begin_write(I2C_ADDRESS);
-	i2c_send((g_dac[1]>>8) & 0xF);
-	i2c_send(g_dac[1] & 0xFF);
-	i2c_send((g_dac[3]>>8) & 0xF);
-	i2c_send(g_dac[3] & 0xFF);
-	i2c_send((g_dac[2]>>8) & 0xF);
-	i2c_send(g_dac[2] & 0xFF);
-	i2c_send((g_dac[0]>>8) & 0xF);
-	i2c_send(g_dac[0] & 0xFF);
-	i2c_end();	
-	*/
-	
+void cv_dac_prepare() {	
 	g_i2c_tx_buf[0] = I2C_ADDRESS<<1;
 	g_i2c_tx_buf[1] = ((g_dac[1]>>8) & 0xF);
 	g_i2c_tx_buf[2] = (g_dac[1] & 0xFF);
@@ -169,6 +156,7 @@ void cv_write_note(byte which, byte midi_note, int pitch_bend) {
 ////////////////////////////////////////////////////////////
 // WRITE A 7-BIT VELOCITY VALUE TO A CV OUTPUT
 void cv_write_vel(byte which, long value) {
+	
 //TODO: scaling
 	value *= 500;
 	value /= 12;	
@@ -188,7 +176,7 @@ void cv_write_cc(byte which, long value) {
 
 ////////////////////////////////////////////////////////////
 // WRITE PITCH BEND VALUE TO A CV OUTPUT
-// pitch bend value is MIDI notes * 256
+// pitch bend value is MIDI pb * 256
 void cv_write_bend(byte which, long value) {
 //TODO: scaling
 	value >>= 2;
@@ -317,9 +305,17 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 	// SELECT SOURCE
 	case NRPNL_SRC:
 		switch(value_hi) {				
-		case NRPVH_SRC_VOLTS:	// REFERENCE VOLTAGE
-			pcv->event.mode = CV_VOLTS;
-			pcv->volts.volts = value_lo;
+		case NRPVH_SRC_TESTVOLTAGE0:	// REFERENCE VOLTAGE
+		case NRPVH_SRC_TESTVOLTAGE1:
+		case NRPVH_SRC_TESTVOLTAGE2:
+		case NRPVH_SRC_TESTVOLTAGE3:
+		case NRPVH_SRC_TESTVOLTAGE4:
+		case NRPVH_SRC_TESTVOLTAGE5:
+		case NRPVH_SRC_TESTVOLTAGE6:
+		case NRPVH_SRC_TESTVOLTAGE7:
+		case NRPVH_SRC_TESTVOLTAGE8:
+			pcv->event.mode = CV_TEST;
+			pcv->test.volts = value_lo - NRPVH_SRC_TESTVOLTAGE0;
 			cv_write_volts(which_cv, value_lo); 
 			return 1;
 		case NRPVH_SRC_DISABLE:	// DISABLE
@@ -328,11 +324,13 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			return 1;
 		case NRPVH_SRC_MIDITICK: // BPM
 			pcv->event.mode = CV_MIDI_BPM;
+			pcv->bpm.volts = DEFAULT_CV_BPM_MAX_VOLTS;
 			return 1;
 		case NRPVH_SRC_MIDICC: // CC
 			pcv->event.mode = CV_MIDI_CC;
 			pcv->cc.chan = CHAN_GLOBAL;
 			pcv->cc.cc = value_lo;
+			pcv->cc.volts = DEFAULT_CV_CC_MAX_VOLTS;
 			return 1;					
 		case NRPVH_SRC_STACK1: // NOTE STACK 
 		case NRPVH_SRC_STACK2:
@@ -350,9 +348,11 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 				return 1;				
 			case NRPVL_SRC_VEL:		// NOTE VELOCITY
 				pcv->event.mode = CV_VEL;
+				pcv->event.volts = DEFAULT_CV_VEL_MAX_VOLTS;
 				return 1;
 			case NRPVL_SRC_PB:		// PITCH BEND
 				pcv->event.mode = CV_PB;
+				pcv->event.volts = DEFAULT_CV_PB_MAX_VOLTS;
 				return 1;
 			}
 		}
@@ -364,9 +364,18 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			return 1;
 		}
 		break;
+
+	// SELECT VOLTAGE RANGE
+	//case NRPNL_VOLTS:
+	//	if(value_lo > 0 && value_lo <= 8) {
+	//		pcv->event.volts = value_lo;
+	//		return 1;
+	//	}
+		break;
+	
 	case NRPNL_CV_OFFSET:
 	case NRPNL_CV_GAIN:
-		if(CV_VOLTS == pcv->event.mode) {			
+		if(CV_TEST == pcv->event.mode) {			
 			char val = value_hi? value_lo : -value_lo;
 			if(param_lo == NRPNL_CV_OFFSET) {
 				g_cal_ofs[which_cv] = val;
@@ -375,7 +384,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 				g_cal_gain[which_cv] = val;
 			}
 			//TODO: EEPROM
-			cv_write_volts(which_cv, pcv->volts.volts); 
+			cv_write_volts(which_cv, pcv->test.volts); 
 		}
 		break;		
 	}
@@ -389,12 +398,18 @@ void cv_init() {
 	memset(g_cv, 0, sizeof(g_cv));
 	cv_config_dac();
 	
-	g_cv[0].event.mode = CV_NOTE;
-	g_cv[0].event.stack_id = 0;
-	g_cv[0].event.out = 0;	
+	//g_cv[0].event.mode = CV_NOTE;
+	//g_cv[0].event.stack_id = 0;
+	//g_cv[0].event.out = 0;	
 	
-	g_cv[1].event.mode = CV_MIDI_BPM;
+	//g_cv[1].event.mode = CV_MIDI_BPM;
 	
+	cv_reset();
+	
+}
+
+////////////////////////////////////////////////////////////
+void cv_reset() {
 }
 
 

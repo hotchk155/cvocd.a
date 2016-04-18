@@ -30,17 +30,23 @@
 #define DEFAULT_GATE_DURATION 10
 #define DEFAULT_ACCENT_VELOCITY 127
 #define DEFAULT_MIDI_CHANNEL 0
-
+#define DEFAULT_CV_BPM_MAX_VOLTS 5
+#define DEFAULT_CV_CC_MAX_VOLTS 5
+#define DEFAULT_CV_PB_MAX_VOLTS 5
+#define DEFAULT_CV_VEL_MAX_VOLTS 5
 #define VEL_ACCENT 100
 
 #define LED_PULSE_MIDI_IN 2
 #define LED_PULSE_MIDI_TICK 10
 #define LED_PULSE_MIDI_BEAT 100
+#define LED_PULSE_PARAM 255
 
 #define MIDI_SYNCH_TICK     	0xf8
 #define MIDI_SYNCH_START    	0xfa
 #define MIDI_SYNCH_CONTINUE 	0xfb
 #define MIDI_SYNCH_STOP     	0xfc
+#define MIDI_SYSEX_BEGIN     	0xf0
+#define MIDI_SYSEX_END     		0xf7
 
 #define MIDI_CC_NRPN_HI 		99
 #define MIDI_CC_NRPN_LO 		98
@@ -53,6 +59,10 @@
 
 #define I2C_TX_BUF_SZ 12
 
+// Sysex ID
+#define MY_SYSEX_ID0	0x00
+#define MY_SYSEX_ID1	0x7f
+#define MY_SYSEX_ID2	0x12
 
 // Utility macros to flash an LED
 #define LED_1_PULSE(ms) { P_LED1 = 1; g_led_1_timeout = ms; }
@@ -103,13 +113,16 @@ enum {
 
 // note stack note priority orders
 enum {
-	PRIORITY_NEW,		// gives priority to newest note
-	PRIORITY_LOW,		// gives priority to lowest note
-	PRIORITY_HIGH,		// gives priority to highest note
-	PRIORITY_OLD,		// gives priority to oldest note
-	PRIORITY_RANDOM,	// randomly prioritises notes	
-	PRIORITY_PLAYORDER,	// work as queue 
-	PRIORITY_MAX
+	PRIORITY_OFF			= 0,	// single note only
+	PRIORITY_NEW			= 1,	// gives priority to newest note
+	PRIORITY_LOW			= 2,	// gives priority to lowest note
+	PRIORITY_LOW_SPREAD		= 3,	// lowest note priority with highest pitch note on output 4
+	PRIORITY_HIGH			= 4,	// gives priority to highest note
+	PRIORITY_HIGH_SPREAD	= 5,	// highest note priority with lowest pitch note on output 4
+	PRIORITY_OLD			= 6,	// gives priority to oldest note
+	PRIORITY_RANDOM			= 7,	// randomly prioritises notes	
+	PRIORITY_PLAYORDER		= 8,	// work as queue 
+	PRIORITY_MAX			= 9
 };
 
 /*
@@ -173,13 +186,15 @@ enum {
 	NRPNL_NOTE			= NRPNL_NOTE_MIN,
 	NRPNL_NOTE_MAX  	= 4,
 	NRPNL_VEL_MIN  		= 5,
-	NRPNL_VEL_ACCENT	= 6,
+	//NRPNL_VEL_ACCENT	= 6,
 	NRPNL_PB_RANGE		= 7,
 	NRPNL_PRIORITY		= 8,	
-	NRPNL_GATE_DUR		= 9,
-	//NRPNL_NEGATE		= 10,
-	NRPNL_THRESHOLD		= 11,
-	NRPNL_TRANSPOSE		= 12,
+	NRPNL_SPLIT  		= 9,
+	NRPNL_TICK_OFS		= 11,
+	NRPNL_GATE_DUR		= 12,
+	NRPNL_THRESHOLD		= 13,
+	NRPNL_TRANSPOSE		= 14,
+	//NRPNL_VOLTS			= 13,
 	NRPNL_CV_OFFSET		= 126,
 	NRPNL_CV_GAIN		= 127
 };
@@ -203,7 +218,15 @@ enum {
 	NRPVH_SRC_MIDICONT		= 24,
 	NRPVH_SRC_MIDISTOP		= 25,
 
-	NRPVH_SRC_VOLTS			= 127,
+	NRPVH_SRC_TESTVOLTAGE0	= 119,
+	NRPVH_SRC_TESTVOLTAGE1	= 120,
+	NRPVH_SRC_TESTVOLTAGE2	= 121,
+	NRPVH_SRC_TESTVOLTAGE3	= 122,
+	NRPVH_SRC_TESTVOLTAGE4	= 123,
+	NRPVH_SRC_TESTVOLTAGE5	= 124,
+	NRPVH_SRC_TESTVOLTAGE6	= 125,
+	NRPVH_SRC_TESTVOLTAGE7	= 126,
+	NRPVH_SRC_TESTVOLTAGE8	= 127,
 	
 	NRPVH_CHAN_SPECIFIC		= 0,
 	NRPVH_CHAN_OMNI			= 1,
@@ -311,6 +334,7 @@ void stack_midi_note(byte chan, byte note, byte vel);
 void stack_midi_bend(byte chan, int bend);
 byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo);
 void stack_init();
+void stack_reset();
 
 // PUBLIC FUNCTIONS FROM GATES MODULE
 void gate_event(byte event, byte stack_id);
@@ -331,6 +355,7 @@ void cv_midi_cc(byte chan, byte cc, byte value);
 void cv_midi_bend(byte chan, int bend);
 void cv_midi_bpm(long value);
 void cv_init(); 
+void cv_reset();
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);
 void cv_write_dac(byte which, int value);
 void cv_write_note(byte which, byte midi_note, int pitch_bend);
