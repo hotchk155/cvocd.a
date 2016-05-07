@@ -4,7 +4,7 @@ Target=PIC16F1825
 Active Compiler=BoostC
 Active Config=Release
 Last Ext=c
-Config=1
+Config=0
 [Files]
 Count=1
 File0=cv-strip-test.c

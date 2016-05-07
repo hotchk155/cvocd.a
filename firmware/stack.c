@@ -120,12 +120,13 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 		
 		//////////////////////////////////////////////////////////
 		// OLD NOTE PRIORITY - copy out back notes
+		/*
 		case PRIORITY_OLD:
 			for(i=0; i<4 && i<pstack->count; ++i) {
 				new_out[i] = pstack->note[pstack->count - 1 - i];
 			}
 			break;
-		
+		*/
 		//////////////////////////////////////////////////////////
 		// HIGHEST NOTE PRIORITY - copy out the highest held notes
 		// in order from highest to lowest
@@ -184,6 +185,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 			}			
 			break;
 
+/*
 		//////////////////////////////////////////////////////////
 		// RANDOMISED PRIORITY - use random notes from list of held
 		// notes, ensuring no note used no more that once
@@ -206,16 +208,22 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 				new_out[i] = pstack->note[new_out[i]];
 			}			
 			break;
-			
+*/			
 		//////////////////////////////////////////////////////////
 		// PLAY ORDER QUEUE
 		// Just shuffle notes along the outputs without any
 		// prioritisation
-		case PRIORITY_PLAYORDER:
-			new_out[3] = pstack->out[2];
-			new_out[2] = pstack->out[1];
-			new_out[1] = pstack->out[0];
-			new_out[0] = pstack->note[0];					
+		case PRIORITY_CYCLE2:
+		case PRIORITY_CYCLE3:
+		case PRIORITY_CYCLE4:
+			i = pcfg->priority - PRIORITY_CYCLE2 + 2;
+			new_out[0] = (pstack->index==0) ? pstack->note[0] : pstack->out[0];
+			new_out[1] = (pstack->index==1) ? pstack->note[1] : pstack->out[1];
+			new_out[2] = (pstack->index==2 && i>2) ? pstack->note[2] : pstack->out[2];
+			new_out[3] = (pstack->index==3 && i>3) ? pstack->note[3] : pstack->out[3];
+			if(++pstack->index > i) {
+				pstack->index = 0;
+			}
 			break;
 	
 	
@@ -300,35 +308,50 @@ void stack_midi_note(byte chan, byte note, byte vel)
 			// store note velocity as stack velocity
 			pstack->vel = vel;
 				
-			// if note prioritisation is off then only
-			// a single note needs to be tracked at a 
-			// time...
-			if(pcfg->priority == PRIORITY_OFF) {
-				pstack->out[0] = note;
-				cv_event(EV_NOTE_A, which_stack);
-				gate_event(EV_NOTE_A, which_stack);
-			}
-			// otherwise add the note to the stack
-			else if(add_note(pstack, note)) {
-				recalc_outputs(pstack, pcfg, which_stack);
-				
+			switch(pcfg->priority) {
+				// cycle modes do not need to remember note priority
+			case PRIORITY_CYCLE1:
+			case PRIORITY_CYCLE2:
+			case PRIORITY_CYCLE3:
+			case PRIORITY_CYCLE4:
+				pstack->out[pstack->index] = note;
+				cv_event(EV_NOTE_A + pstack->index, which_stack);
+				gate_event(EV_NOTE_A + pstack->index, which_stack);
+				if(++pstack->index > (pcfg->priority - PRIORITY_CYCLE2 + 1)) {
+					pstack->index = 0;
+				}
+				break;
+			default:
+				// otherwise add the note to the stack
+				if(add_note(pstack, note)) {
+					recalc_outputs(pstack, pcfg, which_stack);
+				}
 			}
 			gate_event(EV_NOTE_ON, which_stack);
 		}
-		else {
-			// no note prioritisation
-			if(pcfg->priority == PRIORITY_OFF) {
+		else {			
+			switch(pcfg->priority) {
+			// in cycle 1 mode we do react to note off
+			case PRIORITY_CYCLE1:
 				pstack->out[0] = NO_NOTE_OUT;
 				gate_event(EV_NO_NOTE_A, which_stack);
 				gate_event(EV_NOTES_OFF, which_stack);
-			}
+				break;
+			// other cycling modes do not
+			case PRIORITY_CYCLE2:
+			case PRIORITY_CYCLE3:
+			case PRIORITY_CYCLE4:
+				break;
 			// else remove note from the stack
-			else if(remove_note(pstack, note)) {
-				recalc_outputs(pstack, pcfg, which_stack);
-				if(!pstack->count) {
-					// all notes are off
-					gate_event(EV_NOTES_OFF, which_stack);
+			default:
+				if(remove_note(pstack, note)) {
+					recalc_outputs(pstack, pcfg, which_stack);
+					if(!pstack->count) {
+						// all notes are off
+						gate_event(EV_NOTES_OFF, which_stack);
+					}
 				}
+				break;
 			}
 		}		
 	}
@@ -366,6 +389,7 @@ void stack_reset() {
 		g_stack[i].out[3] = NO_NOTE_OUT;
 		g_stack[i].bend = 0;
 		g_stack[i].vel = 0;		
+		g_stack[i].index = 0;		
 	}
 }
  
@@ -379,10 +403,10 @@ void stack_init()
 		g_stack_cfg[i].note_max = 127;
 		g_stack_cfg[i].vel_min = 0;
 		g_stack_cfg[i].bend_range = 12;		
-		g_stack_cfg[i].priority = PRIORITY_OFF;		
+		g_stack_cfg[i].priority = PRIORITY_NEW;		
 	}
-	g_stack_cfg[0].priority = PRIORITY_NEW;		
-	g_stack_cfg[1].priority = PRIORITY_NEW;		
+//	g_stack_cfg[0].priority = PRIORITY_NEW;		
+//	g_stack_cfg[1].priority = PRIORITY_NEW;		
 	stack_reset();
 //	g_stack_cfg[0].chan = 0;
 }

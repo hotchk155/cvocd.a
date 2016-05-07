@@ -115,15 +115,15 @@ enum {
 
 // note stack note priority orders
 enum {
-	PRIORITY_OFF			= 0,	// single note only
-	PRIORITY_NEW			= 1,	// gives priority to newest note
-	PRIORITY_LOW			= 2,	// gives priority to lowest note
-	PRIORITY_LOW_SPREAD		= 3,	// lowest note priority with highest pitch note on output 4
-	PRIORITY_HIGH			= 4,	// gives priority to highest note
-	PRIORITY_HIGH_SPREAD	= 5,	// highest note priority with lowest pitch note on output 4
-	PRIORITY_OLD			= 6,	// gives priority to oldest note
-	PRIORITY_RANDOM			= 7,	// randomly prioritises notes	
-	PRIORITY_PLAYORDER		= 8,	// work as queue 
+	PRIORITY_NEW			= 0,	// gives priority to newest note
+	PRIORITY_LOW			= 1,	// gives priority to lowest note
+	PRIORITY_LOW_SPREAD		= 2,	// lowest note priority with highest pitch note on output 4
+	PRIORITY_HIGH			= 3,	// gives priority to highest note
+	PRIORITY_HIGH_SPREAD	= 4,	// highest note priority with lowest pitch note on output 4
+	PRIORITY_CYCLE1			= 5,	// single note only
+	PRIORITY_CYCLE2			= 6,	
+	PRIORITY_CYCLE3			= 7,	
+	PRIORITY_CYCLE4			= 8,	
 	PRIORITY_MAX			= 9
 };
 
@@ -297,6 +297,7 @@ typedef struct {
 	byte out[4];				// the stack output notes
 	long bend;					// pitch bend
 	byte vel;					// note velocity	
+	byte index;					// index for note cycling
 } NOTE_STACK;
 
 // GLOBAL DATA
