@@ -1,12 +1,8 @@
 /*
 	CV STRIP
 	BASIC HARDWARE TEST
-	
-	Press button to cycle
-	1 - CV A test slope - outputs 1,2
-	2 - CV B test slope - outputs 3,4
-	3 - CV C test slope - outputs 5,6,7,8
-	4 - CV D test slope - outputs 9,10,11,12
+
+	REVISION 1
 */
 
 //
@@ -93,55 +89,6 @@ void i2c_end() {
 	while(!pir1.3); // wait for it to complete
 }
 
-
-////////////////////////////////////////////////////////////
-// INITIALISE TIMER
-void timer_init() {
-	// Configure timer 0 (controls systemticks)
-	// 	timer 0 runs at 4MHz
-	// 	prescaled 1/16 = 250kHz
-	// 	rollover at 250 = 1kHz
-	// 	1ms per rollover	
-	option_reg.5 = 0; // timer 0 driven from instruction cycle clock
-	option_reg.3 = 0; // timer 0 is prescaled
-	option_reg.2 = 0; // }
-	option_reg.1 = 1; // } 1/16 prescaler
-	option_reg.0 = 1; // }
-	intcon.5 = 1; 	  // enabled timer 0 interrrupt
-	intcon.2 = 0;     // clear interrupt fired flag
-}
-
-////////////////////////////////////////////////////////////
-// INITIALISE SERIAL PORT FOR MIDI
-void uart_init()
-{
-	pir1.1 = 0;		//TXIF 		
-	pir1.5 = 0;		//RCIF
-	
-	pie1.1 = 0;		//TXIE 		no interrupts
-	pie1.5 = 1;		//RCIE 		enable
-	
-	baudcon.4 = 0;	// SCKP		synchronous bit polarity 
-	baudcon.3 = 1;	// BRG16	enable 16 bit brg
-	baudcon.1 = 0;	// WUE		wake up enable off
-	baudcon.0 = 0;	// ABDEN	auto baud detect
-		
-	txsta.6 = 0;	// TX9		8 bit transmission
-	txsta.5 = 0;	// TXEN		transmit enable
-	txsta.4 = 0;	// SYNC		async mode
-	txsta.3 = 0;	// SEDNB	break character
-	txsta.2 = 0;	// BRGH		high baudrate 
-	txsta.0 = 0;	// TX9D		bit 9
-
-	rcsta.7 = 1;	// SPEN 	serial port enable
-	rcsta.6 = 0;	// RX9 		8 bit operation
-	rcsta.5 = 1;	// SREN 	enable receiver
-	rcsta.4 = 1;	// CREN 	continuous receive enable
-		
-	spbrgh = 0;		// brg high byte
-	spbrg = 31;		// brg low byte (31250)	
-	
-}
 
 
 unsigned int x[12] = {
@@ -248,40 +195,6 @@ void test_v()
 	}
 }
 
-void test_ramp() 
-{
-	cv_a = 0;
-	cv_b = 0;
-	cv_c = 0;
-	cv_d = 0;
-	
-	int *which = &cv_a;
-	
-	
-	int i;
-	
-	for(;;) {
-		P_LED1 = !P_LED1;
-		P_LED2 = !P_LED1;
-
-		*which = 0;
-		for(i=0; i<2048; ++i) {
-			dac_send(cv_a, cv_b, cv_c, cv_d);
-		}
-		for(i=0; i<2048; ++i) {
-			*which=i;
-			dac_send(cv_a, cv_b, cv_c, cv_d);
-		}
-		for(i=0; i<2048; ++i) {
-			dac_send(cv_a, cv_b, cv_c, cv_d);
-		}
-		for(i=2048; i<4096; ++i) {
-			*which=i;
-			dac_send(cv_a, cv_b, cv_c, cv_d);
-		}
-	}
-
-}
 
 
 ////////////////////////////////////////////////////////////
@@ -304,8 +217,6 @@ void main()
 	i2c_init();
 	dac_cfg();
 	test_v();
-	P_LED1 = 0;
-	P_LED2 = 0;
 }
 
 
