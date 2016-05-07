@@ -26,7 +26,7 @@
 |CV3|CV4|GT3|GT4|	|GT9|G10|G11|G12|
 +---+---+---+---+	+---+---+---+---+
 */
-/*
+
 void preset1() 
 {
 	// Configure CVs
@@ -80,7 +80,6 @@ void preset1()
 
 
 }
-*/
 /*
 // PRESET FOR NOVATION CIRCUIT MODE
 void preset_1()

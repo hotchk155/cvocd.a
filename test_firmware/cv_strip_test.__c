@@ -1,0 +1,12 @@
+[Settings]
+Active Directory=D:\GitHub\cv-strip\test_firmware\
+Target=PIC16F1825
+Active Compiler=BoostC
+Active Config=Debug
+Last Ext=c
+Config=1
+[Files]
+Count=1
+File0=cv-strip-test.c
+[Debugger]
+DebugFromMain=1

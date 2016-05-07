@@ -23,31 +23,25 @@ byte g_gate_duration = DEFAULT_GATE_DURATION; // default gate duration
 // CONFIGURE A GLOBAL SETTING
 byte global_nrpn(byte param_lo, byte value_hi, byte value_lo)
 {
-	switch(param_lo) {
+/*
+	switch(param) {
 		// GLOBAL DEFAULT MIDI CHANNEL
-	case NRPNL_CHAN:
-		switch(value_hi) {
-		default:
-		case NRPVH_CHAN_SPECIFIC:
-			if(value_lo >= 1 && value_lo <= 16) {
-				g_chan = value_lo-1;
-				return 1;
-			}		
-			break;
-		}
-		break;	
-
-		
-	////////////////////////////////////////////////////////////////
-	// SELECT GATE DURATION
-	case NRPNL_GATE_DUR:
-		switch(value_hi) {
-		case NRPVH_DUR_MS:
-			g_gate_duration = value_lo;
+		case P_CHAN:			
+			if(value != CHAN_OMNI && (value < 1 || value > 16 ))
+				return 0;
+			g_chan = value;
 			return 1;
-		}
-		break;
-	}
+		// GLOBAL DEFAULT ACCENT VELOCITY THRESHOLD
+		case P_VEL_MIN:
+			if(value > 127)
+				return 0;
+			g_accent_vel = value;
+			return 1;
+		// GLOBAL DEFAULT PULSE DURATION
+		case P_DURATION:
+			g_gate_duration = value;
+			return 1;
+	}*/
 	return 0;
 }
 

@@ -474,11 +474,10 @@ void main()
 	uart_init();
 	i2c_init();	
 	timer_init();	
-	global_init();
 	stack_init();
 	gate_init();	
 	cv_init(); 
-	//preset1();	
+	preset1();	
 
 	// enable interrupts	
 	intcon.7 = 1; //GIE

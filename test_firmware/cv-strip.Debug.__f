@@ -1,0 +1,4 @@
+[Compiler]
+Extra=
+[Linker]
+Extra=rand.pic16.lib

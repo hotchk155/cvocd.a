@@ -2,9 +2,9 @@
 Active Directory=D:\GitHub\cv-strip\firmware\
 Target=PIC16F1825
 Active Compiler=BoostC
-Active Config=Debug
+Active Config=Release
 Last Ext=c
-Config=1
+Config=0
 Type=0
 Warnings=1
 Model=0
