@@ -106,6 +106,7 @@ typedef union {
 	T_GATE_MIDI_CLOCK	clock;
 } GATE_OUT_CFG;
 
+
 //
 // FILE SCOPE DATA
 //
@@ -165,7 +166,7 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		}
 		// set duration counter
 		if(GATE_DUR_GLOBAL == pcfg->event.duration) {
-			pgate->counter = g_gate_duration;
+			pgate->counter = g_global.gate_duration;
 		}
 		else {
 			pgate->counter = pcfg->event.duration;
@@ -460,12 +461,21 @@ void gate_init() {
 		gate_reset_single(which_gate);
 	}
 	
-//	g_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
-//	g_gate_cfg[0].event.duration = 0;	
+	g_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
+	g_gate_cfg[0].event.duration = 0;	
 
-//	g_gate_cfg[1].event.mode = GATE_MIDI_CLOCK_TICK;	
-//	g_gate_cfg[1].clock.div = 24;
-//	g_gate_cfg[0].event.duration = 0;	
+	g_gate_cfg[1].event.mode = GATE_NOTE_GATEB;	
+	g_gate_cfg[1].event.duration = 0;	
+
+	g_gate_cfg[2].event.mode = GATE_NOTE_GATEC;	
+	g_gate_cfg[2].event.duration = 0;	
+
+	g_gate_cfg[3].event.mode = GATE_NOTE_GATED;	
+	g_gate_cfg[3].event.duration = 0;	
+
+	g_gate_cfg[11].event.mode = GATE_MIDI_CLOCK_TICK;	
+	g_gate_cfg[11].clock.div = 24;
+	g_gate_cfg[11].event.duration = 15;	
 
 }
 
@@ -648,3 +658,11 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	}	
 	return 0;
 }		
+
+
+////////////////////////////////////////////////////////////
+// GET PATCH STORAGE INFO
+byte *gate_storage(int *len) {
+	*len = sizeof(g_gate_cfg);
+	return (byte*)&g_gate_cfg;
+}

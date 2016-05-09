@@ -481,7 +481,7 @@ void main()
 	stack_init();
 	gate_init();	
 	cv_init(); 
-	//preset1();	
+	storage_read_patch();	
 
 	// enable interrupts	
 	intcon.7 = 1; //GIE
@@ -496,8 +496,7 @@ void main()
 	nrpn_lo = 0;
 	nrpn_value_hi = 0;
 
-	//P_LED1 = 1;
-	//P_LED2 = 1;
+	unsigned int button_press = 0;
 
 	// App loop
 	long tick_time = 0; // milliseconds between ticks x 256
@@ -522,6 +521,17 @@ void main()
 				if(!--g_led_2_timeout) {
 					P_LED2 = 0;
 				}
+			}
+			
+			if(!P_SWITCH) {
+				if(++button_press == 2000) {
+					P_LED2 = 1;
+					storage_write_patch();
+					LED_2_PULSE(255);				
+				}
+			}
+			else {
+				button_press = 0;
 			}
 		}
 		

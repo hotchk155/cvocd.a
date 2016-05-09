@@ -405,10 +405,8 @@ void stack_init()
 		g_stack_cfg[i].bend_range = 12;		
 		g_stack_cfg[i].priority = PRIORITY_NEW;		
 	}
-//	g_stack_cfg[0].priority = PRIORITY_NEW;		
-//	g_stack_cfg[1].priority = PRIORITY_NEW;		
+	g_stack_cfg[0].chan = CHAN_GLOBAL;
 	stack_reset();
-//	g_stack_cfg[0].chan = 0;
 }
 
 ////////////////////////////////////////////////////////////
@@ -489,3 +487,9 @@ byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
 	return 0;
 }
 
+////////////////////////////////////////////////////////////
+// GET PATCH STORAGE INFO
+byte *stack_storage(int *len) {
+	*len = sizeof(g_stack_cfg);
+	return (byte*)&g_stack_cfg;
+}

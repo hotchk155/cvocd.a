@@ -17,6 +17,8 @@
 #define P_SRCLK		lata.4
 #define P_SRLAT		lata.5
 
+#define P_SWITCH 	portc.3
+
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
 
@@ -71,7 +73,7 @@
 
 // Check if MIDI channel mychan matches chan - taking into account GLOBAL and OMNI modes
 #define IS_CHAN(mychan, chan) (((chan) == (mychan)) || (CHAN_OMNI == (mychan)) || \
- ((CHAN_GLOBAL == (mychan)) && (g_chan == (chan))))
+ ((CHAN_GLOBAL == (mychan)) && (g_global.chan == (chan))))
 
 
 // Check if a note matches a min-max range. If max==0 then it must exactly equal min
@@ -279,6 +281,11 @@ enum {
 //
 // STRUCT DEFS
 //
+typedef struct {
+	byte chan;
+	byte gate_duration;
+} GLOBAL_CFG;
+
 
 // note stack config
 typedef struct {
@@ -303,10 +310,9 @@ typedef struct {
 // GLOBAL DATA
 extern char g_led_1_timeout;
 extern char g_led_2_timeout;
+extern GLOBAL_CFG g_global;
 extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
 extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
-extern byte g_chan;
-extern byte g_gate_duration;
 extern byte g_cv_dac_pending;
 extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
 extern volatile byte g_i2c_tx_buf_index;
@@ -326,6 +332,7 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo);
 // EXPORTED FUNCTIONS FROM GLOBAL MODULE
 void global_init();
 byte global_nrpn(byte param_lo, byte value_hi, byte value_lo);
+byte *global_storage(int *len);
 
 // EXPORTED FUNCTIONS FROM NOTE STACK MODULE
 void stack_midi_note(byte chan, byte note, byte vel);
@@ -334,6 +341,7 @@ void stack_midi_aftertouch(byte chan, byte value);
 byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo);
 void stack_init();
 void stack_reset();
+byte *stack_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM GATES MODULE
 void gate_event(byte event, byte stack_id);
@@ -347,6 +355,7 @@ void gate_trigger(byte which_gate, byte trigger_enabled);
 byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo);
 void gate_update();
 void gate_write();
+byte *gate_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM CV MODULE
 void cv_event(byte event, byte stack_id);
@@ -363,6 +372,8 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);
 //void cv_write_cc(byte which, long value);
 //void cv_write_bend(byte which, long value);
 void cv_dac_prepare();
+byte *cv_storage(int *len);
 
-// PRESETS
-void preset1();
+// STORAGE
+void storage_read_patch();
+void storage_write_patch();

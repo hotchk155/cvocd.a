@@ -400,11 +400,15 @@ void cv_init() {
 	memset(g_cv, 0, sizeof(g_cv));
 	cv_config_dac();
 	
-	//g_cv[0].event.mode = CV_NOTE;
-	//g_cv[0].event.stack_id = 0;
-	//g_cv[0].event.out = 0;	
+	g_cv[0].event.mode = CV_NOTE;
+	g_cv[0].event.out = 0;	
+	g_cv[1].event.mode = CV_NOTE;
+	g_cv[1].event.out = 1;	
+	g_cv[2].event.mode = CV_NOTE;
+	g_cv[2].event.out = 2;	
+	g_cv[3].event.mode = CV_NOTE;
+	g_cv[3].event.out = 3;	
 	
-	//g_cv[1].event.mode = CV_MIDI_BPM;
 	
 	cv_reset();
 	
@@ -414,5 +418,11 @@ void cv_init() {
 void cv_reset() {
 }
 
+////////////////////////////////////////////////////////////
+// GET PATCH STORAGE INFO
+byte *cv_storage(int *len) {
+	*len = sizeof(g_cv);
+	return (byte*)&g_cv;
+}
 
 

@@ -17,8 +17,8 @@ File1=cv-strip.h
 File2=cv.c
 File3=gate.c
 File4=global.c
-File5=presets.c
-File6=stack.c
+File5=stack.c
+File6=storage.c
 [Tools]
 BoostDir=C:\Program Files (x86)\SourceBoost\
 Programmer=
