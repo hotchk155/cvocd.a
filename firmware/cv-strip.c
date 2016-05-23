@@ -466,16 +466,6 @@ void main()
 	porta 	= 0b00000000;
 	portc 	= 0b00000000;
 
-	// initialise the various modules
-	uart_init();
-	i2c_init();	
-	timer_init();	
-	global_init();
-	stack_init();
-	gate_init();	
-	cv_init(); 
-	storage_read_patch();	
-
 	// enable interrupts	
 	intcon.7 = 1; //GIE
 	intcon.6 = 1; //PEIE
@@ -486,6 +476,16 @@ void main()
 	nrpn_value_hi = 0;
 
 	unsigned int button_press = 0;
+	
+	// initialise the various modules
+	uart_init();
+	i2c_init();	
+	timer_init();	
+	global_init();
+	stack_init();
+	gate_init();	
+	cv_init(); 
+	storage_read_patch();	
 
 	// flash both LEDs at startup
 	LED_1_PULSE(200);
@@ -616,7 +616,7 @@ void main()
 
 		// PITCH BEND
 		case 0xE0: 
-			bend = (int)midi_params[0]<<7|(midi_params[1]&0x7F);	
+			bend = (int)midi_params[1]<<7|(midi_params[0]&0x7F);	
 			stack_midi_bend(msg&0x0F, bend);
 			cv_midi_bend(msg&0x0F, bend);
 			break;

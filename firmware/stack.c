@@ -372,7 +372,8 @@ void stack_midi_bend(byte chan, int bend)
 		if(!IS_CHAN(pcfg->chan, chan))
 			continue;
 
-		long new_bend = ((int)((pcfg->bend_range * (bend - 8192.0)/8192.0))) << 8;		
+		// pitch bend units are 256 * number of midi notes offset 
+		// and can be positive or negative
 		if(pstack->bend != new_bend) {
 			pstack->bend = new_bend;
 			cv_event(EV_BEND, i);

@@ -66,6 +66,9 @@ int g_dac[CV_MAX] = {0};
 // CV config 
 CV_OUT g_cv[CV_MAX];
 
+// cache of the notes playing on each output
+int g_note[CV_MAX];
+
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 // 
@@ -130,14 +133,13 @@ void cv_update(byte which, int value) {
 ////////////////////////////////////////////////////////////
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
-void cv_write_note(byte which, byte midi_note, int pitch_bend) {
-	long value = (((long)midi_note)<<8 + pitch_bend);	
-	value -= 6144; 						// midi note 24 = voltage zero
-	while(value < 0) value += 3072; 	// add octaves if out of low range
-	while(value > 24576) value -= 3072;  // subtract octaves if out of high range
-	value *= 500;
-	value /= 12;	
-	cv_update(which, value>>8);
+void cv_write_note(byte which, long note, int pitch_bend) {
+	note <<= 8;
+	note += pitch_bend;
+	note *= 500;
+	note /= 12;	
+	note >>= 8;
+	cv_update(which, note);
 }
 
 ////////////////////////////////////////////////////////////
@@ -175,6 +177,7 @@ void cv_write_volts(byte which, byte value) {
 // HANDLE AN EVENT FROM A NOTE STACK
 void cv_event(byte event, byte stack_id) {
 	byte output_id;
+	int note;
 	NOTE_STACK *pstack;
 	
 	// for each CV output
@@ -184,43 +187,49 @@ void cv_event(byte event, byte stack_id) {
 			continue;
 		
 		// is it listening to the stack sending the event?
-		if(pcv->event.stack_id == stack_id) {
+		if(pcv->event.stack_id != stack_id)
+			continue;
 
-			// get pointer to note stack
-			pstack = &g_stack[stack_id];
-			
-			// check the mode			
-			switch(pcv->event.mode) {
+		// get pointer to note stack
+		pstack = &g_stack[stack_id];
+		
+		// check the mode			
+		switch(pcv->event.mode) {
 
-			/////////////////////////////////////////////
-			// CV OUTPUT TIED TO INPUT NOTE
-			case CV_NOTE:	
-				switch(event) {
-					case EV_NOTE_A:
-					case EV_NOTE_B:
-					case EV_NOTE_C:
-					case EV_NOTE_D:
-						output_id = event - EV_NOTE_A;
-						if(pcv->event.out == output_id) {			
-							int note = pstack->out[output_id] + pcv->event.transpose;
-							cv_write_note(which_cv, note, pstack->bend);
-						}
-						break;
-				}
-				break;
-			/////////////////////////////////////////////
-			// CV OUTPUT TIED TO INPUT VELOCITY
-			case CV_VEL:	
-				switch(event) {
-					case EV_NOTE_A:
-					case EV_NOTE_B:
-					case EV_NOTE_C:
-					case EV_NOTE_D:
-						cv_write_7bit(which_cv, pstack->vel, pcv->event.volts);
-						break;
-				}
-				break;
+		/////////////////////////////////////////////
+		// CV OUTPUT TIED TO INPUT NOTE
+		case CV_NOTE:	
+			switch(event) {
+				case EV_NOTE_A:
+				case EV_NOTE_B:
+				case EV_NOTE_C:
+				case EV_NOTE_D:
+					output_id = event - EV_NOTE_A;
+					if(pcv->event.out == output_id) {			
+						note = pstack->out[output_id] + pcv->event.transpose - 24;
+						while(note < 0) note += 12; 	
+						while(note > 96) note -= 12; 	
+						g_note[which_cv] = note;
+						cv_write_note(which_cv, g_note[which_cv], pstack->bend);
+					}
+					break;
+				case EV_BEND:
+					cv_write_note(which_cv, g_note[which_cv], pstack->bend);
+					break;
 			}
+			break;
+		/////////////////////////////////////////////
+		// CV OUTPUT TIED TO INPUT VELOCITY
+		case CV_VEL:	
+			switch(event) {
+				case EV_NOTE_A:
+				case EV_NOTE_B:
+				case EV_NOTE_C:
+				case EV_NOTE_D:
+					cv_write_7bit(which_cv, pstack->vel, pcv->event.volts);
+					break;
+			}
+			break;
 		}
 	}
 }
@@ -397,8 +406,8 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 ////////////////////////////////////////////////////////////
 // INITIALISE CV MODULE
 void cv_init() {
-	memset(g_dac, 0, sizeof(g_dac));
 	memset(g_cv, 0, sizeof(g_cv));
+	memset(g_note, 0, sizeof(g_note));
 	cv_config_dac();
 	
 	g_cv[0].event.mode = CV_NOTE;
@@ -417,6 +426,8 @@ void cv_init() {
 
 ////////////////////////////////////////////////////////////
 void cv_reset() {
+	memset(g_dac, 0, sizeof(g_dac));
+	g_cv_dac_pending = 1;		
 }
 
 ////////////////////////////////////////////////////////////
