@@ -65,4 +65,14 @@ Desktop.ini
 *.stat
 *.tree
 makefile.*
-MIDI-Hub.hex
+*.__f
+*.exe
+*.pp
+cv-strip.hex
+
+
+*.dxf
+*.odt#
+
+old/*.*
+Backup_of_*.cdr

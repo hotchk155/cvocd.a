@@ -14,7 +14,7 @@
 #include <eeprom.h>
 #include "cv-strip.h"
 
-#define MAGIC_COOKIE 0xA5
+#define MAGIC_COOKIE 0xA6
 
 static void storage_write(byte *data, int len, int* addr)
 {

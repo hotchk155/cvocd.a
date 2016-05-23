@@ -33,6 +33,8 @@
 // initial CC "last value" 
 #define NO_VALUE 	0xFF
 
+//#define GATE_FLAG_INVERT 0x01
+
 // List of modes for a gate output to be triggered
 enum {
 	GATE_DISABLE,
@@ -47,7 +49,8 @@ enum {
 		
 	// Respond to raw MIDI events
 	GATE_MIDI_NOTE 				= NRPVH_SRC_MIDINOTE,	// arbitrary note mapping
-	GATE_MIDI_CC 				= NRPVH_SRC_MIDICC,		// arbitrary CC mapping
+	GATE_MIDI_CC 				= NRPVH_SRC_MIDICC,		// arbitrary CC mapping > threshold
+	GATE_MIDI_CC_NEG			= NRPVH_SRC_MIDICC_NEG,	// arbitrary CC mapping < threshold
 	GATE_MIDI_CLOCK_TICK 		= NRPVH_SRC_MIDITICK,	// clock tick
 	GATE_MIDI_CLOCK_RUN_TICK	= NRPVH_SRC_MIDITICKRUN,// clock tick if clock running
 	GATE_MIDI_CLOCK_RUN			= NRPVH_SRC_MIDIRUN,	// clock running
@@ -158,7 +161,6 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		}
 		else 
 		{
-			// standard trigger - let rip!
 			if(!(g_sr_data & gate_bit)) {
 				g_sr_data |= gate_bit;
 				g_sr_data_pending = 1;	
@@ -172,7 +174,9 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 			pgate->counter = pcfg->event.duration;
 		}
 	}
-	else { // trigger OFF - no worries about synchronisation
+	// trigger OFF - no worries about synchronisation
+	else
+	{
 		if(g_sr_data & gate_bit) {
 			g_sr_data &= ~gate_bit;
 			g_sr_data_pending = 1;	
@@ -294,7 +298,8 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
 		
 		// does this gate respond to CC?
-		if(pcfg->event.mode != GATE_MIDI_CC)
+		if(pcfg->event.mode != GATE_MIDI_CC && 
+			pcfg->event.mode != GATE_MIDI_CC_NEG)
 			continue;
 		
 		// is this the correct CC?	
@@ -312,7 +317,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// trigger gate
-			trigger(pgate, pcfg, which_gate, true, false);
+			trigger(pgate, pcfg, which_gate, !(pcfg->event.mode == GATE_MIDI_CC_NEG), false);
 			pgate->value = value;		
 		}
 		// has the value just gone below threshold?
@@ -321,7 +326,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// untrigger gate
-			trigger(pgate, pcfg, which_gate, false, false);
+			trigger(pgate, pcfg, which_gate, (pcfg->event.mode == GATE_MIDI_CC_NEG), false);
 			pgate->value = value;		
 		}
 	}			
@@ -544,14 +549,15 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 			pcfg->note.vel_min = 0;
 			return 1;
 
-		// MIDI CC SOURCE
+		// MIDI CC SOURCE 
 		case NRPVH_SRC_MIDICC:
-			pcfg->cc.mode = GATE_MIDI_CC;
+		case NRPVH_SRC_MIDICC_NEG:
+			pcfg->cc.mode = value_hi;
 			pcfg->cc.chan = CHAN_GLOBAL;
 			pcfg->cc.cc = value_lo;
 			pcfg->cc.threshold = DEFAULT_GATE_CC_THRESHOLD;
 			return 1;
-			
+
 		// MIDI CLOCK SOURCE
 		case NRPVH_SRC_MIDITICK:
 		case NRPVH_SRC_MIDITICKRUN:
@@ -645,7 +651,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 			return 1;
 		}
 		break;
-
+		
 	////////////////////////////////////////////////////////////////
 	// SELECT CLOCK COUNT INITIAL VALUE
 	case NRPNL_TICK_OFS:

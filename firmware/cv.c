@@ -131,7 +131,10 @@ void cv_update(byte which, int value) {
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
 void cv_write_note(byte which, byte midi_note, int pitch_bend) {
-	long value = (((long)midi_note)<<8 + pitch_bend);
+	long value = (((long)midi_note)<<8 + pitch_bend);	
+	value -= 6144; 						// midi note 24 = voltage zero
+	while(value < 0) value += 3072; 	// add octaves if out of low range
+	while(value > 24576) value -= 3072;  // subtract octaves if out of high range
 	value *= 500;
 	value /= 12;	
 	cv_update(which, value>>8);
@@ -200,8 +203,6 @@ void cv_event(byte event, byte stack_id) {
 						output_id = event - EV_NOTE_A;
 						if(pcv->event.out == output_id) {			
 							int note = pstack->out[output_id] + pcv->event.transpose;
-							while(note < 0) note += 12;
-							while(note > 127) note -= 12;
 							cv_write_note(which_cv, note, pstack->bend);
 						}
 						break;

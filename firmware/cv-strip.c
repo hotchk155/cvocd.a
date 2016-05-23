@@ -9,13 +9,6 @@
 //
 ////////////////////////////////////////////////////
 
-/*
-TODO: 
-S-Gate support
-CV tuning
-Sysex
-aftertouch, pressure
-*/
 
 //
 // HEADER FILES
@@ -81,7 +74,7 @@ volatile int millis = 0;	// millisecond counter
 //
 // GLOBAL DATA
 //
-volatile byte g_cv_dac_pending;
+volatile byte g_cv_dac_pending;				// flag to say whether dac data is pending
 volatile unsigned int g_sr_data = 0;		// gate data to load to shift registers
 volatile byte g_sr_data_pending = 0;		// indicates if any gate data is pending
 volatile unsigned int g_sync_sr_data = 0;	// additional gate bits, synced to CV load
@@ -487,16 +480,16 @@ void main()
 	intcon.7 = 1; //GIE
 	intcon.6 = 1; //PEIE
 
-
-	g_led_1_timeout = 200;
-	g_led_2_timeout = 200;
 	g_cv_dac_pending = 0;
-
 	nrpn_hi = 0;
 	nrpn_lo = 0;
 	nrpn_value_hi = 0;
 
 	unsigned int button_press = 0;
+
+	// flash both LEDs at startup
+	LED_1_PULSE(200);
+	LED_2_PULSE(200);
 
 	// App loop
 	long tick_time = 0; // milliseconds between ticks x 256
@@ -524,11 +517,16 @@ void main()
 			}
 			
 			if(!P_SWITCH) {
-				if(++button_press == 2000) {
+				++button_press;
+				if(button_press == SHORT_BUTTON_PRESS) {
+					all_reset();
+					LED_2_PULSE(100);				
+				}
+				else if(button_press == LONG_BUTTON_PRESS) {
 					P_LED2 = 1;
 					storage_write_patch();
 					LED_2_PULSE(255);				
-				}
+				}					
 			}
 			else {
 				button_press = 0;

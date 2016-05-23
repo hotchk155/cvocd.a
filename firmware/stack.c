@@ -213,6 +213,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 		// PLAY ORDER QUEUE
 		// Just shuffle notes along the outputs without any
 		// prioritisation
+/*		
 		case PRIORITY_CYCLE2:
 		case PRIORITY_CYCLE3:
 		case PRIORITY_CYCLE4:
@@ -225,7 +226,7 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 				pstack->index = 0;
 			}
 			break;
-	
+*/	
 	
 
 		//////////////////////////////////////////////////////////
