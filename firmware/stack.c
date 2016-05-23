@@ -374,6 +374,7 @@ void stack_midi_bend(byte chan, int bend)
 
 		// pitch bend units are 256 * number of midi notes offset 
 		// and can be positive or negative
+		int new_bend = ((long)pcfg->bend_range * (bend - 8192))/32;
 		if(pstack->bend != new_bend) {
 			pstack->bend = new_bend;
 			cv_event(EV_BEND, i);
@@ -392,6 +393,7 @@ void stack_reset() {
 		g_stack[i].bend = 0;
 		g_stack[i].vel = 0;		
 		g_stack[i].index = 0;		
+		gate_event(EV_NOTES_OFF, i);
 	}
 }
  
@@ -408,7 +410,6 @@ void stack_init()
 		g_stack_cfg[i].priority = PRIORITY_NEW;		
 	}
 	g_stack_cfg[0].chan = CHAN_GLOBAL;
-	stack_reset();
 }
 
 ////////////////////////////////////////////////////////////

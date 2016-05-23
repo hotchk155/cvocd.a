@@ -29,7 +29,7 @@ enum {
 	CV_DISABLE = 0,	// disabled
 	CV_NOTE,	// mapped to note input
 	CV_VEL,		// mapped to note input velocity
-	CV_MIDI_BEND,	// mapped to MIID pitch bend
+	CV_MIDI_BEND,	// mapped to MIDI pitch bend
 	CV_MIDI_TOUCH, // mapped to aftertouch
 	CV_MIDI_CC,	// mapped to midi CC
 	CV_MIDI_BPM, // mapped to midi CC
@@ -57,8 +57,8 @@ typedef union {
 } CV_OUT;
 
 // calibration constants
-char g_cal_ofs[CV_MAX] = {0};
-char g_cal_gain[CV_MAX] = {0};
+//char g_cal_ofs[CV_MAX] = {0};
+//char g_cal_gain[CV_MAX] = {0};
 
 // cache of raw DAC data
 int g_dac[CV_MAX] = {0};
@@ -154,6 +154,7 @@ void cv_write_7bit(byte which, byte value, byte volts) {
 	// ~ 4 * value * volts
 	cv_update(which, ((int)value * volts)<<2);
 }
+
 
 ////////////////////////////////////////////////////////////
 // WRITE PITCH BEND VALUE TO A CV OUTPUT
@@ -253,7 +254,7 @@ void cv_midi_cc(byte chan, byte cc, byte value) {
 			continue;
 		}		
 		// OK update the output
-		cv_write_7bit(which_cv, value, pcv->event.volts);
+		//cv_write_7bit(which_cv, value, pcv->event.volts);
 	}
 }
 
@@ -302,7 +303,7 @@ void cv_midi_bpm(long value) {
 		if(pcv->event.mode != CV_MIDI_BPM) {
 			continue;
 		}		
-		cv_update(which_cv, (int)(value/30)); //TODO
+		//cv_update(which_cv, (int)(value/30)); //TODO
 	}
 }					
 
@@ -332,7 +333,6 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 		case NRPVH_SRC_TESTVOLTAGE8:
 			pcv->event.mode = CV_TEST;
 			pcv->event.volts = value_lo - NRPVH_SRC_TESTVOLTAGE0;
-			cv_write_volts(which_cv, value_lo); 
 			return 1;
 		case NRPVH_SRC_DISABLE:	// DISABLE
 			cv_write_volts(which_cv, 0); 
@@ -347,6 +347,17 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			pcv->midi.chan = CHAN_GLOBAL;
 			pcv->midi.cc = value_lo;
 			pcv->midi.volts = DEFAULT_CV_CC_MAX_VOLTS;
+			return 1;					
+		case NRPVH_SRC_MIDITOUCH: // AFTERTOUCH
+			pcv->event.mode = CV_MIDI_TOUCH;
+			pcv->midi.chan = CHAN_GLOBAL;
+			pcv->midi.cc = value_lo;
+			pcv->midi.volts = DEFAULT_CV_TOUCH_MAX_VOLTS;
+			return 1;					
+		case NRPVH_SRC_MIDIBEND: // PITCHBEND
+			pcv->event.mode = CV_MIDI_BEND;
+			pcv->midi.chan = CHAN_GLOBAL;
+			pcv->midi.volts = DEFAULT_CV_PB_MAX_VOLTS;
 			return 1;					
 		case NRPVH_SRC_STACK1: // NOTE STACK 
 		case NRPVH_SRC_STACK2:
@@ -383,22 +394,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			pcv->event.volts = value_lo;
 			return 1;
 		}
-		break;
-	
-	case NRPNL_CV_OFFSET:
-	case NRPNL_CV_GAIN:
-		if(CV_TEST == pcv->event.mode) {			
-			char val = value_hi? value_lo : -value_lo;
-			if(param_lo == NRPNL_CV_OFFSET) {
-				g_cal_ofs[which_cv] = val;
-			}
-			else {
-				g_cal_gain[which_cv] = val;
-			}
-			//TODO: EEPROM
-			cv_write_volts(which_cv, pcv->event.volts); 
-		}
-		break;		
+		break;	
 	}
 	return 0;
 }
@@ -407,6 +403,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 // INITIALISE CV MODULE
 void cv_init() {
 	memset(g_cv, 0, sizeof(g_cv));
+	memset(g_dac, 0, sizeof(g_dac));
 	memset(g_note, 0, sizeof(g_note));
 	cv_config_dac();
 	
@@ -417,17 +414,25 @@ void cv_init() {
 	g_cv[2].event.mode = CV_NOTE;
 	g_cv[2].event.out = 2;	
 	g_cv[3].event.mode = CV_NOTE;
-	g_cv[3].event.out = 3;	
-	
-	
-	cv_reset();
-	
+	g_cv[3].event.out = 3;		
 }
 
 ////////////////////////////////////////////////////////////
 void cv_reset() {
-	memset(g_dac, 0, sizeof(g_dac));
-	g_cv_dac_pending = 1;		
+	for(byte which=0; which < CV_MAX; ++which) {
+		switch(g_cv[which].event.mode) {				
+		case CV_TEST:	
+			cv_write_volts(which, g_cv[which].event.volts); // set test volts
+			break;
+		case CV_MIDI_BEND: 
+			cv_write_bend(which, 8192, g_cv[which].event.volts); // set half full volts
+			break;
+		default:
+			cv_write_volts(which, 0); 
+			break;
+		}
+	}
+	g_cv_dac_pending = 1;
 }
 
 ////////////////////////////////////////////////////////////

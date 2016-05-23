@@ -76,6 +76,7 @@ volatile int millis = 0;	// millisecond counter
 //
 volatile byte g_cv_dac_pending;				// flag to say whether dac data is pending
 volatile unsigned int g_sr_data = 0;		// gate data to load to shift registers
+volatile unsigned int g_sr_retrigs = 0;		// shift register bits to send low before next load
 volatile byte g_sr_data_pending = 0;		// indicates if any gate data is pending
 volatile unsigned int g_sync_sr_data = 0;	// additional gate bits, synced to CV load
 volatile byte g_sync_sr_data_pending = 0;	// indicates if any synched gate data is pending
@@ -252,8 +253,8 @@ void uart_init()
 
 ////////////////////////////////////////////////////////////
 // LOAD GATE SHIFT REGISTER
-void sr_write() {
-	unsigned int d = g_sr_data;
+void sr_write(unsigned int nmask) {
+	unsigned int d = g_sr_data & ~nmask;
 	unsigned int m1 = 0x0080;
 	unsigned int m2 = 0x8000;
 	P_SRLAT = 0;
@@ -272,9 +273,9 @@ void sr_write() {
 // RESET STATES
 void all_reset()
 {
-	stack_reset();
 	gate_reset();
 	cv_reset();
+	stack_reset();
 }
 
 ////////////////////////////////////////////////////////////
@@ -476,7 +477,11 @@ void main()
 	nrpn_value_hi = 0;
 
 	unsigned int button_press = 0;
-	
+
+	// flash both LEDs at startup
+	LED_1_PULSE(255);
+	LED_2_PULSE(255);
+
 	// initialise the various modules
 	uart_init();
 	i2c_init();	
@@ -486,10 +491,9 @@ void main()
 	gate_init();	
 	cv_init(); 
 	storage_read_patch();	
-
-	// flash both LEDs at startup
-	LED_1_PULSE(200);
-	LED_2_PULSE(200);
+	
+	// reset them
+	all_reset();
 
 	// App loop
 	long tick_time = 0; // milliseconds between ticks x 256
@@ -628,10 +632,15 @@ void main()
 			i2c_send_async();
 			g_cv_dac_pending = 0; 
 		}				
+		// check for retrigs
+		if(g_sr_retrigs) {
+			sr_write(g_sr_retrigs);
+			g_sr_retrigs = 0;
+		}
 		// check if there is any shift register data pending		
 		if(g_sr_data_pending) {
 			g_sr_data_pending = 0;
-			sr_write();
+			sr_write(0);
 		}			
 	}
 }

@@ -36,7 +36,7 @@
 #define DEFAULT_CV_CC_MAX_VOLTS 5
 #define DEFAULT_CV_PB_MAX_VOLTS 5
 #define DEFAULT_CV_VEL_MAX_VOLTS 5
-#define DEFAULT_CV_AFTERTOUCH_MAX_VOLTS 5
+#define DEFAULT_CV_TOUCH_MAX_VOLTS 5
 #define VEL_ACCENT 100
 
 #define SHORT_BUTTON_PRESS 40
@@ -203,8 +203,8 @@ enum {
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
 	//NRPNL_GATE_POLARITY	= 16,
-	NRPNL_CV_OFFSET		= 126,
-	NRPNL_CV_GAIN		= 127
+	//NRPNL_CV_OFFSET		= 126,
+	//NRPNL_CV_GAIN		= 127
 };
 
 // Parameter Value High Byte
@@ -246,6 +246,7 @@ enum {
 	NRPVH_DUR_INF			= 0,
 	NRPVH_DUR_MS			= 1,
 	NRPVH_DUR_GLOBAL		= 2,
+	NRPVH_DUR_RETRIG		= 3
 };
 
 // Parameter Value Low Byte
@@ -324,6 +325,7 @@ extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
 extern volatile byte g_i2c_tx_buf_index;
 extern volatile byte g_i2c_tx_buf_len;
 extern volatile unsigned int g_sr_data;
+extern volatile unsigned int g_sr_retrigs;
 extern volatile unsigned int g_sync_sr_data;
 extern volatile unsigned int g_sync_sr_mask;
 extern volatile byte g_sync_sr_data_pending;
