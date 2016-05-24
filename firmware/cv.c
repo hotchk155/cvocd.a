@@ -307,21 +307,13 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 	// SELECT SOURCE
 	case NRPNL_SRC:
 		switch(value_hi) {				
-		case NRPVH_SRC_TESTVOLTAGE0:	// REFERENCE VOLTAGE
-		case NRPVH_SRC_TESTVOLTAGE1:
-		case NRPVH_SRC_TESTVOLTAGE2:
-		case NRPVH_SRC_TESTVOLTAGE3:
-		case NRPVH_SRC_TESTVOLTAGE4:
-		case NRPVH_SRC_TESTVOLTAGE5:
-		case NRPVH_SRC_TESTVOLTAGE6:
-		case NRPVH_SRC_TESTVOLTAGE7:
-		case NRPVH_SRC_TESTVOLTAGE8:
-			pcv->event.mode = CV_TEST;
-			pcv->event.volts = value_lo - NRPVH_SRC_TESTVOLTAGE0;
-			return 1;
 		case NRPVH_SRC_DISABLE:	// DISABLE
 			cv_write_volts(which_cv, 0); 
 			pcv->event.mode = CV_DISABLE;
+			return 1;
+		case NRPVH_SRC_TESTVOLTAGE:	// REFERENCE VOLTAGE
+			pcv->event.mode = CV_TEST;
+			pcv->event.volts = DEFAULT_CV_TEST_VOLTS;
 			return 1;
 		case NRPVH_SRC_MIDITICK: // BPM
 			pcv->event.mode = CV_MIDI_BPM;

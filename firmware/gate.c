@@ -55,7 +55,7 @@ enum {
 	GATE_MIDI_CLOCK_RUN_TICK	= NRPVH_SRC_MIDITICKRUN,// clock tick if clock running
 	GATE_MIDI_CLOCK_RUN			= NRPVH_SRC_MIDIRUN,	// clock running
 	GATE_MIDI_CLOCK_START		= NRPVH_SRC_MIDISTART,	// start message
-	GATE_MIDI_CLOCK_STARTCONT	= NRPVH_SRC_MIDICONT,	// continue OR start message
+//	GATE_MIDI_CLOCK_STARTCONT	= NRPVH_SRC_MIDICONT,	// continue OR start message
 	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP	// stop message
 };
 
@@ -371,6 +371,7 @@ void gate_midi_clock(byte msg) {
 	case MIDI_SYNCH_CONTINUE:
 		midi_clock_running = 1;
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
+			pcfg = &g_gate_cfg[which_gate];			
 			pgate = &g_gate[which_gate];						
 			switch(pcfg->event.mode) {	
 			case GATE_MIDI_CLOCK_TICK:
@@ -384,11 +385,11 @@ void gate_midi_clock(byte msg) {
 					break;
 				}// else fall through				
 			case GATE_MIDI_CLOCK_RUN:
-			case GATE_MIDI_CLOCK_STARTCONT:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
+			//case GATE_MIDI_CLOCK_STARTCONT:
+				trigger(pgate, pcfg, which_gate, true, false);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
+				trigger(pgate, pcfg, which_gate, false, false);
 				break;
 			}
 		}
@@ -397,13 +398,14 @@ void gate_midi_clock(byte msg) {
 	case MIDI_SYNCH_STOP:
 		midi_clock_running = 0;
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
+			pcfg = &g_gate_cfg[which_gate];			
 			pgate = &g_gate[which_gate];			
 			switch(pcfg->event.mode) {				
 			case GATE_MIDI_CLOCK_RUN:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
+				trigger(pgate, pcfg, which_gate, false, false);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
+				trigger(pgate, pcfg, which_gate, true, false);
 				break;
 			}
 		}
@@ -446,7 +448,7 @@ void gate_reset_single(byte which_gate) {
 			pgate->value = pcfg->clock.tick_ofs;
 			break;
 		default:
-			pgate->value = 0;
+			pgate->value = NO_VALUE;
 			break;
 	}
 	trigger(pgate, pcfg, which_gate, false, false);
@@ -570,7 +572,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 		case NRPVH_SRC_MIDITICKRUN:
 		case NRPVH_SRC_MIDIRUN:
 		case NRPVH_SRC_MIDISTART:
-		case NRPVH_SRC_MIDICONT:
+		//case NRPVH_SRC_MIDICONT:
 		case NRPVH_SRC_MIDISTOP:
 			pcfg->clock.mode = value_hi; // relies on alignment of values!
 			pcfg->clock.tick_ofs = 0;
@@ -588,7 +590,8 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	// SELECT MIDI CHANNEL
 	case NRPNL_CHAN:
 		if(pcfg->event.mode == GATE_MIDI_NOTE || 
-			pcfg->event.mode == GATE_MIDI_CC) {
+			pcfg->event.mode == GATE_MIDI_CC ||
+			pcfg->event.mode == GATE_MIDI_CC_NEG ) {
 			switch(value_hi) {
 			case NRPVH_CHAN_SPECIFIC:
 				if(value_lo >= 1 && value_lo <= 16) {
