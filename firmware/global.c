@@ -46,6 +46,12 @@ byte global_nrpn(byte param_lo, byte value_hi, byte value_lo)
 			return 1;
 		}
 		break;
+	
+	////////////////////////////////////////////////////////////////
+	// AUTO SAVE
+	case NRPNL_SAVE:
+		g_global.auto_save = value_lo;
+		return 1;
 	}
 	return 0;
 }
@@ -55,6 +61,8 @@ byte global_nrpn(byte param_lo, byte value_hi, byte value_lo)
 void global_init() {
 	g_global.chan = DEFAULT_MIDI_CHANNEL; // default MIDI channel
 	g_global.gate_duration = DEFAULT_GATE_DURATION; // default gate duration
+	g_global.auto_save = 0;
+
 }
 
 ////////////////////////////////////////////////////////////

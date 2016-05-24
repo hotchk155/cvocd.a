@@ -9,6 +9,9 @@
 //
 ////////////////////////////////////////////////////
 
+/*
+Channel pressure?
+*/
 
 //
 // HEADER FILES
@@ -329,6 +332,9 @@ byte midi_in()
 					delay_ms(250); 
 					P_LED1 = 0; 
 					P_LED2 = 0; 
+					if(g_global.auto_save) {
+						storage_write_patch();
+					}
 					all_reset();
 					break;
 				default:
@@ -400,6 +406,7 @@ byte midi_in()
 						case 0x90: // note on
 						case 0xE0: // pitch bend
 						case 0xB0: // cc
+						case 0xD0: // aftertouch
 							return midi_status; 
 						}
 					}
@@ -495,6 +502,7 @@ void main()
 	// reset them
 	all_reset();
 
+//byte qq=0;
 	// App loop
 	long tick_time = 0; // milliseconds between ticks x 256
 	for(;;)
@@ -502,6 +510,9 @@ void main()
 		// once per millisecond tick event
 		if(ms_tick) {
 			ms_tick = 0;
+
+//cv_midi_touch(0, qq);
+//if(++qq>127)qq=0;
 			
 			// update the gates...
 			gate_run();
@@ -544,22 +555,11 @@ void main()
 		case 0xF0:
 			switch(msg) {
 			case MIDI_SYNCH_TICK:
-				if(millis) {						 
-					tick_time *= 7;
-					tick_time >>= 3; // divide by 8
-					// tick_time = 7/8 * tick_time + millis
-					// .. crude smoothing of values. The result
-					// is upscaled x 8
-					tick_time += millis;
-					millis = 0;
-				}
 				if(!midi_ticks) {
-					LED_2_PULSE(LED_PULSE_MIDI_BEAT);						
-					if(tick_time) {
-						// bpm = 2500/tick period(ms)
-						// tick_time is upscaled x 8
-						// parameter needs to be upscale x 256
-						cv_midi_bpm(((long)2500*8*256)/tick_time);
+					LED_2_PULSE(LED_PULSE_MIDI_BEAT);				
+					if(millis>0) {		
+						cv_midi_bpm(((long)256*60000)/millis);					
+						millis = 0;
 					}
 				}
 				if(++midi_ticks>=24) {

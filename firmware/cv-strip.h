@@ -202,6 +202,7 @@ enum {
 	NRPNL_THRESHOLD		= 13,
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
+	NRPNL_SAVE			= 100
 	//NRPNL_GATE_POLARITY	= 16,
 	//NRPNL_CV_OFFSET		= 126,
 	//NRPNL_CV_GAIN		= 127
@@ -291,6 +292,7 @@ enum {
 typedef struct {
 	byte chan;
 	byte gate_duration;
+	byte auto_save;
 } GLOBAL_CFG;
 
 

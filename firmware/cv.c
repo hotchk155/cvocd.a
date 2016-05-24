@@ -56,10 +56,6 @@ typedef union {
 	T_CV_MIDI 				midi;
 } CV_OUT;
 
-// calibration constants
-//char g_cal_ofs[CV_MAX] = {0};
-//char g_cal_gain[CV_MAX] = {0};
-
 // cache of raw DAC data
 int g_dac[CV_MAX] = {0};
 
@@ -106,18 +102,6 @@ void cv_dac_prepare() {
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
 void cv_update(byte which, int value) {
-
-	/*
-		want ability to tune gain by +/-5%
-		0.95 .. 1.05 
-		
-		map +/-127 to +/-0.05
-		.0004
-	*/
-	//if(g_cal_gain[which]) {
-//		value *= (1.0 + (0.0004 * g_cal_gain[which]));
-//	}
-//	value += g_cal_ofs[which];
 	if(value < 0) 
 		value = 0;
 	if(value > 4095) 
@@ -254,7 +238,7 @@ void cv_midi_cc(byte chan, byte cc, byte value) {
 			continue;
 		}		
 		// OK update the output
-		//cv_write_7bit(which_cv, value, pcv->event.volts);
+		cv_write_7bit(which_cv, value, pcv->event.volts);
 	}
 }
 
@@ -303,7 +287,8 @@ void cv_midi_bpm(long value) {
 		if(pcv->event.mode != CV_MIDI_BPM) {
 			continue;
 		}		
-		//cv_update(which_cv, (int)(value/30)); //TODO
+		value *= (500 * pcv->event.volts);
+		cv_update(which_cv, value>>16);
 	}
 }					
 
@@ -351,7 +336,6 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 		case NRPVH_SRC_MIDITOUCH: // AFTERTOUCH
 			pcv->event.mode = CV_MIDI_TOUCH;
 			pcv->midi.chan = CHAN_GLOBAL;
-			pcv->midi.cc = value_lo;
 			pcv->midi.volts = DEFAULT_CV_TOUCH_MAX_VOLTS;
 			return 1;					
 		case NRPVH_SRC_MIDIBEND: // PITCHBEND
