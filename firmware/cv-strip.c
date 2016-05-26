@@ -1,17 +1,26 @@
-////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 //
-// MIDI CV STRIP
+//       ///// //   //          /////    /////  /////
+//     //     //   //         //    // //      //   //
+//    //      // //    //    //    // //      //   //
+//   //      // //   ////   //    // //      //   //
+//   /////   ///     //     //////   /////  //////
 //
+// CV.OCD MIDI-TO-CV CONVERTER
 // hotchk155/2016
+// Sixty Four Pixels Limited
 //
-// VERSION
-// 0.1	07MAY16	Initial version for test
+// This work is distibuted under terms of Creative Commons 
+// License BY-NC-SA (Attribution, Non-commercial, Share-Alike)
+// https://creativecommons.org/licenses/by-nc-sa/4.0/
 //
-////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 
-/*
-Channel pressure?
-*/
+//////////////////////////////////////////////////////////////
+//
+// MAIN MODULE
+//
+//////////////////////////////////////////////////////////////
 
 //
 // HEADER FILES
@@ -29,15 +38,8 @@ Channel pressure?
 #pragma DATA _CONFIG2, _WRT_OFF & _PLLEN_OFF & _STVREN_ON & _BORV_19 & _LVP_OFF
 #pragma CLOCK_FREQ 16000000
 
-
 //
-// MACRO DEFS
-//
-
-#define TIMER_0_INIT_SCALAR		5		// Timer 0 is an 8 bit timer counting at 250kHz
-
-//
-// TYPE DEFS
+// TYPES
 //
 
 // States for sysex loading
@@ -56,23 +58,30 @@ enum {
 //
 // LOCAL DATA
 //
+
 // define the buffer used to receive MIDI input
 #define SZ_RXBUFFER 			64		// size of MIDI receive buffer (power of 2)
 #define SZ_RXBUFFER_MASK 		0x3F	// mask to keep an index within range of buffer
-volatile byte rx_buffer[SZ_RXBUFFER];
-volatile byte rx_head = 0;
-volatile byte rx_tail = 0;
+volatile byte rx_buffer[SZ_RXBUFFER];	// the MIDI receive buffer
+volatile byte rx_head = 0;				// buffer data insertion index
+volatile byte rx_tail = 0;				// buffer data retrieval index
 
-// MIDI input state
-byte midi_status = 0;		// current MIDI message status (running status)
-byte midi_num_params = 0;	// number of parameters needed by current MIDI message
-byte midi_params[2];		// parameter values of current MIDI message
-char midi_param = 0;		// number of params currently received
-byte midi_ticks = 0;		// number of MIDI clock ticks received
-byte sysex_state = SYSEX_NONE;		// whether we are currently inside a sysex block
+// State flags used while receiving MIDI data
+byte midi_status = 0;					// current MIDI message status (running status)
+byte midi_num_params = 0;				// number of parameters needed by current MIDI message
+byte midi_params[2];					// parameter values of current MIDI message
+char midi_param = 0;					// number of params currently received
+byte midi_ticks = 0;					// number of MIDI clock ticks received
+byte sysex_state = SYSEX_NONE;			// whether we are currently inside a sysex block
 
-volatile byte ms_tick = 0;	// once per millisecond tick flag
-volatile int millis = 0;	// millisecond counter
+// Timer related stuff
+#define TIMER_0_INIT_SCALAR		5		// Timer 0 initialiser to overlow at 1ms intervals
+volatile byte ms_tick = 0;				// once per millisecond tick flag used to synchronise stuff
+volatile int millis = 0;				// millisecond counter
+
+byte nrpn_hi = 0;						// value of last NRPN param high byte			
+byte nrpn_lo = 0;						// value of last NRPN param low byte
+byte nrpn_value_hi = 0;					// value of last NRPN value high byte
 
 //
 // GLOBAL DATA
@@ -88,12 +97,8 @@ volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];	// transmit buffer for i2c
 volatile byte g_i2c_tx_buf_index = 0;		// index of next byte to send over i2c
 volatile byte g_i2c_tx_buf_len = 0;			// total number of bytes in buffer
 
-char g_led_1_timeout = 0;					// ms after which LED1 is turned off
-char g_led_2_timeout = 0;					// ms after which LED1 is turned off
-
-byte nrpn_hi = 0;
-byte nrpn_lo = 0;
-byte nrpn_value_hi = 0;
+byte g_led_1_timeout = 0;					// ms after which LED1 is turned off
+byte g_led_2_timeout = 0;					// ms after which LED1 is turned off
 
 ////////////////////////////////////////////////////////////
 // INTERRUPT SERVICE ROUTINE
@@ -257,7 +262,7 @@ void uart_init()
 ////////////////////////////////////////////////////////////
 // LOAD GATE SHIFT REGISTER
 void sr_write(unsigned int nmask) {
-	unsigned int d = g_sr_data & ~nmask;
+	unsigned int d = g_sr_data & ~nmask; // nmask is a bit set to force to LOW
 	unsigned int m1 = 0x0080;
 	unsigned int m2 = 0x8000;
 	P_SRLAT = 0;
@@ -310,20 +315,23 @@ byte midi_in()
 		{
 			switch(ch)
 			{
+			// REALTIME MESSAGES
 			case MIDI_SYNCH_TICK:
 			case MIDI_SYNCH_START:
 			case MIDI_SYNCH_CONTINUE:
 			case MIDI_SYNCH_STOP:
-				return ch;			
+				return ch;		
+			// START OF SYSEX	
 			case MIDI_SYSEX_BEGIN:
 				sysex_state = SYSEX_ID0; 
 				break;
+			// END OF SYSEX	
 			case MIDI_SYSEX_END:
 				switch(sysex_state) {
-				case SYSEX_IGNORE:
-				case SYSEX_NONE: 
+				case SYSEX_IGNORE: // we're ignoring a syex block
+				case SYSEX_NONE: // we weren't even in sysex mode!					
 					break;			
-				case SYSEX_PARAMH:
+				case SYSEX_PARAMH:	// the state we'd expect to end in
 					P_LED1 = 1; 
 					P_LED2 = 1; 
 					delay_ms(250); 
@@ -333,11 +341,11 @@ byte midi_in()
 					P_LED1 = 0; 
 					P_LED2 = 0; 
 					if(g_global.auto_save) {
-						storage_write_patch();
+						storage_write_patch();	// store to EEPROM if desired
 					}
 					all_reset();
 					break;
-				default:
+				default:	// any other state would imply bad sysex data
 					P_LED1 = 0; 
 					for(char i=0; i<10; ++i) {
 						P_LED2 = 1; 
@@ -378,7 +386,7 @@ byte midi_in()
 		}    
 		else 
 		{
-			switch(sysex_state) 
+			switch(sysex_state) // are we inside a sysex block?
 			{
 			// SYSEX MANUFACTURER ID
 			case SYSEX_ID0: sysex_state = (ch == MY_SYSEX_ID0)? SYSEX_ID1 : SYSEX_IGNORE; break;
@@ -461,9 +469,7 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
 ////////////////////////////////////////////////////////////
 // MAIN
 void main()
-{ 	
-	int bend;
-	
+{ 		
 	// osc control / 16MHz / internal
 	osccon = 0b01111010;
 
@@ -502,17 +508,14 @@ void main()
 	// reset them
 	all_reset();
 
-//byte qq=0;
 	// App loop
+	int bend;
 	long tick_time = 0; // milliseconds between ticks x 256
 	for(;;)
 	{	
 		// once per millisecond tick event
 		if(ms_tick) {
 			ms_tick = 0;
-
-//cv_midi_touch(0, qq);
-//if(++qq>127)qq=0;
 			
 			// update the gates...
 			gate_run();
@@ -626,13 +629,13 @@ void main()
 			break;
 		}
 				
-		// check if there is any CV data to send out
+		// check if there is any CV data to send out and no i2c transmit in progress
 		if(!pie1.3 && g_cv_dac_pending) {
 			cv_dac_prepare(); 
 			i2c_send_async();
 			g_cv_dac_pending = 0; 
 		}				
-		// check for retrigs
+		// check for retrigs.. if so all retrig bits will be sent low
 		if(g_sr_retrigs) {
 			sr_write(g_sr_retrigs);
 			g_sr_retrigs = 0;
@@ -645,5 +648,6 @@ void main()
 	}
 }
 
-
-
+//
+// END
+//

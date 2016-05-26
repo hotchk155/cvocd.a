@@ -1,70 +1,84 @@
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 //
-// MINI MIDI CV
+//       ///// //   //          /////    /////  /////
+//     //     //   //         //    // //      //   //
+//    //      // //    //    //    // //      //   //
+//   //      // //   ////   //    // //      //   //
+//   /////   ///     //     //////   /////  //////
 //
-// GLOBAL DEFINITIONS
+// CV.OCD MIDI-TO-CV CONVERTER
+// hotchk155/2016
+// Sixty Four Pixels Limited
 //
-////////////////////////////////////////////////////////////
+// This work is distibuted under terms of Creative Commons 
+// License BY-NC-SA (Attribution, Non-commercial, Share-Alike)
+// https://creativecommons.org/licenses/by-nc-sa/4.0/
+//
+//////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////
+//
+// GLOBAL DEFS
+//
+//////////////////////////////////////////////////////////////
 
 //
 // MACRO DEFS
 //
+
+// Pin definitions
 #define P_LED1		lata.2
 #define P_LED2		latc.2
-
 #define P_SRDAT1	lata.0
 #define P_SRDAT2	lata.1
 #define P_SRCLK		lata.4
 #define P_SRLAT		lata.5
-
 #define P_SWITCH 	portc.3
-
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
 
-#define CV_MAX		4
-#define GATE_MAX	12
+// constants
+#define CV_MAX		4					// number of cv outs
+#define GATE_MAX	12					// number of gate outs
+#define SZ_NOTE_STACK 5					// max notes in a single stack
+#define NUM_NOTE_STACKS 4				// number of stacks supported
+#define NO_NOTE_OUT 0xFF 				// special "no note" value
+#define I2C_TX_BUF_SZ 12				// size of i2c transmit buffer
 
-#define DEFAULT_GATE_NOTE 60
-#define DEFAULT_GATE_CC 1
-#define DEFAULT_GATE_CC_THRESHOLD 64
-#define DEFAULT_GATE_DIV	6
-#define DEFAULT_GATE_DURATION 10
-#define DEFAULT_ACCENT_VELOCITY 127
-#define DEFAULT_MIDI_CHANNEL 0
-#define DEFAULT_CV_BPM_MAX_VOLTS 5
-#define DEFAULT_CV_CC_MAX_VOLTS 5
-#define DEFAULT_CV_PB_MAX_VOLTS 5
-#define DEFAULT_CV_VEL_MAX_VOLTS 5
-#define DEFAULT_CV_TOUCH_MAX_VOLTS 5
-#define DEFAULT_CV_TEST_VOLTS 5
-#define VEL_ACCENT 100
+// Defaults
+#define DEFAULT_GATE_NOTE 			60
+#define DEFAULT_GATE_CC 			1
+#define DEFAULT_GATE_CC_THRESHOLD 	64
+#define DEFAULT_GATE_DIV			6
+#define DEFAULT_GATE_DURATION 		10
+#define DEFAULT_ACCENT_VELOCITY 	127
+#define DEFAULT_MIDI_CHANNEL 		0
+#define DEFAULT_CV_BPM_MAX_VOLTS 	5
+#define DEFAULT_CV_CC_MAX_VOLTS 	5
+#define DEFAULT_CV_PB_MAX_VOLTS 	5
+#define DEFAULT_CV_VEL_MAX_VOLTS 	5
+#define DEFAULT_CV_TOUCH_MAX_VOLTS 	5
+#define DEFAULT_CV_TEST_VOLTS 		5
 
+// Millisecond timings
 #define SHORT_BUTTON_PRESS 40
 #define LONG_BUTTON_PRESS 2000
-
 #define LED_PULSE_MIDI_IN 2
 #define LED_PULSE_MIDI_TICK 10
 #define LED_PULSE_MIDI_BEAT 100
 #define LED_PULSE_PARAM 255
 
+// MIDI message bytes
 #define MIDI_SYNCH_TICK     	0xf8
 #define MIDI_SYNCH_START    	0xfa
 #define MIDI_SYNCH_CONTINUE 	0xfb
 #define MIDI_SYNCH_STOP     	0xfc
 #define MIDI_SYSEX_BEGIN     	0xf0
 #define MIDI_SYSEX_END     		0xf7
-
 #define MIDI_CC_NRPN_HI 		99
 #define MIDI_CC_NRPN_LO 		98
 #define MIDI_CC_DATA_HI 		6
 #define MIDI_CC_DATA_LO 		38
-
-#define SZ_NOTE_STACK 5	// max notes in a single stack
-#define NUM_NOTE_STACKS 4	// number of stacks supported
-#define NO_NOTE_OUT 0xFF 	// special "no note" value
-
-#define I2C_TX_BUF_SZ 12
 
 // Sysex ID
 #define MY_SYSEX_ID0	0x00
@@ -79,29 +93,26 @@
 #define IS_CHAN(mychan, chan) (((chan) == (mychan)) || (CHAN_OMNI == (mychan)) || \
  ((CHAN_GLOBAL == (mychan)) && (g_global.chan == (chan))))
 
-
 // Check if a note matches a min-max range. If max==0 then it must exactly equal min
-#define IS_NOTE_MATCH(mymin, mymax, note) (!(mymax)?((note)==(mymin)):((note)>=(mymin) && (note)<=(mymax)))
+#define IS_NOTE_MATCH(mymin, mymax, note) \
+ (!(mymax)?((note)==(mymin)):((note)>=(mymin) && (note)<=(mymax)))
 
 //
-// TYPE DEFS
+// ENUMS
 //
-typedef unsigned char byte;
 
+// special gate duration
 enum {
-	GATE_DUR_INFINITE = 0x00,
-	GATE_DUR_GLOBAL = 0x80
+	GATE_DUR_INFINITE = 0x00,	// "gate mode"
+	GATE_DUR_GLOBAL = 0x80		// use global setting
 };
-
 
 // special channels
 enum {
-	CHAN_OMNI = 0x80,
-	CHAN_GLOBAL = 0x81,
-	CHAN_DISABLE = 0xFF
+	CHAN_OMNI = 0x80,			// omni
+	CHAN_GLOBAL = 0x81,			// use global setting
+	CHAN_DISABLE = 0xFF			// disable channel
 };
-
-
 
 // Events from note stack
 enum {
@@ -115,8 +126,7 @@ enum {
 	EV_NO_NOTE_D,
 	EV_NOTES_OFF,
 	EV_NOTE_ON,
-	EV_BEND,
-	EV_AFTERTOUCH
+	EV_BEND
 };
 
 // note stack note priority orders
@@ -127,35 +137,11 @@ enum {
 	PRIORITY_HIGH			= 3,	// gives priority to highest note
 	PRIORITY_HIGH_SPREAD	= 4,	// highest note priority with lowest pitch note on output 4
 	PRIORITY_CYCLE1			= 5,	// single note only
-	PRIORITY_CYCLE2			= 6,	
-	PRIORITY_CYCLE3			= 7,	
-	PRIORITY_CYCLE4			= 8,	
+	PRIORITY_CYCLE2			= 6,	// 2 note cycle
+	PRIORITY_CYCLE3			= 7,	// 3 note cycle
+	PRIORITY_CYCLE4			= 8,	// 4 note cycle
 	PRIORITY_MAX			= 9
 };
-
-/*
-idea
-2 notes - 
-lowest mapped to synth A
-highest mapped to synth B
-when highest note is released, synth B must not drop to low note
-when lowest note is release, synth A must not rise to high note
-need a split point
-
-*/
-
-
-/*
-+---+---+---+---+	+---+---+---+---+
-|CV0|CV1|GT0|GT1|	|GT4|GT5|GT6|GT7|
-+---+---+---+---+	+---+---+---+---+
-|CV2|CV3|GT2|GT3|	|GT8|GT9|G10|G11|
-+---+---+---+---+	+---+---+---+---+
-*/
-
-
-/////////////////////////////////////////////////////////////////////////////
-// NRPN VALUES FOR CONFIGURATION
 
 // Parameter Number High Byte 
 enum {
@@ -194,7 +180,6 @@ enum {
 	NRPNL_NOTE			= NRPNL_NOTE_MIN,
 	NRPNL_NOTE_MAX  	= 4,
 	NRPNL_VEL_MIN  		= 5,
-	//NRPNL_VEL_ACCENT	= 6,
 	NRPNL_PB_RANGE		= 7,
 	NRPNL_PRIORITY		= 8,	
 	NRPNL_SPLIT  		= 9,
@@ -204,9 +189,6 @@ enum {
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
 	NRPNL_SAVE			= 100
-	//NRPNL_GATE_POLARITY	= 16,
-	//NRPNL_CV_OFFSET		= 126,
-	//NRPNL_CV_GAIN		= 127
 };
 
 // Parameter Value High Byte
@@ -228,7 +210,6 @@ enum {
 	NRPVH_SRC_MIDITICKRUN	= 21,
 	NRPVH_SRC_MIDIRUN		= 22,
 	NRPVH_SRC_MIDISTART		= 23,
-	//NRPVH_SRC_MIDICONT		= 24,
 	NRPVH_SRC_MIDISTOP		= 25,
 
 	NRPVH_SRC_TESTVOLTAGE	= 127,
@@ -253,41 +234,20 @@ enum {
 	NRPVL_SRC_ANY_NOTES			= 5,
 
 	NRPVL_SRC_VEL				= 20,
-//	NRPVL_SRC_PB				= 21,		
 	NRPVL_SRC_AFTERTOUCH		= 22
 };
 
-
-
-
-// Parameter values for P_DIV
-/*
-enum {
-  P_DIV_1    = 96,
-  P_DIV_2D   = 72,
-  P_DIV_2    = 48,
-  P_DIV_4D   = 36,
-  P_DIV_2T   = 32,  
-  P_DIV_4    = 24,
-  P_DIV_8D   = 18,
-  P_DIV_4T   = 16,
-  P_DIV_8    = 12,
-  P_DIV_16D  = 9,
-  P_DIV_8T   = 8,
-  P_DIV_16   = 6,
-  P_DIV_16T  = 4,
-  P_DIV_32   = 3	
-};*/
-
 //
-// STRUCT DEFS
+// TYPE DEFS
 //
+typedef unsigned char byte;
+
+// global config
 typedef struct {
 	byte chan;
 	byte gate_duration;
 	byte auto_save;
 } GLOBAL_CFG;
-
 
 // note stack config
 typedef struct {
@@ -309,7 +269,9 @@ typedef struct {
 	byte index;					// index for note cycling
 } NOTE_STACK;
 
-// GLOBAL DATA
+//
+// GLOBAL DATA DECLARATIONS
+//
 extern char g_led_1_timeout;
 extern char g_led_2_timeout;
 extern GLOBAL_CFG g_global;
@@ -325,6 +287,10 @@ extern volatile unsigned int g_sync_sr_data;
 extern volatile unsigned int g_sync_sr_mask;
 extern volatile byte g_sync_sr_data_pending;
 extern volatile byte g_sr_data_pending;
+
+//
+// GLOBAL FUNCTION DECLARATIONS
+//
 
 // EXPORTED FUNCTIONS FROM MAIN FILE
 void i2c_send(byte data);
@@ -369,14 +335,13 @@ void cv_midi_bpm(long value);
 void cv_init(); 
 void cv_reset();
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);
-//void cv_write_dac(byte which, int value);
-//void cv_write_note(byte which, byte midi_note, int pitch_bend);
-//void cv_write_vel(byte which, long value);
-//void cv_write_cc(byte which, long value);
-//void cv_write_bend(byte which, long value);
 void cv_dac_prepare();
 byte *cv_storage(int *len);
 
 // STORAGE
 void storage_read_patch();
 void storage_write_patch();
+
+//
+// END
+//

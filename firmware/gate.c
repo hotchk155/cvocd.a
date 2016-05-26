@@ -1,17 +1,33 @@
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 //
-// MINI MIDI CV
+//       ///// //   //          /////    /////  /////
+//     //     //   //         //    // //      //   //
+//    //      // //    //    //    // //      //   //
+//   //      // //   ////   //    // //      //   //
+//   /////   ///     //     //////   /////  //////
 //
-// GATE OUTPUTS
+// CV.OCD MIDI-TO-CV CONVERTER
+// hotchk155/2016
+// Sixty Four Pixels Limited
 //
-////////////////////////////////////////////////////////////
+// This work is distibuted under terms of Creative Commons 
+// License BY-NC-SA (Attribution, Non-commercial, Share-Alike)
+// https://creativecommons.org/licenses/by-nc-sa/4.0/
+//
+//////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////
+//
+// GATE OUTPUT MODULE
+//
+//////////////////////////////////////////////////////////////
 
 // INCLUDE FILES
 #include <system.h>
 #include "cv-strip.h"
 
 //
-// CONSTANTS
+// TYPE DEFS
 //
 
 // Define bits for the shift register outputs
@@ -19,8 +35,6 @@
 #define SRB_NOTE2	0x0008
 #define SRB_NOTE3 	0x0002
 #define SRB_NOTE4	0x0001
-
-
 #define SRB_DRM1 	0x0100
 #define SRB_DRM2 	0x0200
 #define SRB_DRM3 	0x0400
@@ -33,6 +47,7 @@
 // initial CC "last value" 
 #define NO_VALUE 	0xFF
 
+// flag bits
 #define GATE_FLAG_RETRIG 0x01
 
 // List of modes for a gate output to be triggered
@@ -55,7 +70,6 @@ enum {
 	GATE_MIDI_CLOCK_RUN_TICK	= NRPVH_SRC_MIDITICKRUN,// clock tick if clock running
 	GATE_MIDI_CLOCK_RUN			= NRPVH_SRC_MIDIRUN,	// clock running
 	GATE_MIDI_CLOCK_START		= NRPVH_SRC_MIDISTART,	// start message
-//	GATE_MIDI_CLOCK_STARTCONT	= NRPVH_SRC_MIDICONT,	// continue OR start message
 	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP	// stop message
 };
 
@@ -113,23 +127,22 @@ typedef union {
 	T_GATE_MIDI_CLOCK	clock;
 } GATE_OUT_CFG;
 
-
 //
-// FILE SCOPE DATA
+// LOCAL DATA
 //
 
 // Whether MIDI clock is running
 static byte midi_clock_running = 0;
 
-// Shift register status
-//static unsigned int g_sr_data = 0;
-//byte g_gate_pending = 0;
-
 // gate config
-static GATE_OUT_CFG g_gate_cfg[GATE_MAX];
+static GATE_OUT_CFG l_gate_cfg[GATE_MAX];
 
-// Gate status
-static GATE_OUT g_gate[GATE_MAX];
+// gate status
+static GATE_OUT l_gate[GATE_MAX];
+
+//
+// LOCAL FUNCTIONS
+//
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
@@ -153,11 +166,16 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		default: return;
 	}	
 
-	if(pcfg->event.flags & GATE_FLAG_RETRIG) {
-		g_sr_retrigs |= gate_bit;
-	}
 	
 	if(trigger_enabled) { // trigger ON
+	
+		// if this gate is set to retrigger, then set
+		// up the retrig mask to include the bit for 
+		// this gate
+		if(pcfg->event.flags & GATE_FLAG_RETRIG) {
+			g_sr_retrigs |= gate_bit;
+		}
+		
 		if(sync && g_cv_dac_pending) {
 			// synchronised trigger - set trigger bits to be 
 			// actioned after CV has been updated
@@ -205,8 +223,8 @@ void gate_event(byte event, byte stack_id)
 
 	// iterate thru gate outputs
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {	
-		GATE_OUT *pgate = &g_gate[which_gate];
-		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
+		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
 		
 		// check this output is watching this note stack
 		if(pcfg->event.stack_id != stack_id)
@@ -273,8 +291,8 @@ void gate_midi_note(byte chan, byte note, byte vel)
 {
 	// for each gate output
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-		GATE_OUT *pgate = &g_gate[which_gate];
-		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
+		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
 		
 		// does this gate respond to midi note?
 		if(pcfg->event.mode != GATE_MIDI_NOTE)
@@ -301,8 +319,8 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 {
 	// for each gate output
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-		GATE_OUT *pgate = &g_gate[which_gate];
-		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
+		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
 		
 		// does this gate respond to CC?
 		if(pcfg->event.mode != GATE_MIDI_CC && 
@@ -349,16 +367,16 @@ void gate_midi_clock(byte msg) {
 	// CLOCK TICK
 	case MIDI_SYNCH_TICK: 
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-			pcfg = &g_gate_cfg[which_gate];			
+			pcfg = &l_gate_cfg[which_gate];			
 			//is this gate tied to clock ticks?
 			if((GATE_MIDI_CLOCK_TICK == pcfg->event.mode) || (GATE_MIDI_CLOCK_RUN_TICK == pcfg->event.mode)) {
 				// does it need the clock to be running?
 				if((GATE_MIDI_CLOCK_RUN_TICK == pcfg->event.mode) && !midi_clock_running) {
 					continue;
 				}
-				pgate = &g_gate[which_gate];			
+				pgate = &l_gate[which_gate];			
 				if(!pgate->value) {
-					trigger(pgate, &g_gate_cfg[which_gate], which_gate, true, false);
+					trigger(pgate, &l_gate_cfg[which_gate], which_gate, true, false);
 				}
 				if(++pgate->value >= pcfg->clock.div) {
 					pgate->value = 0;
@@ -371,8 +389,8 @@ void gate_midi_clock(byte msg) {
 	case MIDI_SYNCH_CONTINUE:
 		midi_clock_running = 1;
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-			pcfg = &g_gate_cfg[which_gate];			
-			pgate = &g_gate[which_gate];						
+			pcfg = &l_gate_cfg[which_gate];			
+			pgate = &l_gate[which_gate];						
 			switch(pcfg->event.mode) {	
 			case GATE_MIDI_CLOCK_TICK:
 			case GATE_MIDI_CLOCK_RUN_TICK:
@@ -398,8 +416,8 @@ void gate_midi_clock(byte msg) {
 	case MIDI_SYNCH_STOP:
 		midi_clock_running = 0;
 		for(which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-			pcfg = &g_gate_cfg[which_gate];			
-			pgate = &g_gate[which_gate];			
+			pcfg = &l_gate_cfg[which_gate];			
+			pgate = &l_gate[which_gate];			
 			switch(pcfg->event.mode) {				
 			case GATE_MIDI_CLOCK_RUN:
 				trigger(pgate, pcfg, which_gate, false, false);
@@ -417,10 +435,10 @@ void gate_midi_clock(byte msg) {
 // MANAGE GATE TIMEOUTS
 void gate_run() {
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-		GATE_OUT *pgate = &g_gate[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
 		if(pgate->counter) {
 			if(!--pgate->counter) {
-				trigger(pgate, &g_gate_cfg[which_gate], which_gate, false, false);
+				trigger(pgate, &l_gate_cfg[which_gate], which_gate, false, false);
 			}
 		}
 	}
@@ -431,34 +449,27 @@ void gate_run() {
 void gate_trigger(byte which_gate, byte trigger_enabled)
 {
 	if(which_gate < GATE_MAX) {
-		trigger(&g_gate[which_gate], &g_gate_cfg[which_gate], which_gate, trigger_enabled, false);
+		trigger(&l_gate[which_gate], &l_gate_cfg[which_gate], which_gate, trigger_enabled, false);
 	}
-}
-
-
-////////////////////////////////////////////////////////////
-// SET DEFAULT GATE STATE
-void gate_reset_single(byte which_gate) {
-	GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
-	GATE_OUT *pgate = &g_gate[which_gate];
-	pgate->counter = 0;
-	switch(pcfg->event.mode) {
-		case GATE_MIDI_CLOCK_TICK:
-		case GATE_MIDI_CLOCK_RUN_TICK:
-			pgate->value = pcfg->clock.tick_ofs;
-			break;
-		default:
-			pgate->value = NO_VALUE;
-			break;
-	}
-	trigger(pgate, pcfg, which_gate, false, false);
 }
 
 ////////////////////////////////////////////////////////////
 // SET DEFAULT GATE STATE
 void gate_reset() {
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-		gate_reset_single(which_gate);
+		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
+		pgate->counter = 0;
+		switch(pcfg->event.mode) {
+			case GATE_MIDI_CLOCK_TICK:
+			case GATE_MIDI_CLOCK_RUN_TICK:
+				pgate->value = pcfg->clock.tick_ofs;
+				break;
+			default:
+				pgate->value = NO_VALUE;
+				break;
+		}
+		trigger(pgate, pcfg, which_gate, false, false);
 	}
 }
 	
@@ -468,30 +479,30 @@ void gate_init() {
 
 	// initialise state info
 	for(byte which_gate=0; which_gate<GATE_MAX; ++which_gate) {
-		GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
-		GATE_OUT *pgate = &g_gate[which_gate];
+		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
+		GATE_OUT *pgate = &l_gate[which_gate];
 		pcfg->event.mode = GATE_DISABLE;
 		pcfg->event.flags = 0;
 		pcfg->event.duration = DEFAULT_GATE_DURATION;
-		gate_reset_single(which_gate);
 	}
 	
-	g_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
-	g_gate_cfg[0].event.duration = 0;	
+	l_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
+	l_gate_cfg[0].event.duration = 0;	
 
-	g_gate_cfg[1].event.mode = GATE_NOTE_GATEB;	
-	g_gate_cfg[1].event.duration = 0;	
+	l_gate_cfg[1].event.mode = GATE_NOTE_GATEB;	
+	l_gate_cfg[1].event.duration = 0;	
 
-	g_gate_cfg[2].event.mode = GATE_NOTE_GATEC;	
-	g_gate_cfg[2].event.duration = 0;	
+	l_gate_cfg[2].event.mode = GATE_NOTE_GATEC;	
+	l_gate_cfg[2].event.duration = 0;	
 
-	g_gate_cfg[3].event.mode = GATE_NOTE_GATED;	
-	g_gate_cfg[3].event.duration = 0;	
+	l_gate_cfg[3].event.mode = GATE_NOTE_GATED;	
+	l_gate_cfg[3].event.duration = 0;	
 
-	g_gate_cfg[11].event.mode = GATE_MIDI_CLOCK_TICK;	
-	g_gate_cfg[11].clock.div = 24;
-	g_gate_cfg[11].event.duration = 15;	
+	l_gate_cfg[11].event.mode = GATE_MIDI_CLOCK_TICK;	
+	l_gate_cfg[11].clock.div = 24;
+	l_gate_cfg[11].event.duration = 15;	
 
+	gate_reset();
 }
 
 
@@ -501,8 +512,8 @@ void gate_init() {
 byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {	
 	if(which_gate >= GATE_MAX)
 		return 0;		
-	GATE_OUT_CFG *pcfg = &g_gate_cfg[which_gate];
-	GATE_OUT *pgate = &g_gate[which_gate];
+	GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
+	GATE_OUT *pgate = &l_gate[which_gate];
 	
 	// Check the target register
 	switch(param_lo) {	
@@ -511,9 +522,6 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	// SELECT GATE SOURCE AND INITIALISE GATE
 	case NRPNL_SRC:	
 	
-		// reset the gate status
-		gate_reset_single(which_gate);
-		
 		// High byte of value is the gate event source
 		switch(value_hi) {		
 
@@ -683,6 +691,10 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 ////////////////////////////////////////////////////////////
 // GET PATCH STORAGE INFO
 byte *gate_storage(int *len) {
-	*len = sizeof(g_gate_cfg);
-	return (byte*)&g_gate_cfg;
+	*len = sizeof(l_gate_cfg);
+	return (byte*)&l_gate_cfg;
 }
+
+//
+// END
+//

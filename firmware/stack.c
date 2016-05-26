@@ -1,35 +1,44 @@
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 //
-// MINI MIDI CV
+//       ///// //   //          /////    /////  /////
+//     //     //   //         //    // //      //   //
+//    //      // //    //    //    // //      //   //
+//   //      // //   ////   //    // //      //   //
+//   /////   ///     //     //////   /////  //////
 //
-// NOTE STACK
+// CV.OCD MIDI-TO-CV CONVERTER
+// hotchk155/2016
+// Sixty Four Pixels Limited
 //
-////////////////////////////////////////////////////////////
+// This work is distibuted under terms of Creative Commons 
+// License BY-NC-SA (Attribution, Non-commercial, Share-Alike)
+// https://creativecommons.org/licenses/by-nc-sa/4.0/
+//
+//////////////////////////////////////////////////////////////
 
-//TODO ACCENT
-//TODO LEGATO
+//////////////////////////////////////////////////////////////
+//
+// NOTE STACK MODULE
+//
+//////////////////////////////////////////////////////////////
 
 //
 // INCLUDES
 //
 #include <system.h>
-#include <rand.h>
 #include "cv-strip.h"
 
-
 //
-// PRIVATE DATA
+// GLOBAL DATA
 //
 
 // the note stacks
 NOTE_STACK g_stack[NUM_NOTE_STACKS] = {0};
 NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
+//
 // PRIVATE FUNCTIONS
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
+//
 
 ///////////////////////////////////////////////////////////////
 // ADD A NOTE TO A STACK
@@ -119,15 +128,6 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 		switch(pcfg->priority) {
 		
 		//////////////////////////////////////////////////////////
-		// OLD NOTE PRIORITY - copy out back notes
-		/*
-		case PRIORITY_OLD:
-			for(i=0; i<4 && i<pstack->count; ++i) {
-				new_out[i] = pstack->note[pstack->count - 1 - i];
-			}
-			break;
-		*/
-		//////////////////////////////////////////////////////////
 		// HIGHEST NOTE PRIORITY - copy out the highest held notes
 		// in order from highest to lowest
 		//////////////////////////////////////////////////////////
@@ -185,50 +185,6 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 			}			
 			break;
 
-/*
-		//////////////////////////////////////////////////////////
-		// RANDOMISED PRIORITY - use random notes from list of held
-		// notes, ensuring no note used no more that once
-		case PRIORITY_RANDOM:
-			for(i=0; i<4 && i<pstack->count; ++i) {
-				flag = 1;
-				while(flag) { // looking for a note position we've not used
-					pos = rand()%pstack->count;
-					flag = 0;
-					for(j=0; j<i; ++j) {
-						if(new_out[j] == pos) { // already got this one
-							flag = 1; 
-							break;
-						}
-					}
-				}
-			}
-			// replace the note positions with the note values
-			for(i=0; i<4; ++i) {
-				new_out[i] = pstack->note[new_out[i]];
-			}			
-			break;
-*/			
-		//////////////////////////////////////////////////////////
-		// PLAY ORDER QUEUE
-		// Just shuffle notes along the outputs without any
-		// prioritisation
-/*		
-		case PRIORITY_CYCLE2:
-		case PRIORITY_CYCLE3:
-		case PRIORITY_CYCLE4:
-			i = pcfg->priority - PRIORITY_CYCLE2 + 2;
-			new_out[0] = (pstack->index==0) ? pstack->note[0] : pstack->out[0];
-			new_out[1] = (pstack->index==1) ? pstack->note[1] : pstack->out[1];
-			new_out[2] = (pstack->index==2 && i>2) ? pstack->note[2] : pstack->out[2];
-			new_out[3] = (pstack->index==3 && i>3) ? pstack->note[3] : pstack->out[3];
-			if(++pstack->index > i) {
-				pstack->index = 0;
-			}
-			break;
-*/	
-	
-
 		//////////////////////////////////////////////////////////
 		// NEW NOTE PRIORITY - just copy out front notes
 		case PRIORITY_NEW:
@@ -277,11 +233,9 @@ static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_
 	return result;
 }
 
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-// PUBLIC FUNCTIONS
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
+//
+// GLOBAL FUNCTIONS
+//
 
 ////////////////////////////////////////////////////////////
 // HANDLE A MIDI NOTE
@@ -382,38 +336,8 @@ void stack_midi_bend(byte chan, int bend)
 	}
 }
 
-// RESET NOTE STACK STATE
-void stack_reset() {
-	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
-		g_stack[i].count = 0;
-		g_stack[i].out[0] = NO_NOTE_OUT;
-		g_stack[i].out[1] = NO_NOTE_OUT;
-		g_stack[i].out[2] = NO_NOTE_OUT;
-		g_stack[i].out[3] = NO_NOTE_OUT;
-		g_stack[i].bend = 0;
-		g_stack[i].vel = 0;		
-		g_stack[i].index = 0;		
-		gate_event(EV_NOTES_OFF, i);
-	}
-}
- 
-
-// INITIALISE NOTE STACK CONFIG
-void stack_init()
-{
-	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
-		g_stack_cfg[i].chan = CHAN_DISABLE;
-		g_stack_cfg[i].note_min = 0;
-		g_stack_cfg[i].note_max = 127;
-		g_stack_cfg[i].vel_min = 0;
-		g_stack_cfg[i].bend_range = 12;		
-		g_stack_cfg[i].priority = PRIORITY_NEW;		
-	}
-	g_stack_cfg[0].chan = CHAN_GLOBAL;
-}
-
 ////////////////////////////////////////////////////////////
-// CONFIGURE A PARAMETER OF A NOTE STACK
+// CONFIGURE NOTE STACK
 byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
 {
 	if(which_stack >= NUM_NOTE_STACKS) 
@@ -491,8 +415,43 @@ byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
 }
 
 ////////////////////////////////////////////////////////////
-// GET PATCH STORAGE INFO
+// GET NOTE STACK CONFIG 
 byte *stack_storage(int *len) {
 	*len = sizeof(g_stack_cfg);
 	return (byte*)&g_stack_cfg;
 }
+
+////////////////////////////////////////////////////////////
+// RESET NOTE STACK STATE
+void stack_reset() {
+	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
+		g_stack[i].count = 0;
+		g_stack[i].out[0] = NO_NOTE_OUT;
+		g_stack[i].out[1] = NO_NOTE_OUT;
+		g_stack[i].out[2] = NO_NOTE_OUT;
+		g_stack[i].out[3] = NO_NOTE_OUT;
+		g_stack[i].bend = 0;
+		g_stack[i].vel = 0;		
+		g_stack[i].index = 0;		
+		gate_event(EV_NOTES_OFF, i);
+	}
+}
+ 
+////////////////////////////////////////////////////////////
+// INITIALISE NOTE STACK CONFIG
+void stack_init()
+{
+	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
+		g_stack_cfg[i].chan = CHAN_DISABLE;
+		g_stack_cfg[i].note_min = 0;
+		g_stack_cfg[i].note_max = 127;
+		g_stack_cfg[i].vel_min = 0;
+		g_stack_cfg[i].bend_range = 12;		
+		g_stack_cfg[i].priority = PRIORITY_NEW;		
+	}
+	g_stack_cfg[0].chan = CHAN_GLOBAL;
+}
+
+//
+// END
+//
