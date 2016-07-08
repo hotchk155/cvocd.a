@@ -271,6 +271,21 @@ typedef struct {
 	byte index;					// index for note cycling
 } NOTE_STACK;
 
+// A note transaction is used to synchronise CV and gate data
+// when sending notes (so gate fires only after note info has
+// been sent out to the DAC
+enum {
+	TXN_DONE 	= 0x10
+};
+typedef struct {
+	byte flags;
+	unsigned int pretrig_mask;
+	unsigned int pretrig_data;
+	unsigned int trig_mask;
+	unsigned int trig_data;
+	unsigned int dac[4];
+} CV_TXN;
+
 //
 // GLOBAL DATA DECLARATIONS
 //
@@ -279,21 +294,22 @@ extern char g_led_2_timeout;
 extern GLOBAL_CFG g_global;
 extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
 extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
-extern byte g_cv_dac_pending;
-extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
-extern volatile byte g_i2c_tx_buf_index;
-extern volatile byte g_i2c_tx_buf_len;
+//extern byte g_cv_dac_pending;
+//extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
+//extern volatile byte g_i2c_tx_buf_index;
+//extern volatile byte g_i2c_tx_buf_len;
 //extern volatile unsigned int g_sr_data;
 
 extern volatile unsigned int g_sr_pending_mask;	// mask of gate bits that are pending update
 extern volatile unsigned int g_sr_pending_data;	// pending state of those gate bits 
 extern volatile unsigned int g_sr_retrig_mask;		// bits that need to be changed just before pending update (for retrig)
 extern volatile unsigned int g_sr_retrig_data;		// shift register bits for retrigs
+extern volatile CV_TXN *g_pending_txn;
 
 //extern volatile unsigned int g_sr_retrigs;
-extern volatile unsigned int g_sync_sr_data;
-extern volatile unsigned int g_sync_sr_mask;
-extern volatile byte g_sync_sr_data_pending;
+//extern volatile unsigned int g_sync_sr_data;
+//extern volatile unsigned int g_sync_sr_mask;
+//extern volatile byte g_sync_sr_data_pending;
 //extern volatile byte g_sr_data_pending;
 
 //

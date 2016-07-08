@@ -32,8 +32,12 @@
 //
 // MACRO DEFS
 //
-#define I2C_ADDRESS 0b1100000
+/*
 
+	FSD = 5V
+	
+	6553.5
+*/
 //
 // TYPE DEFS
 //
@@ -75,7 +79,7 @@ typedef union {
 //
 
 // cache of raw DAC data
-int l_dac[CV_MAX] = {0};
+unsigned int l_dac[CV_MAX] = {0};
 
 // CV config 
 CV_OUT l_cv[CV_MAX];
@@ -89,28 +93,27 @@ int l_note[CV_MAX];
 
 ////////////////////////////////////////////////////////////
 // CONFIGURE THE DAC
-static void cv_config_dac() {
-	i2c_begin_write(I2C_ADDRESS);
-	i2c_send(0b10001111); // set each channel to use internal vref
-	i2c_end();	
-
-	i2c_begin_write(I2C_ADDRESS);
-	i2c_send(0b11001111); // set x2 gain on each channel
-	i2c_end();	
-}
+//static void cv_config_dac() {
+//	i2c_begin_write(I2C_ADDRESS);
+//	i2c_send(0b10001111); // set each channel to use internal vref
+//	i2c_end();	
+//
+//	i2c_begin_write(I2C_ADDRESS);
+//	i2c_send(0b11001111); // set x2 gain on each channel
+//	i2c_end();	
+//}
 
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
-static void cv_update(byte which, int value) {
-	if(value < 0) 
-		value = 0;
-	if(value > 4095) 
-		value = 4095;
-		
+static void cv_update(byte which, unsigned int value) {
+
 	// check the value has actually changed
 	if(value != l_dac[which]) {
 		l_dac[which] = value;
-		g_cv_dac_pending = 1;
+		
+		// flag new data to go to DAC
+		g_pending_txn->dac[which] = value;
+		g_pending_txn->flags |= (1<<which);
 	}
 }	
 
@@ -154,13 +157,20 @@ static void cv_write_bend(byte which, int value, byte volts) {
 ////////////////////////////////////////////////////////////
 // WRITE VOLTS
 static void cv_write_volts(byte which, byte value) {
-	cv_update(which, (int)value * 500);
+	
+	/*
+		DAC outputs 5V when set to 65535
+		op-amp doubles this to 10V
+		10V on output = 65535 on DAC
+	*/
+	cv_update(which, (unsigned int)((((unsigned long)value)<<16)/10));
 }
 
 //
 // GLOBAL FUNCTIONS
 //
 
+/*
 ////////////////////////////////////////////////////////////
 // COPY CURRENT OUTPUT VALUES TO TRANSMIT BUFFER FOR DAC
 void cv_dac_prepare() {	
@@ -175,7 +185,7 @@ void cv_dac_prepare() {
 	g_i2c_tx_buf[8] = (l_dac[0] & 0xFF);
 	g_i2c_tx_buf_len = 9;
 	g_i2c_tx_buf_index = 0;
-}
+}*/
 
 ////////////////////////////////////////////////////////////
 // HANDLE AN EVENT FROM A NOTE STACK
@@ -405,7 +415,7 @@ void cv_init() {
 	memset(l_cv, 0, sizeof(l_cv));
 	memset(l_dac, 0, sizeof(l_dac));
 	memset(l_note, 0, sizeof(l_note));
-	cv_config_dac();
+	//cv_config_dac();
 	
 	l_cv[0].event.mode = CV_NOTE;
 	l_cv[0].event.out = 0;	
@@ -432,7 +442,7 @@ void cv_reset() {
 			break;
 		}
 	}
-	g_cv_dac_pending = 1;
+	//g_cv_dac_pending = 1;
 }
 
 //
