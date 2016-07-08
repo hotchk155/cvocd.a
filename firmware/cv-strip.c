@@ -83,13 +83,20 @@ byte nrpn_hi = 0;						// value of last NRPN param high byte
 byte nrpn_lo = 0;						// value of last NRPN param low byte
 byte nrpn_value_hi = 0;					// value of last NRPN value high byte
 
+static volatile unsigned int g_sr_data = 0;		// holds the current status of the gate shift registers
+
 //
 // GLOBAL DATA
 //
 volatile byte g_cv_dac_pending;				// flag to say whether dac data is pending
-volatile unsigned int g_sr_data = 0;		// gate data to load to shift registers
-volatile unsigned int g_sr_retrigs = 0;		// shift register bits to send low before next load
-volatile byte g_sr_data_pending = 0;		// indicates if any gate data is pending
+
+
+volatile unsigned int g_sr_pending_mask;	// mask of gate bits that are pending update
+volatile unsigned int g_sr_pending_data;	// pending state of those gate bits 
+volatile unsigned int g_sr_retrig_mask;		// bits that need to be changed just before pending update (for retrig)
+volatile unsigned int g_sr_retrig_data;		// shift register bits for retrigs
+
+
 volatile unsigned int g_sync_sr_data = 0;	// additional gate bits, synced to CV load
 volatile byte g_sync_sr_data_pending = 0;	// indicates if any synched gate data is pending
 
@@ -150,7 +157,7 @@ void interrupt( void )
 				g_sr_data |= g_sync_sr_data;	// set the new gates
 				g_sync_sr_data = 0;				// no syncronised data pending now..
 				g_sync_sr_data_pending = 0;		
-				g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
+				//g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
 			}			
 			pie1.3 = 0; // we're done - disable the I2C interrupt
 		}
@@ -261,20 +268,19 @@ void uart_init()
 
 ////////////////////////////////////////////////////////////
 // LOAD GATE SHIFT REGISTER
-void sr_write(unsigned int nmask) {
-	unsigned int d = g_sr_data & ~nmask; // nmask is a bit set to force to LOW
+void sr_write(unsigned int d) {
 	unsigned int m1 = 0x0080;
 	unsigned int m2 = 0x8000;
-	P_SRLAT = 0;
+	P_SRLAT = 1;
 	while(m1) {
-		P_SRCLK = 0;
+		P_SRCLK = 1;
 		P_SRDAT1 = !!(d&m1);
 		P_SRDAT2 = !!(d&m2);
-		P_SRCLK = 1;
+		P_SRCLK = 0;
 		m1>>=1;
 		m2>>=1;
 	}
-	P_SRLAT = 1;
+	P_SRLAT = 0;
 }
 
 ////////////////////////////////////////////////////////////
@@ -491,6 +497,12 @@ void main()
 
 	unsigned int button_press = 0;
 
+	// initial gate data
+	g_sr_retrig_mask = 0;
+	g_sr_retrig_data = 0;
+	g_sr_pending_mask = 0;
+	g_sr_pending_data = 0;
+
 	// flash both LEDs at startup
 	LED_1_PULSE(255);
 	LED_2_PULSE(255);
@@ -507,6 +519,9 @@ void main()
 	
 	// reset them
 	all_reset();
+
+P_VSEL1 	= 0;
+P_VSEL2 	= 0;
 
 	// App loop
 	int bend;
@@ -635,15 +650,26 @@ void main()
 			i2c_send_async();
 			g_cv_dac_pending = 0; 
 		}				
-		// check for retrigs.. if so all retrig bits will be sent low
-		if(g_sr_retrigs) {
-			sr_write(g_sr_retrigs);
-			g_sr_retrigs = 0;
+		
+		// check if any retrig data is pending (these are shift register bits that
+		// will be set to their "gate off" state immediately before getting set
+		// to their "gate on" state
+		if(g_sr_retrig_mask) {
+			g_sr_data &= ~g_sr_retrig_mask;
+			g_sr_data |= g_sr_retrig_data;
+			sr_write(g_sr_data);
+			g_sr_retrig_mask = 0;
+			g_sr_retrig_data = 0;
 		}
-		// check if there is any shift register data pending		
-		if(g_sr_data_pending) {
-			g_sr_data_pending = 0;
-			sr_write(0);
+				
+		// Check if any new gate data is pending. If so update those bits on
+		// the output shift register
+		if(g_sr_pending_mask) {
+			g_sr_data &= ~g_sr_pending_mask;
+			g_sr_data |= g_sr_pending_data;
+			sr_write(g_sr_data);
+			g_sr_pending_mask = 0;
+			g_sr_pending_data = 0;
 		}			
 	}
 }

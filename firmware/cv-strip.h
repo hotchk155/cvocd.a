@@ -29,13 +29,15 @@
 // Pin definitions
 #define P_LED1		lata.2
 #define P_LED2		latc.2
-#define P_SRDAT1	lata.0
+#define P_SRDAT1	lata.4
 #define P_SRDAT2	lata.1
-#define P_SRCLK		lata.4
-#define P_SRLAT		lata.5
-#define P_SWITCH 	portc.3
+#define P_SRCLK		lata.5
+#define P_SRLAT		lata.0
+#define P_SWITCH 	porta.3
+#define P_VSEL1 	latc.3
+#define P_VSEL2 	latc.4
 #define TRIS_A		0b11001000
-#define TRIS_C		0b11111011
+#define TRIS_C		0b11100011
 
 // constants
 #define CV_MAX		4					// number of cv outs
@@ -281,12 +283,18 @@ extern byte g_cv_dac_pending;
 extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
 extern volatile byte g_i2c_tx_buf_index;
 extern volatile byte g_i2c_tx_buf_len;
-extern volatile unsigned int g_sr_data;
-extern volatile unsigned int g_sr_retrigs;
+//extern volatile unsigned int g_sr_data;
+
+extern volatile unsigned int g_sr_pending_mask;	// mask of gate bits that are pending update
+extern volatile unsigned int g_sr_pending_data;	// pending state of those gate bits 
+extern volatile unsigned int g_sr_retrig_mask;		// bits that need to be changed just before pending update (for retrig)
+extern volatile unsigned int g_sr_retrig_data;		// shift register bits for retrigs
+
+//extern volatile unsigned int g_sr_retrigs;
 extern volatile unsigned int g_sync_sr_data;
 extern volatile unsigned int g_sync_sr_mask;
 extern volatile byte g_sync_sr_data_pending;
-extern volatile byte g_sr_data_pending;
+//extern volatile byte g_sr_data_pending;
 
 //
 // GLOBAL FUNCTION DECLARATIONS

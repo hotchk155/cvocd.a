@@ -31,10 +31,19 @@
 //
 
 // Define bits for the shift register outputs
-#define SRB_NOTE1	0x0004
-#define SRB_NOTE2	0x0008
-#define SRB_NOTE3 	0x0002
-#define SRB_NOTE4	0x0001
+//#define SRB_NOTE1	0x0004
+//#define SRB_NOTE2	0x0008
+//#define SRB_NOTE3 	0x0002
+//#define SRB_NOTE4	0x0001
+//#define SRB_DRM1 	0x0100
+//#define SRB_DRM2 	0x0200
+//#define SRB_DRM3 	0x0400
+//#define SRB_DRM4 	0x0800
+//#define SRB_DRM5 	0x1000
+//#define SRB_DRM6 	0x2000
+//#define SRB_DRM7 	0x4000
+//#define SRB_DRM8 	0x8000
+
 #define SRB_DRM1 	0x0100
 #define SRB_DRM2 	0x0200
 #define SRB_DRM3 	0x0400
@@ -43,12 +52,21 @@
 #define SRB_DRM6 	0x2000
 #define SRB_DRM7 	0x4000
 #define SRB_DRM8 	0x8000
+#define SRB_GT1H	0x0008
+#define SRB_GT1L	0x0080
+#define SRB_GT2H	0x0001
+#define SRB_GT2L	0x0010
+#define SRB_GT3H	0x0004
+#define SRB_GT3L	0x0040
+#define SRB_GT4H	0x0002
+#define SRB_GT4L	0x0020
 
 // initial CC "last value" 
 #define NO_VALUE 	0xFF
 
 // flag bits
 #define GATE_FLAG_RETRIG 0x01
+#define GATE_FLAG_STRIG	 0x02
 
 // List of modes for a gate output to be triggered
 enum {
@@ -146,6 +164,119 @@ static GATE_OUT l_gate[GATE_MAX];
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
+static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_on, byte sync)
+{	
+	// get appropriate shift register bits
+	unsigned int gate_mask;	// bits within shift reg word that are affected
+	unsigned int gate_on;	// how these bits are set when gate is ON
+	unsigned int gate_off;	// how these bits are set when gate is OFF
+
+	// Gates 1-4 (indexed 0..3) are three-state gates which can be driven 
+	// high, low or floated. Each is driven by two shift register outputs
+	// meaning two bits in the shift register word
+	if(which_gate < 4) {
+		switch(which_gate) {
+			case 0:  
+				gate_mask = SRB_GT1H|SRB_GT1L;
+				if(pcfg->event.flags & GATE_FLAG_STRIG) {
+					gate_on = SRB_GT1H|SRB_GT1L;	// drive low
+					gate_off = SRB_GT1H;			// float
+				}
+				else {
+					gate_on = 0;					// drive high
+					gate_off = SRB_GT1H|SRB_GT1L;	// drive low
+				} 
+				break;
+			case 1:  
+				gate_mask = SRB_GT2H|SRB_GT2L;
+				if(pcfg->event.flags & GATE_FLAG_STRIG) {
+					gate_on = SRB_GT2H|SRB_GT2L;	// drive low
+					gate_off = SRB_GT2H;			// float
+				}
+				else {
+					gate_on = 0;					// drive high
+					gate_off = SRB_GT2H|SRB_GT2L;	// drive low
+				} 
+				break;
+			case 2:  
+				gate_mask = SRB_GT3H|SRB_GT3L;
+				if(pcfg->event.flags & GATE_FLAG_STRIG) {
+					gate_on = SRB_GT3H|SRB_GT3L;	// drive low
+					gate_off = SRB_GT3H;			// float
+				}
+				else {
+					gate_on = 0;					// drive high
+					gate_off = SRB_GT3H|SRB_GT3L;	// drive low
+				} 
+				break;
+			case 3:  
+				gate_mask = SRB_GT4H|SRB_GT4L;
+				if(pcfg->event.flags & GATE_FLAG_STRIG) {
+					gate_on = SRB_GT4H|SRB_GT4L;	// drive low
+					gate_off = SRB_GT4H;			// float
+				}
+				else {
+					gate_on = 0;					// drive high
+					gate_off = SRB_GT4H|SRB_GT4L;	// drive low
+				} 
+				break;
+			default: 
+				return;
+		}	
+	}
+	else {
+		switch(which_gate) {
+			case 4:  gate_mask = SRB_DRM1; break;
+			case 5:  gate_mask = SRB_DRM2; break;
+			case 6:  gate_mask = SRB_DRM3; break;
+			case 7:  gate_mask = SRB_DRM4; break;
+			case 8:  gate_mask = SRB_DRM5; break;
+			case 9:  gate_mask = SRB_DRM6; break;
+			case 10: gate_mask = SRB_DRM7; break;
+			case 11: gate_mask = SRB_DRM8; break;
+			default: return;
+		}	
+		gate_on = gate_mask;	// and mask is 1 bit only
+		gate_off = 0;			// these gate bits simply ON or OFF
+	}
+
+	if(trigger_on) { 
+		
+		// if this gate is set to retrigger, then set
+		// up a pretrig to turn the output off
+		if(pcfg->event.flags & GATE_FLAG_RETRIG) {
+			g_sr_retrig_mask |= gate_mask;
+			g_sr_retrig_data &= ~gate_mask;
+			g_sr_retrig_data |= gate_off;
+		}
+
+		// set up the trigger 
+		g_sr_pending_mask |= gate_mask;
+		g_sr_pending_data &= ~gate_mask;
+		g_sr_pending_data |= gate_on;
+
+		// set duration counter
+		if(GATE_DUR_GLOBAL == pcfg->event.duration) {
+			pgate->counter = g_global.gate_duration;
+		}
+		else {
+			pgate->counter = pcfg->event.duration;
+		}
+	}	
+	else { 
+		// trigger OFF 
+		g_sr_pending_mask |= gate_mask;
+		g_sr_pending_data &= ~gate_mask;
+		g_sr_pending_data |= gate_off;	
+		
+		// clear duration counter
+		pgate->counter = 0;
+	}		
+}
+
+
+
+/*
 static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync)
 {	
 	// get appropriate shift register bit
@@ -209,6 +340,7 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		pgate->counter = 0;
 	}	
 }
+*/
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
