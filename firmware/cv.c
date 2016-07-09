@@ -105,8 +105,20 @@ int l_note[CV_MAX];
 
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
-static void cv_update(byte which, unsigned int value) {
+// value is in volts * 65536
+static void cv_update(byte which, long value) {
 
+	// divide by full 10V output range
+	value/=10;
+	
+	//TODO - offset/scale
+	
+	// limit the value
+	if(value < 0) 
+		value = 0;
+	if(value > 65535) 
+		value = 65535;
+		
 	// check the value has actually changed
 	if(value != l_dac[which]) {
 		l_dac[which] = value;
@@ -121,49 +133,42 @@ static void cv_update(byte which, unsigned int value) {
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
 static void cv_write_note(byte which, long note, int pitch_bend) {
-	note <<= 8;
-	note += pitch_bend;
-	note *= 500;
-	note /= 12;	
-	note >>= 8;
+
+	note <<= 8;				// get MIDI note into same units as bend
+	note += pitch_bend; 	// add MIDI note and pitch bend	
+	note <<=8;				// upscale to midi note * 65536
+	note/=12;				// scale to volts (1V/octave)
 	cv_update(which, note);
 }
+
+
 
 ////////////////////////////////////////////////////////////
 // WRITE A 7-BIT CC VALUE TO A CV OUTPUT
 static void cv_write_7bit(byte which, byte value, byte volts) {
-	if(value > 127) 
-		value = 127;
-	// 1 volt is 500 clicks on the DAC
-	// So (500 * volts) is the full range for the 7-bit value (127)
-	// DAC value = (value / 127) * (500 * volts)
-	// = 3.937 * value * volts
-	// ~ 4 * value * volts
-	cv_update(which, ((int)value * volts)<<2);
+
+	// get a value which is 65536 * desired voltage
+	// = 65536 * volts * (value/128)
+	// = volts * value * 512
+	cv_update(which, ((long)value * volts)<<9);
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE PITCH BEND VALUE TO A CV OUTPUT
 // receive raw 14bit value 
 static void cv_write_bend(byte which, int value, byte volts) {	
-	// 1 volt is 500 clicks on the DAC
-	// So (500 * volts) is the full range for the 14-bit bend value (16384)
-	// DAC value = (value / 16384) * (500 * volts)
-	// = (value / 32.768) * volts
-	// ~ (volts * value)/32
-	cv_update(which, (((long)value * volts) >> 5));
+	
+	// get a value which is 65536 * desired voltage
+	// = 65536 * volts * (value/16384)
+	// = volts * value * 4
+	cv_update(which, ((long)value * volts)<<2);
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE VOLTS
 static void cv_write_volts(byte which, byte value) {
 	
-	/*
-		DAC outputs 5V when set to 65535
-		op-amp doubles this to 10V
-		10V on output = 65535 on DAC
-	*/
-	cv_update(which, (unsigned int)((((unsigned long)value)<<16)/10));
+	cv_update(which, ((long)value)<<16);
 }
 
 //
