@@ -18740,13 +18740,13 @@ SIXTY FOUR PIXELS LTD</text>
 <net name="SCL" class="0">
 <segment>
 <pinref part="R22" gate="G$1" pin="2"/>
-<wire x1="-99.06" y1="60.96" x2="-129.54" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="-129.54" y1="60.96" x2="-132.08" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="-129.54" y1="88.9" x2="-129.54" y2="60.96" width="0.1524" layer="91"/>
-<junction x="-129.54" y="60.96"/>
-<label x="-134.62" y="60.96" size="1.778" layer="95"/>
-<pinref part="IC1" gate="G$1" pin="PIO0_11"/>
-<junction x="-99.06" y="60.96"/>
+<wire x1="-129.54" y1="58.42" x2="-132.08" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="-129.54" y1="88.9" x2="-129.54" y2="58.42" width="0.1524" layer="91"/>
+<junction x="-129.54" y="58.42"/>
+<label x="-134.62" y="58.42" size="1.778" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="PIO0_10"/>
+<wire x1="-129.54" y1="58.42" x2="-99.06" y2="58.42" width="0.1524" layer="91"/>
+<junction x="-99.06" y="58.42"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="SCL"/>
@@ -18763,13 +18763,13 @@ SIXTY FOUR PIXELS LTD</text>
 <net name="SDA" class="0">
 <segment>
 <pinref part="R21" gate="G$1" pin="2"/>
-<wire x1="-132.08" y1="58.42" x2="-127" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="-127" y1="88.9" x2="-127" y2="58.42" width="0.1524" layer="91"/>
-<junction x="-127" y="58.42"/>
-<label x="-134.62" y="58.42" size="1.778" layer="95"/>
-<pinref part="IC1" gate="G$1" pin="PIO0_10"/>
-<wire x1="-127" y1="58.42" x2="-99.06" y2="58.42" width="0.1524" layer="91"/>
-<junction x="-99.06" y="58.42"/>
+<wire x1="-132.08" y1="60.96" x2="-127" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="-127" y1="88.9" x2="-127" y2="60.96" width="0.1524" layer="91"/>
+<junction x="-127" y="60.96"/>
+<label x="-134.62" y="60.96" size="1.778" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="PIO0_11"/>
+<wire x1="-127" y1="60.96" x2="-99.06" y2="60.96" width="0.1524" layer="91"/>
+<junction x="-99.06" y="60.96"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="SDA"/>
@@ -19023,10 +19023,10 @@ SIXTY FOUR PIXELS LTD</text>
 <label x="2.54" y="172.72" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<label x="-58.42" y="78.486" size="1.778" layer="95"/>
-<pinref part="IC1" gate="G$1" pin="PIO0_14"/>
-<wire x1="-63.5" y1="78.74" x2="-58.42" y2="78.74" width="0.1524" layer="91"/>
-<junction x="-63.5" y="78.74"/>
+<label x="-116.332" y="73.66" size="1.778" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="PIO0_12"/>
+<wire x1="-104.14" y1="73.66" x2="-99.06" y2="73.66" width="0.1524" layer="91"/>
+<junction x="-99.06" y="73.66"/>
 </segment>
 </net>
 <net name="5V" class="0">
@@ -19595,8 +19595,10 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <label x="-58.42" y="70.866" size="1.778" layer="95"/>
 <pinref part="IC1" gate="G$1" pin="PIO0_7"/>
-<wire x1="-63.5" y1="71.12" x2="-58.42" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="-63.5" y1="71.12" x2="-60.96" y2="71.12" width="0.1524" layer="91"/>
 <junction x="-63.5" y="71.12"/>
+<junction x="-60.96" y="71.12"/>
+<wire x1="-60.96" y1="71.12" x2="-58.42" y2="71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GT1_VSEL" class="0">
