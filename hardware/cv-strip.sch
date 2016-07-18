@@ -18099,10 +18099,10 @@ EAGLE CAD Libraries on element14&lt;/a&gt;</description>
 <part name="IC1" library="jason_eagle6" deviceset="LPC812" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
-<part name="Q15" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
-<part name="Q16" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
-<part name="Q17" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
-<part name="Q18" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
+<part name="Q6" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
+<part name="Q5" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
+<part name="Q4" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
+<part name="Q3" library="jason_eagle6" deviceset="MOSFET-N_DUAL" device=""/>
 <part name="IC8" library="Microchip-24LCxxx" deviceset="24LC_" device="" technology="64T-I/OT"/>
 <part name="C23" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="GND20" library="supply1" deviceset="GND" device=""/>
@@ -18321,14 +18321,14 @@ SIXTY FOUR PIXELS LTD</text>
 <instance part="IC1" gate="G$1" x="-81.28" y="71.12"/>
 <instance part="GND2" gate="1" x="-35.56" y="33.02"/>
 <instance part="R4" gate="G$1" x="-137.16" y="83.82" rot="R270"/>
-<instance part="Q15" gate="G$1" x="-33.02" y="-20.32"/>
-<instance part="Q15" gate="G$2" x="-40.64" y="-15.24"/>
-<instance part="Q16" gate="G$1" x="-25.4" y="-25.4"/>
-<instance part="Q16" gate="G$2" x="-35.56" y="-114.3"/>
-<instance part="Q17" gate="G$1" x="-20.32" y="-124.46"/>
-<instance part="Q17" gate="G$2" x="-27.94" y="-119.38"/>
-<instance part="Q18" gate="G$1" x="-109.22" y="-55.88"/>
-<instance part="Q18" gate="G$2" x="-116.84" y="-38.1"/>
+<instance part="Q6" gate="G$1" x="-33.02" y="-20.32"/>
+<instance part="Q6" gate="G$2" x="-40.64" y="-15.24"/>
+<instance part="Q5" gate="G$1" x="-25.4" y="-25.4"/>
+<instance part="Q5" gate="G$2" x="-35.56" y="-114.3"/>
+<instance part="Q4" gate="G$1" x="-20.32" y="-124.46"/>
+<instance part="Q4" gate="G$2" x="-27.94" y="-119.38"/>
+<instance part="Q3" gate="G$1" x="-109.22" y="-55.88"/>
+<instance part="Q3" gate="G$2" x="-116.84" y="-38.1"/>
 <instance part="IC8" gate="A" x="-99.06" y="38.1"/>
 <instance part="C23" gate="G$1" x="-106.68" y="25.4"/>
 <instance part="GND20" gate="1" x="-101.6" y="15.24"/>
@@ -18539,11 +18539,11 @@ SIXTY FOUR PIXELS LTD</text>
 <wire x1="-38.1" y1="-20.32" x2="-38.1" y2="-35.56" width="0.1524" layer="91"/>
 <wire x1="-38.1" y1="-35.56" x2="-30.48" y2="-35.56" width="0.1524" layer="91"/>
 <junction x="-30.48" y="-35.56"/>
-<pinref part="Q16" gate="G$1" pin="S"/>
+<pinref part="Q5" gate="G$1" pin="S"/>
 <wire x1="-22.86" y1="-35.56" x2="-22.86" y2="-30.48" width="0.1524" layer="91"/>
 <junction x="-22.86" y="-35.56"/>
-<pinref part="Q15" gate="G$2" pin="S"/>
-<pinref part="Q15" gate="G$1" pin="S"/>
+<pinref part="Q6" gate="G$2" pin="S"/>
+<pinref part="Q6" gate="G$1" pin="S"/>
 <wire x1="-30.48" y1="-35.56" x2="-30.48" y2="-25.4" width="0.1524" layer="91"/>
 <junction x="-38.1" y="-20.32"/>
 <junction x="-30.48" y="-25.4"/>
@@ -18563,11 +18563,11 @@ SIXTY FOUR PIXELS LTD</text>
 <junction x="-25.4" y="-134.62"/>
 <pinref part="GND17" gate="1" pin="GND"/>
 <wire x1="-17.78" y1="-139.7" x2="-17.78" y2="-134.62" width="0.1524" layer="91"/>
-<pinref part="Q16" gate="G$2" pin="S"/>
+<pinref part="Q5" gate="G$2" pin="S"/>
 <junction x="-33.02" y="-124.46"/>
-<pinref part="Q17" gate="G$2" pin="S"/>
+<pinref part="Q4" gate="G$2" pin="S"/>
 <wire x1="-25.4" y1="-134.62" x2="-25.4" y2="-124.46" width="0.1524" layer="91"/>
-<pinref part="Q17" gate="G$1" pin="S"/>
+<pinref part="Q4" gate="G$1" pin="S"/>
 <wire x1="-17.78" y1="-129.54" x2="-17.78" y2="-134.62" width="0.1524" layer="91"/>
 <junction x="-17.78" y="-134.62"/>
 <junction x="-33.02" y="-119.38"/>
@@ -18678,12 +18678,12 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="-114.3" y1="-63.5" x2="-114.3" y2="-43.18" width="0.1524" layer="91"/>
-<pinref part="Q18" gate="G$2" pin="S"/>
+<pinref part="Q3" gate="G$2" pin="S"/>
 <junction x="-114.3" y="-43.18"/>
 </segment>
 <segment>
 <pinref part="GND15" gate="1" pin="GND"/>
-<pinref part="Q18" gate="G$1" pin="S"/>
+<pinref part="Q3" gate="G$1" pin="S"/>
 <wire x1="-106.68" y1="-63.5" x2="-106.68" y2="-60.96" width="0.1524" layer="91"/>
 <junction x="-106.68" y="-60.96"/>
 </segment>
@@ -18731,11 +18731,10 @@ SIXTY FOUR PIXELS LTD</text>
 <label x="149.86" y="157.48" size="1.778" layer="95"/>
 </segment>
 <segment>
-<label x="-114.3" y="88.9" size="1.778" layer="95" rot="R90"/>
-<wire x1="-99.06" y1="68.58" x2="-114.3" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="-114.3" y1="68.58" x2="-114.3" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="PIO0_4"/>
-<junction x="-99.06" y="68.58"/>
+<label x="-49.276" y="77.724" size="1.778" layer="95" rot="R180"/>
+<wire x1="-58.42" y1="76.2" x2="-63.5" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="PIO0_0"/>
+<junction x="-63.5" y="76.2"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -18937,7 +18936,7 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <label x="-55.88" y="-22.86" size="1.778" layer="95"/>
 <wire x1="-35.56" y1="-22.86" x2="-48.26" y2="-22.86" width="0.1524" layer="91"/>
-<pinref part="Q15" gate="G$1" pin="G"/>
+<pinref part="Q6" gate="G$1" pin="G"/>
 <junction x="-35.56" y="-22.86"/>
 </segment>
 </net>
@@ -18951,13 +18950,13 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <label x="-55.88" y="-27.94" size="1.778" layer="95"/>
 <wire x1="-27.94" y1="-27.94" x2="-48.26" y2="-27.94" width="0.1524" layer="91"/>
-<pinref part="Q16" gate="G$1" pin="G"/>
+<pinref part="Q5" gate="G$1" pin="G"/>
 <junction x="-27.94" y="-27.94"/>
 </segment>
 <segment>
 <label x="-48.26" y="-127" size="1.778" layer="95"/>
 <wire x1="-22.86" y1="-127" x2="-43.18" y2="-127" width="0.1524" layer="91"/>
-<pinref part="Q17" gate="G$1" pin="G"/>
+<pinref part="Q4" gate="G$1" pin="G"/>
 <junction x="-22.86" y="-127"/>
 </segment>
 </net>
@@ -18970,13 +18969,13 @@ SIXTY FOUR PIXELS LTD</text>
 </segment>
 <segment>
 <label x="-55.88" y="-17.78" size="1.778" layer="95"/>
-<pinref part="Q15" gate="G$2" pin="G"/>
+<pinref part="Q6" gate="G$2" pin="G"/>
 <wire x1="-48.26" y1="-17.78" x2="-43.18" y2="-17.78" width="0.1524" layer="91"/>
 <junction x="-43.18" y="-17.78"/>
 </segment>
 <segment>
 <label x="-48.26" y="-116.84" size="1.778" layer="95"/>
-<pinref part="Q16" gate="G$2" pin="G"/>
+<pinref part="Q5" gate="G$2" pin="G"/>
 <wire x1="-43.18" y1="-116.84" x2="-40.64" y2="-116.84" width="0.1524" layer="91"/>
 <junction x="-40.64" y="-116.84"/>
 <wire x1="-40.64" y1="-116.84" x2="-38.1" y2="-116.84" width="0.1524" layer="91"/>
@@ -19024,10 +19023,10 @@ SIXTY FOUR PIXELS LTD</text>
 <label x="2.54" y="172.72" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<label x="-111.76" y="73.66" size="1.778" layer="95"/>
-<pinref part="IC1" gate="G$1" pin="PIO0_12"/>
-<wire x1="-104.14" y1="73.66" x2="-99.06" y2="73.66" width="0.1524" layer="91"/>
-<junction x="-99.06" y="73.66"/>
+<label x="-58.42" y="78.486" size="1.778" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="PIO0_14"/>
+<wire x1="-63.5" y1="78.74" x2="-58.42" y2="78.74" width="0.1524" layer="91"/>
+<junction x="-63.5" y="78.74"/>
 </segment>
 </net>
 <net name="5V" class="0">
@@ -19339,7 +19338,7 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <label x="-48.26" y="-121.92" size="1.778" layer="95"/>
 <wire x1="-30.48" y1="-121.92" x2="-43.18" y2="-121.92" width="0.1524" layer="91"/>
-<pinref part="Q17" gate="G$2" pin="G"/>
+<pinref part="Q4" gate="G$2" pin="G"/>
 <junction x="-30.48" y="-121.92"/>
 </segment>
 </net>
@@ -19406,7 +19405,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC3" gate="G$1" pin="STROBE"/>
 <wire x1="-38.1" y1="-7.62" x2="-38.1" y2="0" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-7.62" x2="-38.1" y2="-7.62" width="0.1524" layer="91"/>
-<pinref part="Q15" gate="G$2" pin="D"/>
+<pinref part="Q6" gate="G$2" pin="D"/>
 <wire x1="-38.1" y1="-10.16" x2="-38.1" y2="-7.62" width="0.1524" layer="91"/>
 <junction x="-38.1" y="-7.62"/>
 <junction x="-38.1" y="-10.16"/>
@@ -19418,7 +19417,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC3" gate="G$1" pin="DATA"/>
 <wire x1="-30.48" y1="-10.16" x2="-30.48" y2="0" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-10.16" x2="-30.48" y2="-10.16" width="0.1524" layer="91"/>
-<pinref part="Q15" gate="G$1" pin="D"/>
+<pinref part="Q6" gate="G$1" pin="D"/>
 <wire x1="-30.48" y1="-15.24" x2="-30.48" y2="-10.16" width="0.1524" layer="91"/>
 <junction x="-30.48" y="-10.16"/>
 <junction x="-30.48" y="-15.24"/>
@@ -19430,7 +19429,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC3" gate="G$1" pin="CLOCK"/>
 <wire x1="-22.86" y1="-12.7" x2="-22.86" y2="0" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="-12.7" x2="-22.86" y2="-12.7" width="0.1524" layer="91"/>
-<pinref part="Q16" gate="G$1" pin="D"/>
+<pinref part="Q5" gate="G$1" pin="D"/>
 <wire x1="-22.86" y1="-20.32" x2="-22.86" y2="-12.7" width="0.1524" layer="91"/>
 <junction x="-22.86" y="-12.7"/>
 <junction x="-22.86" y="-20.32"/>
@@ -19512,7 +19511,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC4" gate="G$1" pin="STROBE"/>
 <wire x1="-33.02" y1="-106.68" x2="-33.02" y2="-99.06" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="-106.68" x2="-33.02" y2="-106.68" width="0.1524" layer="91"/>
-<pinref part="Q16" gate="G$2" pin="D"/>
+<pinref part="Q5" gate="G$2" pin="D"/>
 <wire x1="-33.02" y1="-109.22" x2="-33.02" y2="-106.68" width="0.1524" layer="91"/>
 <junction x="-33.02" y="-106.68"/>
 <junction x="-33.02" y="-109.22"/>
@@ -19524,7 +19523,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC4" gate="G$1" pin="DATA"/>
 <wire x1="-25.4" y1="-109.22" x2="-25.4" y2="-99.06" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="-109.22" x2="-25.4" y2="-109.22" width="0.1524" layer="91"/>
-<pinref part="Q17" gate="G$2" pin="D"/>
+<pinref part="Q4" gate="G$2" pin="D"/>
 <wire x1="-25.4" y1="-114.3" x2="-25.4" y2="-109.22" width="0.1524" layer="91"/>
 <junction x="-25.4" y="-109.22"/>
 <junction x="-25.4" y="-114.3"/>
@@ -19536,7 +19535,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="IC4" gate="G$1" pin="CLOCK"/>
 <wire x1="-17.78" y1="-111.76" x2="-17.78" y2="-99.06" width="0.1524" layer="91"/>
 <wire x1="15.24" y1="-111.76" x2="-17.78" y2="-111.76" width="0.1524" layer="91"/>
-<pinref part="Q17" gate="G$1" pin="D"/>
+<pinref part="Q4" gate="G$1" pin="D"/>
 <wire x1="-17.78" y1="-119.38" x2="-17.78" y2="-111.76" width="0.1524" layer="91"/>
 <junction x="-17.78" y="-111.76"/>
 <junction x="-17.78" y="-119.38"/>
@@ -19588,13 +19587,13 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="R39" gate="G$1" pin="1"/>
 <wire x1="-127" y1="-58.42" x2="-142.24" y2="-58.42" width="0.1524" layer="91"/>
 <wire x1="-127" y1="-38.1" x2="-127" y2="-58.42" width="0.1524" layer="91"/>
-<pinref part="Q18" gate="G$1" pin="G"/>
+<pinref part="Q3" gate="G$1" pin="G"/>
 <wire x1="-127" y1="-58.42" x2="-111.76" y2="-58.42" width="0.1524" layer="91"/>
 <junction x="-127" y="-58.42"/>
 <junction x="-111.76" y="-58.42"/>
 </segment>
 <segment>
-<label x="-58.42" y="71.12" size="1.778" layer="95"/>
+<label x="-58.42" y="70.866" size="1.778" layer="95"/>
 <pinref part="IC1" gate="G$1" pin="PIO0_7"/>
 <wire x1="-63.5" y1="71.12" x2="-58.42" y2="71.12" width="0.1524" layer="91"/>
 <junction x="-63.5" y="71.12"/>
@@ -19606,7 +19605,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="R38" gate="G$1" pin="1"/>
 <wire x1="-129.54" y1="-40.64" x2="-142.24" y2="-40.64" width="0.1524" layer="91"/>
 <wire x1="-129.54" y1="-38.1" x2="-129.54" y2="-40.64" width="0.1524" layer="91"/>
-<pinref part="Q18" gate="G$2" pin="G"/>
+<pinref part="Q3" gate="G$2" pin="G"/>
 <wire x1="-119.38" y1="-40.64" x2="-129.54" y2="-40.64" width="0.1524" layer="91"/>
 <junction x="-129.54" y="-40.64"/>
 <junction x="-119.38" y="-40.64"/>
@@ -19624,7 +19623,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="R36" gate="G$1" pin="1"/>
 <wire x1="-114.3" y1="-30.48" x2="-83.82" y2="-30.48" width="0.1524" layer="91"/>
 <wire x1="-114.3" y1="-27.94" x2="-114.3" y2="-30.48" width="0.1524" layer="91"/>
-<pinref part="Q18" gate="G$2" pin="D"/>
+<pinref part="Q3" gate="G$2" pin="D"/>
 <wire x1="-114.3" y1="-33.02" x2="-114.3" y2="-30.48" width="0.1524" layer="91"/>
 <junction x="-114.3" y="-30.48"/>
 <junction x="-83.82" y="-30.48"/>
@@ -19636,7 +19635,7 @@ SIXTY FOUR PIXELS LTD</text>
 <pinref part="R37" gate="G$1" pin="1"/>
 <wire x1="-106.68" y1="-48.26" x2="-76.2" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="-106.68" y1="-27.94" x2="-106.68" y2="-48.26" width="0.1524" layer="91"/>
-<pinref part="Q18" gate="G$1" pin="D"/>
+<pinref part="Q3" gate="G$1" pin="D"/>
 <wire x1="-106.68" y1="-50.8" x2="-106.68" y2="-48.26" width="0.1524" layer="91"/>
 <junction x="-106.68" y="-48.26"/>
 <junction x="-76.2" y="-48.26"/>
@@ -20010,8 +20009,8 @@ SIXTY FOUR PIXELS LTD</text>
 <approved hash="104,1,45.72,-106.68,IC4,VDD,VDD_GT2,,,"/>
 <approved hash="104,1,20.32,81.28,IC2,VDD,5V,,,"/>
 <approved hash="104,1,50.8,78.74,IC2,VLOGIC,5V,,,"/>
-<approved hash="104,1,-99.06,38.1,U$3,VCC,5V,,,"/>
-<approved hash="104,1,-83.82,119.38,5V,VIN,5V,,,"/>
+<approved hash="104,1,-99.06,38.1,IC8,VCC,5V,,,"/>
+<approved hash="104,1,-83.82,119.38,IC9,VIN,5V,,,"/>
 <approved hash="113,1,48.1009,-31.75,C13,,,,,"/>
 <approved hash="113,1,83.6609,-39.37,C18,,,,,"/>
 <approved hash="113,1,-150.94,69.85,ICSP,,,,,"/>
@@ -20083,10 +20082,10 @@ SIXTY FOUR PIXELS LTD</text>
 <approved hash="113,1,120.925,-25.4,R45,,,,,"/>
 <approved hash="113,1,146.325,-25.4,R46,,,,,"/>
 <approved hash="113,1,72.6652,-25.4,R47,,,,,"/>
-<approved hash="113,1,-30.2609,-20.32,Q15,,,,,"/>
-<approved hash="113,1,-22.6409,-25.4,Q16,,,,,"/>
-<approved hash="113,1,-17.5609,-124.46,Q17,,,,,"/>
-<approved hash="113,1,-106.461,-55.88,Q18,,,,,"/>
+<approved hash="113,1,-30.7652,-20.32,Q6,,,,,"/>
+<approved hash="113,1,-23.1452,-25.4,Q5,,,,,"/>
+<approved hash="113,1,-18.0652,-124.46,Q4,,,,,"/>
+<approved hash="113,1,-106.965,-55.88,Q3,,,,,"/>
 <approved hash="113,1,-53.1809,113.03,C24,,,,,"/>
 <approved hash="113,1,-101.441,113.03,C25,,,,,"/>
 </errors>
