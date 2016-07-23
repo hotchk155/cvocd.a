@@ -18119,8 +18119,7 @@ EAGLE CAD Libraries on element14&lt;/a&gt;</description>
 <plain>
 <text x="-108.712" y="-81.28" size="3.81" layer="97">GATES VOLTAGE 
 LEVEL SELECT</text>
-<text x="13.716" y="56.388" size="3.81" layer="97">CV OUTPUT
-16-BIT DAC</text>
+<text x="2.794" y="64.008" size="3.81" layer="97">CV OUTPUT DAC</text>
 <text x="100.33" y="45.212" size="3.81" layer="97">CV OUTPUT
 BUFFERS</text>
 <text x="18.542" y="-138.684" size="3.81" layer="97">GATES 5-12 
@@ -18129,20 +18128,46 @@ DRIVE</text>
 SHIFT</text>
 <text x="-58.674" y="-8.89" size="3.81" layer="97">LEVEL
 SHIFT</text>
-<text x="-84.074" y="183.134" size="3.81" layer="97">POWER 
-SUPPLY
-REGULATOR</text>
-<text x="37.846" y="180.594" size="3.81" layer="97">MIDI
-DATA
-INPUT</text>
-<text x="-139.192" y="-119.38" size="3.81" layer="97">MIDI-TO-CV CONVERTER
+<text x="-114.554" y="136.652" size="3.81" layer="97">POWER SUPPLY</text>
+<text x="73.406" y="178.054" size="3.81" layer="97">MIDI DATA INPUT</text>
+<text x="-139.954" y="-115.062" size="3.81" layer="97">CV-OCD rev 3
+MIDI-TO-CV CONVERTER
 JASON HOTCHKISS
 SIXTY FOUR PIXELS LTD</text>
-<wire x1="-142.24" y1="-93.98" x2="-142.24" y2="-121.92" width="0.1524" layer="97"/>
-<wire x1="-142.24" y1="-121.92" x2="-71.12" y2="-121.92" width="0.1524" layer="97"/>
-<wire x1="-71.12" y1="-121.92" x2="-71.12" y2="-93.98" width="0.1524" layer="97"/>
-<wire x1="-71.12" y1="-93.98" x2="-142.24" y2="-93.98" width="0.1524" layer="97"/>
+<wire x1="-142.24" y1="-91.44" x2="-142.24" y2="-118.11" width="0.1524" layer="97"/>
+<wire x1="-142.24" y1="-118.11" x2="-71.12" y2="-118.11" width="0.1524" layer="97"/>
+<wire x1="-71.12" y1="-118.11" x2="-71.12" y2="-91.44" width="0.1524" layer="97"/>
+<wire x1="-71.12" y1="-91.44" x2="-142.24" y2="-91.44" width="0.1524" layer="97"/>
 <text x="91.948" y="-52.324" size="3.81" layer="97">GATES 1-4 DRIVE</text>
+<text x="-98.044" y="83.566" size="3.81" layer="97">LPC812 MCU
+(CORTEX M0+)</text>
+<text x="-161.798" y="25.654" size="3.81" layer="97">SERIAL EEPROM 
+</text>
+<text x="12.446" y="-3.302" size="2.1844" layer="97">MC14094BDR2G 
+CMOS Shift Register</text>
+<text x="11.938" y="-102.87" size="2.1844" layer="97">MC14094BDR2G 
+CMOS Shift Register</text>
+<text x="-89.408" y="-67.31" size="2.1844" layer="97">D3/D4 Schottky 
+Rectifier</text>
+<text x="94.742" y="122.174" size="2.1844" layer="97">TLV2374QDRG4Q1
+Op-Amp R2R</text>
+<text x="25.654" y="95.758" size="2.1844" layer="97">AD5696RARUZ 
+16-Bit DAC</text>
+<text x="-161.036" y="-54.356" size="2.1844" layer="97">Logic low input enables 
+12V supply to gate 
+shift registers.</text>
+<text x="135.89" y="-134.62" size="2.1844" layer="97">0V/5V or 0V/12V outputs
+depending on supply 
+voltage to shift register </text>
+<text x="29.464" y="14.224" size="2.1844" layer="97">Tristate outputs 0V/Hi-Z/5V or 
+0V/Hi-Z/12V depending on supply 
+voltage to shift register IC</text>
+<text x="74.422" y="167.894" size="2.1844" layer="97">3.5mm MIDI jack with +5V tip (e.g. Novation/Arturia)
+can be used as alternative to MIDI DIN input 
+(not both at same time)</text>
+<text x="-118.11" y="155.702" size="2.1844" layer="97">D5 Schottky Rectifier</text>
+<text x="-161.036" y="24.384" size="2.1844" layer="97">24LC64T-I/OT 
+64KBIT</text>
 </plain>
 <instances>
 <instance part="CVB" gate="G$1" x="152.4" y="99.06" rot="R180"/>
@@ -18188,15 +18213,15 @@ SIXTY FOUR PIXELS LTD</text>
 <instance part="IC5" gate="P" x="88.9" y="114.3"/>
 <instance part="ICSP" gate="G$1" x="-154.94" y="68.58" rot="MR0"/>
 <instance part="GND18" gate="1" x="-139.7" y="48.26"/>
-<instance part="PWR" gate="G$1" x="-12.7" y="165.1"/>
-<instance part="ACT" gate="G$1" x="-5.08" y="165.1"/>
-<instance part="R1" gate="G$1" x="-12.7" y="152.4" rot="R270"/>
-<instance part="R3" gate="G$1" x="-5.08" y="152.4" rot="R270"/>
-<instance part="R2" gate="G$1" x="2.54" y="152.4" rot="R270"/>
-<instance part="STA" gate="G$1" x="2.54" y="165.1"/>
-<instance part="GND21" gate="1" x="-12.7" y="142.24"/>
-<instance part="GND22" gate="1" x="-5.08" y="142.24"/>
-<instance part="GND23" gate="1" x="2.54" y="142.24"/>
+<instance part="PWR" gate="G$1" x="-7.62" y="154.94"/>
+<instance part="ACT" gate="G$1" x="0" y="154.94"/>
+<instance part="R1" gate="G$1" x="-7.62" y="142.24" rot="R270"/>
+<instance part="R3" gate="G$1" x="0" y="142.24" rot="R270"/>
+<instance part="R2" gate="G$1" x="7.62" y="142.24" rot="R270"/>
+<instance part="STA" gate="G$1" x="7.62" y="154.94"/>
+<instance part="GND21" gate="1" x="-7.62" y="132.08"/>
+<instance part="GND22" gate="1" x="0" y="132.08"/>
+<instance part="GND23" gate="1" x="7.62" y="132.08"/>
 <instance part="IC6" gate="G$1" x="-63.5" y="160.02"/>
 <instance part="GND4" gate="1" x="-63.5" y="139.7"/>
 <instance part="C22" gate="G$1" x="-86.36" y="152.4"/>
@@ -18333,12 +18358,12 @@ SIXTY FOUR PIXELS LTD</text>
 <instance part="C23" gate="G$1" x="-106.68" y="25.4"/>
 <instance part="GND20" gate="1" x="-101.6" y="15.24"/>
 <instance part="GND24" gate="1" x="-106.68" y="15.24"/>
-<instance part="IC9" gate="G$1" x="-71.12" y="116.84" rot="R90"/>
-<instance part="GND25" gate="1" x="-91.44" y="104.14"/>
-<instance part="C24" gate="G$1" x="-50.8" y="111.76" rot="R180"/>
-<instance part="C25" gate="G$1" x="-99.06" y="111.76" rot="R180"/>
-<instance part="GND26" gate="1" x="-99.06" y="104.14"/>
-<instance part="GND27" gate="1" x="-50.8" y="104.14"/>
+<instance part="IC9" gate="G$1" x="-63.5" y="129.54" rot="R90"/>
+<instance part="GND25" gate="1" x="-83.82" y="116.84"/>
+<instance part="C24" gate="G$1" x="-43.18" y="124.46" rot="R180"/>
+<instance part="C25" gate="G$1" x="-91.44" y="124.46" rot="R180"/>
+<instance part="GND26" gate="1" x="-91.44" y="116.84"/>
+<instance part="GND27" gate="1" x="-43.18" y="116.84"/>
 </instances>
 <busses>
 </busses>
@@ -18392,17 +18417,17 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <pinref part="GND21" gate="1" pin="GND"/>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="-12.7" y1="144.78" x2="-12.7" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="134.62" x2="-7.62" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="R3" gate="G$1" pin="2"/>
-<wire x1="-5.08" y1="144.78" x2="-5.08" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="0" y1="134.62" x2="0" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND23" gate="1" pin="GND"/>
 <pinref part="R2" gate="G$1" pin="2"/>
-<wire x1="2.54" y1="144.78" x2="2.54" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="134.62" x2="7.62" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="-119.38" y1="165.1" x2="-119.38" y2="144.78" width="0.1524" layer="91"/>
@@ -18704,19 +18729,19 @@ SIXTY FOUR PIXELS LTD</text>
 </segment>
 <segment>
 <pinref part="IC9" gate="G$1" pin="GND"/>
-<wire x1="-83.82" y1="116.84" x2="-91.44" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="-91.44" y1="116.84" x2="-91.44" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="129.54" x2="-83.82" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="-83.82" y1="129.54" x2="-83.82" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="GND25" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND26" gate="1" pin="GND"/>
 <pinref part="C25" gate="G$1" pin="1"/>
-<wire x1="-99.06" y1="106.68" x2="-99.06" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="119.38" x2="-91.44" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND27" gate="1" pin="GND"/>
 <pinref part="C24" gate="G$1" pin="1"/>
-<wire x1="-50.8" y1="106.68" x2="-50.8" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="-43.18" y1="119.38" x2="-43.18" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MIDI_IN" class="0">
@@ -18986,28 +19011,28 @@ SIXTY FOUR PIXELS LTD</text>
 <segment>
 <pinref part="R1" gate="G$1" pin="1"/>
 <pinref part="PWR" gate="G$1" pin="C"/>
-<wire x1="-12.7" y1="157.48" x2="-12.7" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="147.32" x2="-7.62" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$36" class="0">
 <segment>
 <pinref part="R3" gate="G$1" pin="1"/>
 <pinref part="ACT" gate="G$1" pin="C"/>
-<wire x1="-5.08" y1="157.48" x2="-5.08" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="0" y1="147.32" x2="0" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$37" class="0">
 <segment>
 <pinref part="R2" gate="G$1" pin="1"/>
 <pinref part="STA" gate="G$1" pin="C"/>
-<wire x1="2.54" y1="157.48" x2="2.54" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="147.32" x2="7.62" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="ACT_LED" class="0">
 <segment>
 <pinref part="ACT" gate="G$1" pin="A"/>
-<wire x1="-5.08" y1="167.64" x2="-5.08" y2="175.26" width="0.1524" layer="91"/>
-<label x="-5.08" y="172.72" size="1.778" layer="95" rot="R90"/>
+<wire x1="0" y1="157.48" x2="0" y2="165.1" width="0.1524" layer="91"/>
+<label x="0" y="162.56" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <label x="-111.76" y="76.2" size="1.778" layer="95"/>
@@ -19019,8 +19044,8 @@ SIXTY FOUR PIXELS LTD</text>
 <net name="STATUS_LED" class="0">
 <segment>
 <pinref part="STA" gate="G$1" pin="A"/>
-<wire x1="2.54" y1="167.64" x2="2.54" y2="175.26" width="0.1524" layer="91"/>
-<label x="2.54" y="172.72" size="1.778" layer="95" rot="R90"/>
+<wire x1="7.62" y1="157.48" x2="7.62" y2="165.1" width="0.1524" layer="91"/>
+<label x="7.62" y="162.56" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <label x="-116.332" y="73.66" size="1.778" layer="95"/>
@@ -19112,17 +19137,17 @@ SIXTY FOUR PIXELS LTD</text>
 </segment>
 <segment>
 <pinref part="IC9" gate="G$1" pin="VIN"/>
-<wire x1="-83.82" y1="119.38" x2="-86.36" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="132.08" x2="-78.74" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="IC9" gate="G$1" pin="EN"/>
-<wire x1="-86.36" y1="119.38" x2="-99.06" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="-99.06" y1="119.38" x2="-111.76" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="-83.82" y1="114.3" x2="-86.36" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="-86.36" y1="114.3" x2="-86.36" y2="119.38" width="0.1524" layer="91"/>
-<junction x="-86.36" y="119.38"/>
-<label x="-111.76" y="119.38" size="1.778" layer="95"/>
+<wire x1="-78.74" y1="132.08" x2="-91.44" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="132.08" x2="-104.14" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="127" x2="-78.74" y2="127" width="0.1524" layer="91"/>
+<wire x1="-78.74" y1="127" x2="-78.74" y2="132.08" width="0.1524" layer="91"/>
+<junction x="-78.74" y="132.08"/>
+<label x="-104.14" y="132.08" size="1.778" layer="95"/>
 <pinref part="C25" gate="G$1" pin="2"/>
-<wire x1="-99.06" y1="116.84" x2="-99.06" y2="119.38" width="0.1524" layer="91"/>
-<junction x="-99.06" y="119.38"/>
+<wire x1="-91.44" y1="129.54" x2="-91.44" y2="132.08" width="0.1524" layer="91"/>
+<junction x="-91.44" y="132.08"/>
 </segment>
 <segment>
 <pinref part="R39" gate="G$1" pin="2"/>
@@ -19935,17 +19960,17 @@ SIXTY FOUR PIXELS LTD</text>
 </segment>
 <segment>
 <pinref part="PWR" gate="G$1" pin="A"/>
-<wire x1="-12.7" y1="167.64" x2="-12.7" y2="175.26" width="0.1524" layer="91"/>
-<label x="-15.24" y="175.26" size="1.778" layer="95"/>
+<wire x1="-7.62" y1="157.48" x2="-7.62" y2="165.1" width="0.1524" layer="91"/>
+<label x="-10.16" y="165.1" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="IC9" gate="G$1" pin="VOUT"/>
-<wire x1="-58.42" y1="119.38" x2="-50.8" y2="119.38" width="0.1524" layer="91"/>
-<label x="-45.72" y="119.38" size="1.778" layer="95"/>
+<wire x1="-50.8" y1="132.08" x2="-43.18" y2="132.08" width="0.1524" layer="91"/>
+<label x="-38.1" y="132.08" size="1.778" layer="95"/>
 <pinref part="C24" gate="G$1" pin="2"/>
-<wire x1="-50.8" y1="119.38" x2="-43.18" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="-50.8" y1="116.84" x2="-50.8" y2="119.38" width="0.1524" layer="91"/>
-<junction x="-50.8" y="119.38"/>
+<wire x1="-43.18" y1="132.08" x2="-35.56" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="-43.18" y1="129.54" x2="-43.18" y2="132.08" width="0.1524" layer="91"/>
+<junction x="-43.18" y="132.08"/>
 </segment>
 </net>
 <net name="N$34" class="0">
