@@ -10,8 +10,6 @@ Warnings=1
 Model=0
 Profiling=0
 Snapshot=0
-Last ExtIdx=1
-Last Dir=D:\GitHub\MIDI-Bootloader\
 [Files]
 Count=7
 File0=cv-strip.c

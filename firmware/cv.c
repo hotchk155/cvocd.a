@@ -32,12 +32,8 @@
 //
 // MACRO DEFS
 //
-/*
+#define I2C_ADDRESS 0b1100000
 
-	FSD = 5V
-	
-	6553.5
-*/
 //
 // TYPE DEFS
 //
@@ -79,7 +75,7 @@ typedef union {
 //
 
 // cache of raw DAC data
-unsigned int l_dac[CV_MAX] = {0};
+int l_dac[CV_MAX] = {0};
 
 // CV config 
 CV_OUT l_cv[CV_MAX];
@@ -93,39 +89,28 @@ int l_note[CV_MAX];
 
 ////////////////////////////////////////////////////////////
 // CONFIGURE THE DAC
-//static void cv_config_dac() {
-//	i2c_begin_write(I2C_ADDRESS);
-//	i2c_send(0b10001111); // set each channel to use internal vref
-//	i2c_end();	
-//
-//	i2c_begin_write(I2C_ADDRESS);
-//	i2c_send(0b11001111); // set x2 gain on each channel
-//	i2c_end();	
-//}
+static void cv_config_dac() {
+	i2c_begin_write(I2C_ADDRESS);
+	i2c_send(0b10001111); // set each channel to use internal vref
+	i2c_end();	
+
+	i2c_begin_write(I2C_ADDRESS);
+	i2c_send(0b11001111); // set x2 gain on each channel
+	i2c_end();	
+}
 
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
-// value is in volts * 65536
-static void cv_update(byte which, long value) {
-
-	// divide by full 10V output range
-	value/=10;
-	
-	//TODO - offset/scale
-	
-	// limit the value
+static void cv_update(byte which, int value) {
 	if(value < 0) 
 		value = 0;
-	if(value > 65535) 
-		value = 65535;
+	if(value > 4095) 
+		value = 4095;
 		
 	// check the value has actually changed
 	if(value != l_dac[which]) {
 		l_dac[which] = value;
-		
-		// flag new data to go to DAC
-		g_pending_txn->dac[which] = value;
-		g_pending_txn->flags |= (1<<which);
+		g_cv_dac_pending = 1;
 	}
 }	
 
@@ -133,49 +118,49 @@ static void cv_update(byte which, long value) {
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
 static void cv_write_note(byte which, long note, int pitch_bend) {
-
-	note <<= 8;				// get MIDI note into same units as bend
-	note += pitch_bend; 	// add MIDI note and pitch bend	
-	note <<=8;				// upscale to midi note * 65536
-	note/=12;				// scale to volts (1V/octave)
+	note <<= 8;
+	note += pitch_bend;
+	note *= 500;
+	note /= 12;	
+	note >>= 8;
 	cv_update(which, note);
 }
-
-
 
 ////////////////////////////////////////////////////////////
 // WRITE A 7-BIT CC VALUE TO A CV OUTPUT
 static void cv_write_7bit(byte which, byte value, byte volts) {
-
-	// get a value which is 65536 * desired voltage
-	// = 65536 * volts * (value/128)
-	// = volts * value * 512
-	cv_update(which, ((long)value * volts)<<9);
+	if(value > 127) 
+		value = 127;
+	// 1 volt is 500 clicks on the DAC
+	// So (500 * volts) is the full range for the 7-bit value (127)
+	// DAC value = (value / 127) * (500 * volts)
+	// = 3.937 * value * volts
+	// ~ 4 * value * volts
+	cv_update(which, ((int)value * volts)<<2);
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE PITCH BEND VALUE TO A CV OUTPUT
 // receive raw 14bit value 
 static void cv_write_bend(byte which, int value, byte volts) {	
-	
-	// get a value which is 65536 * desired voltage
-	// = 65536 * volts * (value/16384)
-	// = volts * value * 4
-	cv_update(which, ((long)value * volts)<<2);
+	// 1 volt is 500 clicks on the DAC
+	// So (500 * volts) is the full range for the 14-bit bend value (16384)
+	// DAC value = (value / 16384) * (500 * volts)
+	// = (value / 32.768) * volts
+	// ~ (volts * value)/32
+	cv_update(which, (((long)value * volts) >> 5));
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE VOLTS
 static void cv_write_volts(byte which, byte value) {
-	
-	cv_update(which, ((long)value)<<16);
+	cv_update(which, (int)value * 500);
 }
 
 //
 // GLOBAL FUNCTIONS
 //
 
-/*
 ////////////////////////////////////////////////////////////
 // COPY CURRENT OUTPUT VALUES TO TRANSMIT BUFFER FOR DAC
 void cv_dac_prepare() {	
@@ -190,7 +175,7 @@ void cv_dac_prepare() {
 	g_i2c_tx_buf[8] = (l_dac[0] & 0xFF);
 	g_i2c_tx_buf_len = 9;
 	g_i2c_tx_buf_index = 0;
-}*/
+}
 
 ////////////////////////////////////////////////////////////
 // HANDLE AN EVENT FROM A NOTE STACK
@@ -420,7 +405,7 @@ void cv_init() {
 	memset(l_cv, 0, sizeof(l_cv));
 	memset(l_dac, 0, sizeof(l_dac));
 	memset(l_note, 0, sizeof(l_note));
-	//cv_config_dac();
+	cv_config_dac();
 	
 	l_cv[0].event.mode = CV_NOTE;
 	l_cv[0].event.out = 0;	
@@ -447,7 +432,7 @@ void cv_reset() {
 			break;
 		}
 	}
-	//g_cv_dac_pending = 1;
+	g_cv_dac_pending = 1;
 }
 
 //

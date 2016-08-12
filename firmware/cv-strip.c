@@ -26,8 +26,7 @@
 // HEADER FILES
 //
 #include <system.h>
-#include <memory.h>
-//#include <rand.h>
+#include <rand.h>
 #include <eeprom.h>
 #include "cv-strip.h"
 
@@ -55,27 +54,6 @@ enum {
 	SYSEX_VALUEH,	// expect high byte of a param value
 	SYSEX_VALUEL	// expect low byte of a param value
 };
-
-
-// states for the DAC state machine
-enum {
-	I2C_START,
-	I2C_DATA0,
-	I2C_DATA1,
-	I2C_DATA2,
-	I2C_STOP,
-	I2C_NEXT,
-	I2C_IDLE
-};
-
-#define I2C_ADDRESS 0b0001100
-
-// commands for loading DAC
-//#define CMD_WRITE_DAC  0b00110000
-#define CMD_WRITE_DACA 0b00110001
-#define CMD_WRITE_DACB 0b00110010
-#define CMD_WRITE_DACC 0b00110100
-#define CMD_WRITE_DACD 0b00111000
 
 //
 // LOCAL DATA
@@ -105,23 +83,13 @@ byte nrpn_hi = 0;						// value of last NRPN param high byte
 byte nrpn_lo = 0;						// value of last NRPN param low byte
 byte nrpn_value_hi = 0;					// value of last NRPN value high byte
 
-static volatile unsigned int g_sr_data = 0;		// holds the current status of the gate shift registers
-
-static volatile byte i2c_tx1;
-static volatile byte i2c_tx2;
-static volatile byte i2c_tx_state;
 //
 // GLOBAL DATA
 //
-//volatile byte g_cv_dac_pending;				// flag to say whether dac data is pending
-
-
-volatile unsigned int g_sr_pending_mask;	// mask of gate bits that are pending update
-volatile unsigned int g_sr_pending_data;	// pending state of those gate bits 
-volatile unsigned int g_sr_retrig_mask;		// bits that need to be changed just before pending update (for retrig)
-volatile unsigned int g_sr_retrig_data;		// shift register bits for retrigs
-
-
+volatile byte g_cv_dac_pending;				// flag to say whether dac data is pending
+volatile unsigned int g_sr_data = 0;		// gate data to load to shift registers
+volatile unsigned int g_sr_retrigs = 0;		// shift register bits to send low before next load
+volatile byte g_sr_data_pending = 0;		// indicates if any gate data is pending
 volatile unsigned int g_sync_sr_data = 0;	// additional gate bits, synced to CV load
 volatile byte g_sync_sr_data_pending = 0;	// indicates if any synched gate data is pending
 
@@ -131,11 +99,6 @@ volatile byte g_i2c_tx_buf_len = 0;			// total number of bytes in buffer
 
 byte g_led_1_timeout = 0;					// ms after which LED1 is turned off
 byte g_led_2_timeout = 0;					// ms after which LED1 is turned off
-
-static volatile CV_TXN _txn1, _txn2;					// CV transactions (double buffered)
-volatile CV_TXN *g_pending_txn;						// pending CV transaction (being populated)
-static volatile CV_TXN *active_txn;					// active CV transaction (being sent)
-
 
 ////////////////////////////////////////////////////////////
 // INTERRUPT SERVICE ROUTINE
@@ -168,7 +131,7 @@ void interrupt( void )
 
 	/////////////////////////////////////////////////////
 	// I2C INTERRUPT
-/*	if(pir1.3) 
+	if(pir1.3) 
 	{
 		pir1.3 = 0;
 		if(g_i2c_tx_buf_index < g_i2c_tx_buf_len) {
@@ -187,104 +150,11 @@ void interrupt( void )
 				g_sr_data |= g_sync_sr_data;	// set the new gates
 				g_sync_sr_data = 0;				// no syncronised data pending now..
 				g_sync_sr_data_pending = 0;		
-				//g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
+				g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
 			}			
 			pie1.3 = 0; // we're done - disable the I2C interrupt
 		}
 	}
-*/
-	
-	/////////////////////////////////////////////////////
-	// I2C INTERRUPT
-	if(pir1.3) 
-	{
-		byte i;
-		pir1.3 = 0;
-
-		if((ssp1con2.6) && (i2c_tx_state != I2C_START)) {	//NAK
-			// abandon the transaction to avoid a deadlock
-			active_txn->flags = TXN_DONE;
-			pie1.3 = 0; // disable the interrupt	
-		}
-		else {		
-			// DAC transmission state machine
-			switch(i2c_tx_state) {
-			
-			//////////////////////////////////////////////////////
-			case I2C_START:	
-				ssp1buf = I2C_ADDRESS<<1;	// start a DAC write 
-				i2c_tx_state = I2C_DATA0;
-				break;
-				
-			//////////////////////////////////////////////////////
-			case I2C_DATA0: 			
-				// check for next data to send
-				if(active_txn->flags & (1<<0)) {
-					i = 0;
-					ssp1buf = CMD_WRITE_DACC;
-				}
-				else if(active_txn->flags & (1<<1)) {
-					i = 1;
-					ssp1buf = CMD_WRITE_DACB;
-				}
-				else if(active_txn->flags & (1<<2)) {
-					i = 2;
-					ssp1buf = CMD_WRITE_DACD;
-				}
-				else if(active_txn->flags & (1<<3)) {
-					i = 3;
-					ssp1buf = CMD_WRITE_DACA;
-				}
-				else {
-					// no more data, send stop condition
-					ssp1con2.2 = 1; 
-					i2c_tx_state = I2C_NEXT;
-					break;
-				}
-			
-				i2c_tx1 = active_txn->dac[i]>>8;
-				i2c_tx2 = (byte)active_txn->dac[i];				
-				active_txn->flags &= ~(1<<i);
-				i2c_tx_state = I2C_DATA1;
-				break;
-
-			//////////////////////////////////////////////////////
-			case I2C_DATA1:
-				ssp1buf = i2c_tx1; // message byte #1
-				i2c_tx_state = I2C_DATA2;
-				break;
-
-			//////////////////////////////////////////////////////
-			case I2C_DATA2:
-				ssp1buf = i2c_tx2; // message byte #2
-				i2c_tx_state = I2C_STOP;
-				break;
-
-			//////////////////////////////////////////////////////
-			case I2C_STOP: // send stop condition
-				ssp1con2.2 = 1; 
-				i2c_tx_state = I2C_NEXT;
-				break;
-
-			//////////////////////////////////////////////////////
-			case I2C_NEXT: // after stop condition				
-				// is there any more data to send?
-				if(active_txn->flags & 0x0F) {
-					i2c_tx_state = I2C_START;
-					ssp1con2.0 = 1; // signal start condition									
-				}
-				else {
-					// here we are done!
-					active_txn->flags |= TXN_DONE;
-					pie1.3 = 0; // disable the interrupt	
-				}			
-				break;
-			}
-		}
-	}
-	
-	
-	
 }
 
 ////////////////////////////////////////////////////////////
@@ -307,7 +177,6 @@ static void i2c_init() {
 	ssp1add = 19;	// 100kHz baud rate
 }
 
-/*
 ////////////////////////////////////////////////////////////
 // I2C WRITE BYTE TO BUS
 void i2c_send(byte data) {
@@ -336,13 +205,10 @@ void i2c_end() {
 ////////////////////////////////////////////////////////////
 // I2C ASYNC SEND
 void i2c_send_async() {
-	i2c_tx_state = I2C_START;
-
 	pir1.3 = 0; // clear interrupt flag
 	pie1.3 = 1; // enable the interrupt
 	ssp1con2.0 = 1; // signal start condition					
 }
-*/
 
 ////////////////////////////////////////////////////////////
 // INITIALISE TIMER
@@ -395,19 +261,20 @@ void uart_init()
 
 ////////////////////////////////////////////////////////////
 // LOAD GATE SHIFT REGISTER
-void sr_write(unsigned int d) {
+void sr_write(unsigned int nmask) {
+	unsigned int d = g_sr_data & ~nmask; // nmask is a bit set to force to LOW
 	unsigned int m1 = 0x0080;
 	unsigned int m2 = 0x8000;
-	P_SRLAT = 1;
+	P_SRLAT = 0;
 	while(m1) {
-		P_SRCLK = 1;
+		P_SRCLK = 0;
 		P_SRDAT1 = !!(d&m1);
 		P_SRDAT2 = !!(d&m2);
-		P_SRCLK = 0;
+		P_SRCLK = 1;
 		m1>>=1;
 		m2>>=1;
 	}
-	P_SRLAT = 0;
+	P_SRLAT = 1;
 }
 
 ////////////////////////////////////////////////////////////
@@ -617,25 +484,12 @@ void main()
 	intcon.7 = 1; //GIE
 	intcon.6 = 1; //PEIE
 
-	//g_cv_dac_pending = 0;
+	g_cv_dac_pending = 0;
 	nrpn_hi = 0;
 	nrpn_lo = 0;
 	nrpn_value_hi = 0;
 
 	unsigned int button_press = 0;
-
-	// initial gate data
-	g_sr_retrig_mask = 0;
-	g_sr_retrig_data = 0;
-	g_sr_pending_mask = 0;
-	g_sr_pending_data = 0;
-
-
-	g_pending_txn = &_txn1;
-	active_txn = &_txn2;
-	g_pending_txn->flags = 0;
-	g_pending_txn->pretrig_mask = 0;
-	g_pending_txn->trig_mask = 0;
 
 	// flash both LEDs at startup
 	LED_1_PULSE(255);
@@ -653,9 +507,6 @@ void main()
 	
 	// reset them
 	all_reset();
-
-P_VSEL1 	= 0;
-P_VSEL2 	= 0;
 
 	// App loop
 	int bend;
@@ -777,76 +628,22 @@ P_VSEL2 	= 0;
 			cv_midi_bend(msg&0x0F, bend);
 			break;
 		}
-		
-		/*		
+				
 		// check if there is any CV data to send out and no i2c transmit in progress
 		if(!pie1.3 && g_cv_dac_pending) {
 			cv_dac_prepare(); 
 			i2c_send_async();
 			g_cv_dac_pending = 0; 
 		}				
-		*/	
-		// check if the active CV transaction is complete but there is a pending 
-		// CV transaction to cue up
-		if(!active_txn->flags && g_pending_txn->flags) {
-		
-			// reset the active transaction
-			active_txn->pretrig_mask = 0;
-			active_txn->trig_mask = 0;
-			
-			// switch the two transactions, so the pending transaction becomes
-			// the active one
-			CV_TXN *txn = active_txn;
-			active_txn = g_pending_txn;
-			g_pending_txn = txn;
-			
-			// kick off the send process
-			i2c_tx_state = I2C_START;
-			pir1.3 = 0; // clear interrupt flag
-			pie1.3 = 1; // enable the interrupt
-			ssp1con2.0 = 1; // signal start condition					
+		// check for retrigs.. if so all retrig bits will be sent low
+		if(g_sr_retrigs) {
+			sr_write(g_sr_retrigs);
+			g_sr_retrigs = 0;
 		}
-		// otherwise is the CV send complete?
-		else if(active_txn->flags == TXN_DONE) {
-		
-			// does this transaction include a trigger?
-			if(active_txn->trig_mask) {
-				g_sr_pending_mask |= active_txn->trig_mask;
-				g_sr_pending_data &= ~active_txn->trig_mask;
-				g_sr_pending_data |= active_txn->trig_data;
-				
-				// does it have a pretrigger?
-				if(active_txn->pretrig_mask) {
-					g_sr_retrig_mask |= active_txn->pretrig_mask;
-					g_sr_retrig_data &= ~active_txn->pretrig_mask;
-					g_sr_retrig_data |= active_txn->pretrig_data;
-				}
-			}
-			
-			// transaction is done with
-			active_txn->flags = 0;
-		}
-
-		
-		// check if any retrig data is pending (these are shift register bits that
-		// will be set to their "gate off" state immediately before getting set
-		// to their "gate on" state
-		if(g_sr_retrig_mask) {
-			g_sr_data &= ~g_sr_retrig_mask;
-			g_sr_data |= g_sr_retrig_data;
-			sr_write(g_sr_data);
-			g_sr_retrig_mask = 0;
-			g_sr_retrig_data = 0;
-		}
-				
-		// Check if any new gate data is pending. If so update those bits on
-		// the output shift register
-		if(g_sr_pending_mask) {
-			g_sr_data &= ~g_sr_pending_mask;
-			g_sr_data |= g_sr_pending_data;
-			sr_write(g_sr_data);
-			g_sr_pending_mask = 0;
-			g_sr_pending_data = 0;
+		// check if there is any shift register data pending		
+		if(g_sr_data_pending) {
+			g_sr_data_pending = 0;
+			sr_write(0);
 		}			
 	}
 }
