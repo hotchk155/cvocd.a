@@ -47,7 +47,8 @@ enum {
 	CV_MIDI_TOUCH, // mapped to aftertouch
 	CV_MIDI_CC,	// mapped to midi CC
 	CV_MIDI_BPM, // mapped to midi CC
-	CV_TEST			// mapped to test voltage	
+	CV_TEST,			// mapped to test voltage	
+	CV_GATE			// CV output used as a higher voltage gate
 };
 
 typedef struct {
@@ -65,9 +66,16 @@ typedef struct {
 	byte cc;
 } T_CV_MIDI;
 
+typedef struct {
+	byte mode;	// CV_xxx enum
+	byte volts;	
+	byte pending;
+} T_CV_GATE;
+
 typedef union {
 	T_CV_EVENT 				event;
 	T_CV_MIDI 				midi;
+	T_CV_GATE				gate;
 } CV_OUT;
 
 //
@@ -175,6 +183,44 @@ void cv_dac_prepare() {
 	g_i2c_tx_buf[8] = (l_dac[0] & 0xFF);
 	g_i2c_tx_buf_len = 9;
 	g_i2c_tx_buf_index = 0;
+}
+
+////////////////////////////////////////////////////////////
+// RECEIVE NOTIFICATION THAT DAC TRANSACTION HAS STARTED
+void cv_dac_postprepare() {
+	for(byte which_cv = 0; which_cv < CV_MAX; ++which_cv) {
+		// For CV outputs that are working in gate mode, we can have a retrigger
+		// where "off" level is sent, followed later by "on" level when DAC is
+		// ready
+		if(l_cv[which_cv].event.mode == CV_GATE && l_cv[which_cv].gate.pending) {
+			cv_write_volts(which_cv, l_cv[which_cv].gate.volts);
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////
+// ALLOW CV OUTPUT TO BE USED AS A GATE 
+void cv_gate_out(byte which_cv, byte state, byte retrig)
+{
+	if(l_cv[which_cv].event.mode != CV_GATE) 
+		return;
+	
+	// need a high voltage state?
+	if(state) { 
+		// need a retrig?
+		if(retrig) {
+			cv_write_volts(which_cv, 0);
+			l_cv[which_cv].gate.pending = 1;			
+		}
+		else {
+			cv_write_volts(which_cv, l_cv[which_cv].gate.volts);
+			l_cv[which_cv].gate.pending = 0;			
+		}
+	}
+	else {
+		cv_write_volts(which_cv, 0);
+		l_cv[which_cv].gate.pending = 0;			
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -331,6 +377,10 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 		case NRPVH_SRC_TESTVOLTAGE:	// REFERENCE VOLTAGE
 			pcv->event.mode = CV_TEST;
 			pcv->event.volts = DEFAULT_CV_TEST_VOLTS;
+			return 1;
+		case NRPVH_SRC_CVGATEMODE:	// GATE MODE
+			pcv->event.mode = CV_GATE;
+			pcv->event.volts = DEFAULT_CV_GATE_VOLTS;
 			return 1;
 		case NRPVH_SRC_MIDITICK: // BPM
 			pcv->event.mode = CV_MIDI_BPM;

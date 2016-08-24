@@ -38,12 +38,13 @@
 #define TRIS_C		0b11111011
 
 // constants
-#define CV_MAX		4					// number of cv outs
-#define GATE_MAX	12					// number of gate outs
-#define SZ_NOTE_STACK 5					// max notes in a single stack
-#define NUM_NOTE_STACKS 4				// number of stacks supported
-#define NO_NOTE_OUT 0xFF 				// special "no note" value
-#define I2C_TX_BUF_SZ 12				// size of i2c transmit buffer
+#define CV_MAX			4	 // number of cv outs
+#define CV_GATE_BASE	12	 // gate index of first "cv gate"
+#define GATE_MAX		16	 // number of gate outs (including the 4xCVs in gate mode)
+#define SZ_NOTE_STACK 	5	 // max notes in a single stack
+#define NUM_NOTE_STACKS 4	 // number of stacks supported
+#define NO_NOTE_OUT 	0xFF // special "no note" value
+#define I2C_TX_BUF_SZ 	12	 // size of i2c transmit buffer
 
 // Defaults
 #define DEFAULT_GATE_NOTE 			60
@@ -59,6 +60,7 @@
 #define DEFAULT_CV_VEL_MAX_VOLTS 	5
 #define DEFAULT_CV_TOUCH_MAX_VOLTS 	5
 #define DEFAULT_CV_TEST_VOLTS 		5
+#define DEFAULT_CV_GATE_VOLTS		5
 
 // Millisecond timings
 #define SHORT_BUTTON_PRESS 40
@@ -169,7 +171,11 @@ enum {
 	NRPNH_GATE9 	= 39,
 	NRPNH_GATE10	= 40,
 	NRPNH_GATE11	= 41,
-	NRPNH_GATE12	= 42
+	NRPNH_GATE12	= 42,
+	NRPNH_GATE13CV1	= 43,
+	NRPNH_GATE14CV2	= 44,
+	NRPNH_GATE15CV3	= 45,
+	NRPNH_GATE16CV4	= 46
 };
 
 // Parameter Number Low Byte 
@@ -211,6 +217,8 @@ enum {
 	NRPVH_SRC_MIDIRUN		= 22,
 	NRPVH_SRC_MIDISTART		= 23,
 	NRPVH_SRC_MIDISTOP		= 25,
+
+	NRPVH_SRC_CVGATEMODE	= 30,
 
 	NRPVH_SRC_TESTVOLTAGE	= 127,
 	
@@ -337,6 +345,9 @@ void cv_reset();
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);
 void cv_dac_prepare();
 byte *cv_storage(int *len);
+void cv_dac_postprepare();
+void cv_gate_out(byte which, byte state, byte retrig);
+
 
 // STORAGE
 void storage_read_patch();
