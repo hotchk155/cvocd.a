@@ -148,105 +148,66 @@ static GATE_OUT l_gate[GATE_MAX];
 // TRIGGER OR UNTRIGGER A GATE
 static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync)
 {	
-/*
-if(trigger_enabled) {		
-	cv_gate_out(0, true, false);
-	if(GATE_DUR_GLOBAL == pcfg->event.duration) {
-		pgate->counter = g_global.gate_duration;
-	}
-	else {
-		pgate->counter = pcfg->event.duration;
-	}
-}
-else
-{
-	cv_gate_out(0, false, false);
-	pgate->counter = 0;
-}		
-return;
-*/
+	// get appropriate shift register bit
+	unsigned int gate_bit = 0;
+	switch(which_gate) {
+		case 0:  gate_bit = SRB_NOTE1; break;
+		case 1:  gate_bit = SRB_NOTE2; break;
+		case 2:  gate_bit = SRB_NOTE3; break;
+		case 3:  gate_bit = SRB_NOTE4; break;
+		case 4:  gate_bit = SRB_DRM1; break;
+		case 5:  gate_bit = SRB_DRM2; break;
+		case 6:  gate_bit = SRB_DRM3; break;
+		case 7:  gate_bit = SRB_DRM4; break;
+		case 8:  gate_bit = SRB_DRM5; break;
+		case 9:  gate_bit = SRB_DRM6; break;
+		case 10: gate_bit = SRB_DRM7; break;
+		case 11: gate_bit = SRB_DRM8; break;
+		default: return;
+	}	
 
-	// check if this is a gate that is actually implemented 
-	// by a CV output
-	if(which_gate >= CV_GATE_BASE) {
-		if(trigger_enabled) {		
-			cv_gate_out(which_gate - CV_GATE_BASE, true, (pcfg->event.flags & GATE_FLAG_RETRIG));
-			if(GATE_DUR_GLOBAL == pcfg->event.duration) {
-				pgate->counter = g_global.gate_duration;
-			}
-			else {
-				pgate->counter = pcfg->event.duration;
+	
+	if(trigger_enabled) { // trigger ON
+	
+		// if this gate is set to retrigger, then set
+		// up the retrig mask to include the bit for 
+		// this gate
+		if(pcfg->event.flags & GATE_FLAG_RETRIG) {
+			g_sr_retrigs |= gate_bit;
+		}
+		
+		if(sync && g_cv_dac_pending) {
+			// synchronised trigger - set trigger bits to be 
+			// actioned after CV has been updated
+			if(!(g_sync_sr_data & gate_bit)) {
+				g_sync_sr_data |= gate_bit;
+				g_sync_sr_data_pending = 1;	
 			}
 		}
-		else
+		else 
 		{
-			cv_gate_out(which_gate - CV_GATE_BASE, false, false);
-			pgate->counter = 0;
-		}		
-	}
-	else {
-	
-		// get appropriate shift register bit
-		unsigned int gate_bit = 0;
-		switch(which_gate) {
-			case 0:  gate_bit = SRB_NOTE1; break;
-			case 1:  gate_bit = SRB_NOTE2; break;
-			case 2:  gate_bit = SRB_NOTE3; break;
-			case 3:  gate_bit = SRB_NOTE4; break;
-			case 4:  gate_bit = SRB_DRM1; break;
-			case 5:  gate_bit = SRB_DRM2; break;
-			case 6:  gate_bit = SRB_DRM3; break;
-			case 7:  gate_bit = SRB_DRM4; break;
-			case 8:  gate_bit = SRB_DRM5; break;
-			case 9:  gate_bit = SRB_DRM6; break;
-			case 10: gate_bit = SRB_DRM7; break;
-			case 11: gate_bit = SRB_DRM8; break;
-			default: return;
-		}	
-	
-		
-		if(trigger_enabled) { // trigger ON
-		
-			// if this gate is set to retrigger, then set
-			// up the retrig mask to include the bit for 
-			// this gate
-			if(pcfg->event.flags & GATE_FLAG_RETRIG) {
-				g_sr_retrigs |= gate_bit;
-			}
-			
-			if(sync && g_cv_dac_pending) {
-				// synchronised trigger - set trigger bits to be 
-				// actioned after CV has been updated
-				if(!(g_sync_sr_data & gate_bit)) {
-					g_sync_sr_data |= gate_bit;
-					g_sync_sr_data_pending = 1;	
-				}
-			}
-			else 
-			{
-				if(!(g_sr_data & gate_bit)) {
-					g_sr_data |= gate_bit;
-					g_sr_data_pending = 1;	
-				}
-			}
-			// set duration counter
-			if(GATE_DUR_GLOBAL == pcfg->event.duration) {
-				pgate->counter = g_global.gate_duration;
-			}
-			else {
-				pgate->counter = pcfg->event.duration;
-			}
-		}
-		// trigger OFF - no worries about synchronisation
-		else
-		{
-			if(g_sr_data & gate_bit) {
-				g_sr_data &= ~gate_bit;
+			if(!(g_sr_data & gate_bit)) {
+				g_sr_data |= gate_bit;
 				g_sr_data_pending = 1;	
 			}
-			pgate->counter = 0;
-		}	
+		}
+		// set duration counter
+		if(GATE_DUR_GLOBAL == pcfg->event.duration) {
+			pgate->counter = g_global.gate_duration;
+		}
+		else {
+			pgate->counter = pcfg->event.duration;
+		}
 	}
+	// trigger OFF - no worries about synchronisation
+	else
+	{
+		if(g_sr_data & gate_bit) {
+			g_sr_data &= ~gate_bit;
+			g_sr_data_pending = 1;	
+		}
+		pgate->counter = 0;
+	}	
 }
 
 ////////////////////////////////////////////////////////////

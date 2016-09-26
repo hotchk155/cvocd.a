@@ -452,10 +452,6 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
 		case NRPNH_GATE10:
 		case NRPNH_GATE11:
 		case NRPNH_GATE12:
-		case NRPNH_GATE13CV1:
-		case NRPNH_GATE14CV2:
-		case NRPNH_GATE15CV3:
-		case NRPNH_GATE16CV4:
 			result = gate_nrpn(param_hi-NRPNH_GATE1, param_lo, value_hi, value_lo);
 			break;
 		case NRPNH_CV1:
@@ -637,12 +633,7 @@ void main()
 		if(!pie1.3 && g_cv_dac_pending) {
 			cv_dac_prepare(); 
 			i2c_send_async();
-			g_cv_dac_pending = 0;
-			
-			// this call informs the CV outputs that the current DAC data has been
-			// prepared and is on its way. It allows new data to be flagged as 
-			// pending (e.g. for a retrigger when CV output used in gate mode)
-			cv_dac_postprepare(); 
+			g_cv_dac_pending = 0; 
 		}				
 		// check for retrigs.. if so all retrig bits will be sent low
 		if(g_sr_retrigs) {
