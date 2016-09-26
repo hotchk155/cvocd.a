@@ -195,6 +195,29 @@ void test_v()
 	}
 }
 
+void test_vg() 
+{
+	byte count = 0;
+	unsigned int index = 0;
+	unsigned int a = 0;
+	unsigned int b = 1024;
+	unsigned int c = 2048;
+	unsigned int d = 3072;
+	while(1) {
+		if(!a) {
+				if(++index > 3) {
+					index = 0;
+				}
+				sr_write(x[index]|x[4+index]|x[8+index]);
+		}
+		
+		dac_send(a, b, c, d);
+		a+=8;
+		b+=8;
+		c+=8;
+		d+=8;
+	}
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -216,7 +239,7 @@ void main()
 	delay_ms(255);
 	i2c_init();
 	dac_cfg();
-	test_v();
+	test_vg();
 }
 
 
