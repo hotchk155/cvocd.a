@@ -28,7 +28,7 @@
 #include <system.h>
 #include <rand.h>
 #include <eeprom.h>
-#include "cv-strip.h"
+#include "cvocd.h"
 
 //
 // LOCAL DATA

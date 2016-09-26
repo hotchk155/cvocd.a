@@ -27,7 +27,8 @@
 //
 #include <system.h>
 #include <memory.h>
-#include "cv-strip.h"
+#include "cvocd.h"
+
 
 //
 // MACRO DEFS

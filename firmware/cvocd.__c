@@ -1,9 +1,9 @@
 [Settings]
-Active Directory=D:\GitHub\cv-strip\firmware\
+Active Directory=D:\GitHub\cvocd.a\firmware\
 Target=PIC16F1825
 Active Compiler=BoostC
 Active Config=Release
-Last Ext=c
+Last Ext=h
 Config=0
 Type=0
 Warnings=1
@@ -12,13 +12,15 @@ Profiling=0
 Snapshot=0
 [Files]
 Count=7
-File0=cv-strip.c
-File1=cv-strip.h
-File2=cv.c
-File3=gate.c
-File4=global.c
-File5=stack.c
-File6=storage.c
+File0=cv.c
+File1=gate.c
+File2=global.c
+File3=stack.c
+File4=storage.c
+File5=cvocd.c
+File6=cvocd.h
+File7=cvocd.h
+File8=cvocd.h
 [Tools]
 BoostDir=C:\Program Files (x86)\SourceBoost\
 Programmer=

@@ -24,7 +24,8 @@
 
 // INCLUDE FILES
 #include <system.h>
-#include "cv-strip.h"
+#include "cvocd.h"
+
 
 //
 // TYPE DEFS

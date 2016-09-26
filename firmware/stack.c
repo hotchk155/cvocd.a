@@ -26,7 +26,8 @@
 // INCLUDES
 //
 #include <system.h>
-#include "cv-strip.h"
+#include "cvocd.h"
+
 
 //
 // GLOBAL DATA

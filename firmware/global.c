@@ -26,7 +26,8 @@
 #include <system.h>
 #include <memory.h>
 #include <eeprom.h>
-#include "cv-strip.h"
+#include "cvocd.h"
+
 
 
 //
