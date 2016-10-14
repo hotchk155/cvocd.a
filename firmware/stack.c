@@ -200,16 +200,19 @@ static void chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, by
 {
 	byte i, any_note;
 	if(vel) {	
+	
 		// note on... look for a space for it...
-		for(i=0; i<chord_size; ++i) {
-			if(pstack->out[i] == NO_NOTE_OUT) {
-				pstack->out[i] = note;
-				cv_event(EV_NOTE_A + i, which_stack);
-				gate_event(EV_NOTE_A + i, which_stack);
-				gate_event(EV_NOTE_ON, which_stack);
+		for(i=0; i<chord_size; ++i) {		
+			if(pstack->out[i] == NO_NOTE_OUT)  // free slot
 				break;
-			}
 		}
+		if(i == chord_size) {			
+			i = chord_size - 1; // no free slots, steal the last slot
+		}
+		pstack->out[i] = note;
+		cv_event(EV_NOTE_A + i, which_stack);
+		gate_event(EV_NOTE_A + i, which_stack);
+		gate_event(EV_NOTE_ON, which_stack);
 	}
 	else {
 		// note off - remove old note
