@@ -302,11 +302,13 @@ void cv_midi_bend(byte chan, int value)
 // HANDLE BPM
 // BPM is upscaled by 256
 void cv_midi_bpm(long value) {
+	if(value & (long)0xFFFF0000)
+		value = 0xFFFF;
 	for(byte which_cv=0; which_cv<CV_MAX; ++which_cv) {
 		CV_OUT *pcv = &l_cv[which_cv];
 		if(pcv->event.mode != CV_MIDI_BPM) {
 			continue;
-		}		
+		}				
 		value *= (500 * pcv->event.volts);
 		cv_update(which_cv, value>>16);
 	}

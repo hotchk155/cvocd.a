@@ -187,7 +187,9 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		}
 		else 
 		{
-			if(!(g_sr_data & gate_bit)) {
+			// only need to refresh the gates if the bit has changed (or if
+			// we are retriggering)
+			if((pcfg->event.flags & GATE_FLAG_RETRIG) || !(g_sr_data & gate_bit)) {
 				g_sr_data |= gate_bit;
 				g_sr_data_pending = 1;	
 			}
@@ -198,6 +200,11 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 		}
 		else {
 			pgate->counter = pcfg->event.duration;
+		}
+		
+		// compensate for immediate decrement 
+		if(pgate->counter) {
+			++pgate->counter;
 		}
 	}
 	// trigger OFF - no worries about synchronisation
@@ -649,7 +656,8 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI CC SWITCHING THRESHOLD
 	case NRPNL_THRESHOLD:
-		if(pcfg->event.mode == GATE_MIDI_CC) {
+		if(pcfg->event.mode == GATE_MIDI_CC ||
+			pcfg->event.mode == NRPVH_SRC_MIDICC_NEG) {
 			pcfg->cc.threshold = value_lo;
 			return 1;
 		}
