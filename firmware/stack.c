@@ -364,20 +364,7 @@ byte stack_nrpn(byte which_stack, byte param_lo, byte value_hi, byte value_lo)
 			pcfg->priority = value_lo;
 			return 1;
 		}
-		break;
-			
-	//////////////////////////////////////////////////
-	// SET A SPLIT POINT
-	case NRPNL_SPLIT: 
-		if((which_stack == 0 || which_stack == 2) && (value_lo>0 && value_lo<127)) {
-			g_stack_cfg[which_stack+1] = g_stack_cfg[which_stack];
-			g_stack_cfg[which_stack].note_min = 0;
-			g_stack_cfg[which_stack].note_max = value_lo - 1;
-			g_stack_cfg[which_stack+1].note_min = value_lo;
-			g_stack_cfg[which_stack+1].note_max = 127;
-			return 1;
-		}
-		break;
+		break;			
 	}
 		
 	return 0;
