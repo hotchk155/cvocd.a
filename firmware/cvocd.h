@@ -83,7 +83,7 @@
 // Sysex ID
 #define MY_SYSEX_ID0	0x00
 #define MY_SYSEX_ID1	0x7f
-#define MY_SYSEX_ID2	0x12
+#define MY_SYSEX_ID2	0x15 // CVOCD patch
 
 // Utility macros to flash an LED
 #define LED_1_PULSE(ms) { P_LED1 = 1; g_led_1_timeout = ms; }
@@ -131,16 +131,19 @@ enum {
 
 // note stack note priority orders
 enum {
-	PRIORITY_NEW			= 0,	// gives priority to newest note
+	PRIORITY_LAST			= 0,	// gives priority to newest note
 	PRIORITY_LOW			= 1,	// gives priority to lowest note
-	PRIORITY_LOW_SPREAD		= 2,	// lowest note priority with highest pitch note on output 4
 	PRIORITY_HIGH			= 3,	// gives priority to highest note
-	PRIORITY_HIGH_SPREAD	= 4,	// highest note priority with lowest pitch note on output 4
-	PRIORITY_CYCLE1			= 5,	// single note only
+
 	PRIORITY_CYCLE2			= 6,	// 2 note cycle
 	PRIORITY_CYCLE3			= 7,	// 3 note cycle
 	PRIORITY_CYCLE4			= 8,	// 4 note cycle
-	PRIORITY_MAX			= 9
+	
+	PRIORITY_CHORD2			= 9,	
+	PRIORITY_CHORD3			= 10,	
+	PRIORITY_CHORD4			= 11,	
+	
+	PRIORITY_MAX			= 12
 };
 
 // Parameter Number High Byte 
@@ -246,7 +249,6 @@ typedef unsigned char byte;
 typedef struct {
 	byte chan;
 	byte gate_duration;
-	byte auto_save;
 } GLOBAL_CFG;
 
 // note stack config

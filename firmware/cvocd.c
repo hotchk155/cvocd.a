@@ -341,9 +341,7 @@ byte midi_in()
 					delay_ms(250); 
 					P_LED1 = 0; 
 					P_LED2 = 0; 
-					if(g_global.auto_save) {
-						storage_write_patch();	// store to EEPROM if desired
-					}
+					storage_write_patch();	// store to EEPROM 
 					all_reset();
 					break;
 				default:	// any other state would imply bad sysex data

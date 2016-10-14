@@ -69,9 +69,9 @@ byte global_nrpn(byte param_lo, byte value_hi, byte value_lo)
 		break;
 	
 	////////////////////////////////////////////////////////////////
-	// AUTO SAVE
+	// SAVE
 	case NRPNL_SAVE:
-		g_global.auto_save = value_lo;
+		storage_write_patch();	// store to EEPROM 
 		return 1;
 	}
 	return 0;
@@ -89,8 +89,6 @@ byte *global_storage(int *len) {
 void global_init() {
 	g_global.chan = DEFAULT_MIDI_CHANNEL; // default MIDI channel
 	g_global.gate_duration = DEFAULT_GATE_DURATION; // default gate duration
-	g_global.auto_save = 0;
-
 }
 
 //

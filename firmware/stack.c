@@ -105,134 +105,131 @@ static byte remove_note(NOTE_STACK *pstack, byte note)
 }
 
 ///////////////////////////////////////////////////////////////
-// RECALCULATE NOTE STACK OUTPUTS
-static byte recalc_outputs(NOTE_STACK *pstack, NOTE_STACK_CFG *pcfg, byte stack_id)
+// PRIORITIZE A NOTE
+static void prioritize_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
 {
-	byte i,j,len,flag,pos = 0;
-	byte new_out[4];
-	byte result = 0;
-	new_out[0] = NO_NOTE_OUT;
-	new_out[1] = NO_NOTE_OUT;
-	new_out[2] = NO_NOTE_OUT;
-	new_out[3] = NO_NOTE_OUT;
+	byte i = 0;
+	byte new_note = NO_NOTE_OUT;
 
-	if(pstack->count == 0) {
-		// no held notes		
+	// maintain stack of notes that are held
+	if(vel) {
+		add_note(pstack, note);
 	}
-	else if(pstack->count == 1) {
-		// only one held note
-		new_out[0] = pstack->note[0];
+	else {
+		remove_note(pstack, note);
 	}
-	else { // multiple held notes - need to prioritise
-			
-		// handle according to prioritization setting
-		switch(pcfg->priority) {
-		
-		//////////////////////////////////////////////////////////
-		// HIGHEST NOTE PRIORITY - copy out the highest held notes
-		// in order from highest to lowest
-		//////////////////////////////////////////////////////////
-		case PRIORITY_HIGH:
-		case PRIORITY_HIGH_SPREAD:
-			new_out[0] = pstack->note[0];
-			for(i=1; i<pstack->count; ++i) {				
-				if(pstack->note[i] > new_out[0]) {
-					new_out[3] = new_out[2];
-					new_out[2] = new_out[1];
-					new_out[1] = new_out[0];
-					new_out[0] = pstack->note[i];					
-				}
-				else if(new_out[1] == NO_NOTE_OUT || pstack->note[i] > new_out[1]) {
-					new_out[3] = new_out[2];
-					new_out[2] = new_out[1];
-					new_out[1] = pstack->note[i];
-				}
-				else if(new_out[2] == NO_NOTE_OUT || pstack->note[i] > new_out[2]) {
-					new_out[3] = new_out[2];
-					new_out[2] = pstack->note[i];
-				}
-				else if(new_out[3] == NO_NOTE_OUT || pstack->note[i] > new_out[3]) {
-					new_out[3] = pstack->note[i];
-				}		
-			}
-			break;
-		
-		//////////////////////////////////////////////////////////
-		// LOWEST NOTE PRIORITY - copy out the highest held notes
-		// in order from highest to lowest
-		//////////////////////////////////////////////////////////
-		case PRIORITY_LOW:
-		case PRIORITY_LOW_SPREAD:
-			new_out[0] = pstack->note[0];
-			for(i=1; i<pstack->count; ++i) {				
-				if(pstack->note[i] < new_out[0]) {
-					new_out[3] = new_out[2];
-					new_out[2] = new_out[1];
-					new_out[1] = new_out[0];
-					new_out[0] = pstack->note[i];					
-				}
-				else if(new_out[1] == NO_NOTE_OUT || pstack->note[i] < new_out[1]) {
-					new_out[3] = new_out[2];
-					new_out[2] = new_out[1];
-					new_out[1] = pstack->note[i];
-				}
-				else if(new_out[2] == NO_NOTE_OUT || pstack->note[i] < new_out[2]) {
-					new_out[3] = new_out[2];
-					new_out[2] = pstack->note[i];
-				}
-				else if(new_out[3] == NO_NOTE_OUT || pstack->note[i] < new_out[3]) {
-					new_out[3] = pstack->note[i];
-				}		
-			}			
-			break;
-
-		//////////////////////////////////////////////////////////
-		// NEW NOTE PRIORITY - just copy out front notes
-		case PRIORITY_NEW:
-		default:
-			for(i=0; i<4 && i<pstack->count; ++i) {
-				new_out[i] = pstack->note[i];
-			}			
-			break;
-		}
-		
-		// Spread out the notes if applicable
-		if(pcfg->priority == PRIORITY_LOW_SPREAD || 
-			pcfg->priority == PRIORITY_HIGH_SPREAD) {
-			if(new_out[0] != NO_NOTE_OUT && new_out[1] != NO_NOTE_OUT) {
-				if(new_out[2] == NO_NOTE_OUT) { // #3 will also be empty
-					// AB.. -> A..B
-					new_out[3] = new_out[1];
-					new_out[1] = NO_NOTE_OUT;
-				}						
-				else if(new_out[3] == NO_NOTE_OUT) {
-					// ABC. -> AB.C
-					new_out[3] = new_out[2];
-					new_out[2] = NO_NOTE_OUT;
-				}					
+	
+	// handle according to prioritization setting	
+	switch(priority) {	
+					
+	case PRIORITY_HIGH:
+		for(i=0; i<pstack->count; ++i) {				
+			if(new_note == NO_NOTE_OUT || new_note < pstack->note[i]) {
+				new_note = pstack->note[i];
 			}
 		}
-	}
+		break;
 
-	// now update the note stack outputs based on the new_out array
-	for(i=0; i<4; ++i) {
-		// check for a change to output
-		if(new_out[i] != pstack->out[i]) {
-			pstack->out[i] = new_out[i];
-			if(new_out[i] != NO_NOTE_OUT) {
-				// new note triggered on output
-				cv_event(EV_NOTE_A + i, stack_id);
-				gate_event(EV_NOTE_A + i, stack_id);
+	case PRIORITY_LOW:
+		for(i=0; i<pstack->count; ++i) {				
+			if(new_note == NO_NOTE_OUT || new_note > pstack->note[i]) {
+				new_note = pstack->note[i];
 			}
-			else {
-				// note untriggered on output
-				gate_event(EV_NO_NOTE_A + i, stack_id);
-			}
-			result = 1; // record a change to outputs
+		}
+		break;
+		
+	case PRIORITY_LAST:
+	default:
+		if(pstack->count > 0) {				
+			new_note = pstack->note[0];
+		}
+		break;
+	}
+	
+	// check for a change to output
+	if(new_note != pstack->out[0]) {
+		pstack->out[0] = new_note;
+		if(new_note != NO_NOTE_OUT) {
+			// new note triggered on output
+			cv_event(EV_NOTE_A, which_stack);
+			gate_event(EV_NOTE_A, which_stack);
+			gate_event(EV_NOTE_ON, which_stack);
+		}
+		else {
+			// note untriggered on output
+			gate_event(EV_NO_NOTE_A, which_stack);
+			gate_event(EV_NOTES_OFF, which_stack);			
 		}
 	}	
-	return result;
 }
+
+///////////////////////////////////////////////////////////////
+// HANDLE NOTE CYCLING
+static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, byte note, byte vel) 
+{
+	byte i, any_note;
+	if(vel) {
+		pstack->out[pstack->index] = note;
+		cv_event(EV_NOTE_A + pstack->index, which_stack);
+		gate_event(EV_NOTE_A + pstack->index, which_stack);
+		gate_event(EV_NOTE_ON, which_stack);
+		if(++pstack->index >= cycle_size ) {
+			pstack->index = 0;
+		}
+	}
+	else {
+		any_note = 0;
+		for(i=0; i<4; ++i) {		
+			if(pstack->out[i] == note) {
+				pstack->out[i] = NO_NOTE_OUT;
+				gate_event(EV_NO_NOTE_A + i, which_stack);
+			}			
+			else if(pstack->out[i] != NO_NOTE_OUT) {
+				any_note = 1;
+			}
+		}
+		if(!any_note) {
+			gate_event(EV_NOTES_OFF, which_stack);			
+		}
+	}	
+}
+
+///////////////////////////////////////////////////////////////
+// HANDLE CHORDS
+static void chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
+{
+	byte i, any_note;
+	if(vel) {	
+		// note on... look for a space for it...
+		for(i=0; i<chord_size; ++i) {
+			if(pstack->out[i] == NO_NOTE_OUT) {
+				pstack->out[i] = note;
+				cv_event(EV_NOTE_A + i, which_stack);
+				gate_event(EV_NOTE_A + i, which_stack);
+				gate_event(EV_NOTE_ON, which_stack);
+				break;
+			}
+		}
+	}
+	else {
+		// note off - remove old note
+		any_note = 0;
+		for(i=0; i<4; ++i) {		
+			if(pstack->out[i] == note) {
+				pstack->out[i] = NO_NOTE_OUT;
+				gate_event(EV_NO_NOTE_A + i, which_stack);
+			}		
+			else if(pstack->out[i] != NO_NOTE_OUT) {
+				any_note = 1;
+			}
+		}
+		if(!any_note) {
+			gate_event(EV_NOTES_OFF, which_stack);			
+		}
+	}
+}	
+
+
 
 //
 // GLOBAL FUNCTIONS
@@ -254,62 +251,33 @@ void stack_midi_note(byte chan, byte note, byte vel)
 		if(!IS_NOTE_MATCH(pcfg->note_min, pcfg->note_max, note))
 			continue;
 		
-		// note on message?
-		if(vel) {			
-		
-			// velocity above threshold? 
-			if(pcfg->vel_min && vel < pcfg->vel_min) 
-				continue;
-				
+		if(vel) {
+			// for a note on message, velocity must be abve threshold
+			if(pcfg->vel_min && vel < pcfg->vel_min) {
+				continue;			
+			}
 			// store note velocity as stack velocity
 			pstack->vel = vel;
-				
-			switch(pcfg->priority) {
-				// cycle modes do not need to remember note priority
-			case PRIORITY_CYCLE1:
-			case PRIORITY_CYCLE2:
-			case PRIORITY_CYCLE3:
-			case PRIORITY_CYCLE4:
-				pstack->out[pstack->index] = note;
-				cv_event(EV_NOTE_A + pstack->index, which_stack);
-				gate_event(EV_NOTE_A + pstack->index, which_stack);
-				if(++pstack->index > (pcfg->priority - PRIORITY_CYCLE2 + 1)) {
-					pstack->index = 0;
-				}
-				break;
-			default:
-				// otherwise add the note to the stack
-				if(add_note(pstack, note)) {
-					recalc_outputs(pstack, pcfg, which_stack);
-				}
-			}
-			gate_event(EV_NOTE_ON, which_stack);
 		}
-		else {			
-			switch(pcfg->priority) {
-			// in cycle 1 mode we do react to note off
-			case PRIORITY_CYCLE1:
-				pstack->out[0] = NO_NOTE_OUT;
-				gate_event(EV_NO_NOTE_A, which_stack);
-				gate_event(EV_NOTES_OFF, which_stack);
+
+		// pass the note to the appropriate handler
+		switch(pcfg->priority) {		
+			case PRIORITY_LAST:
+			case PRIORITY_LOW:
+			case PRIORITY_HIGH:
+				prioritize_note(pstack, which_stack, pcfg->priority, note, vel);
 				break;
-			// other cycling modes do not
 			case PRIORITY_CYCLE2:
 			case PRIORITY_CYCLE3:
 			case PRIORITY_CYCLE4:
-				break;
-			// else remove note from the stack
-			default:
-				if(remove_note(pstack, note)) {
-					recalc_outputs(pstack, pcfg, which_stack);
-					if(!pstack->count) {
-						// all notes are off
-						gate_event(EV_NOTES_OFF, which_stack);
-					}
-				}
-				break;
-			}
-		}		
+				cycle_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CYCLE2), note, vel);
+				break;	
+			case PRIORITY_CHORD2:
+			case PRIORITY_CHORD3:
+			case PRIORITY_CHORD4:
+				chord_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CHORD2), note, vel);
+				break;	
+		}
 	}
 }
 
@@ -447,10 +415,10 @@ void stack_init()
 		g_stack_cfg[i].note_min = 0;
 		g_stack_cfg[i].note_max = 127;
 		g_stack_cfg[i].vel_min = 0;
-		g_stack_cfg[i].bend_range = 12;		
-		g_stack_cfg[i].priority = PRIORITY_NEW;		
+		g_stack_cfg[i].bend_range = 3;		
+		g_stack_cfg[i].priority = PRIORITY_LOW;		
 	}
-	g_stack_cfg[0].chan = CHAN_GLOBAL;
+	g_stack_cfg[0].chan = 0;
 }
 
 //
