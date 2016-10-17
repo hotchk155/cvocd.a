@@ -213,7 +213,7 @@ void cv_event(byte event, byte stack_id) {
 					if(pcv->event.out == output_id) {			
 						note = pstack->out[output_id] + pcv->event.transpose - 24;
 						while(note < 0) note += 12; 	
-						while(note > 96) note -= 12; 	
+						while(note > 120) note -= 12; 	
 						l_note[which_cv] = note;
 						cv_write_note(which_cv, l_note[which_cv], pstack->bend);
 					}
