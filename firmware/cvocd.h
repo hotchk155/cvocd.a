@@ -190,6 +190,7 @@ enum {
 	NRPNL_THRESHOLD		= 13,
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
+	NRPNL_PITCH_SCHEME  = 16,
 	NRPNL_SAVE			= 100
 };
 
@@ -223,7 +224,10 @@ enum {
 	NRPVH_DUR_INF			= 0,
 	NRPVH_DUR_MS			= 1,
 	NRPVH_DUR_GLOBAL		= 2,
-	NRPVH_DUR_RETRIG		= 3
+	NRPVH_DUR_RETRIG		= 3,
+
+	NRPVH_PITCH_VOCT		= 0,
+	NRPVH_PITCH_HZV			= 1
 };
 
 // Parameter Value Low Byte

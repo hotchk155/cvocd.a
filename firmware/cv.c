@@ -48,7 +48,8 @@ enum {
 	CV_MIDI_TOUCH, // mapped to aftertouch
 	CV_MIDI_CC,	// mapped to midi CC
 	CV_MIDI_BPM, // mapped to midi CC
-	CV_TEST			// mapped to test voltage	
+	CV_TEST,			// mapped to test voltage	
+	CV_NOTE_HZV // mapped to Hz/Volt note
 };
 
 typedef struct {
@@ -125,6 +126,67 @@ static void cv_write_note(byte which, long note, int pitch_bend) {
 	note /= 12;	
 	note >>= 8;
 	cv_update(which, note);
+}
+
+
+////////////////////////////////////////////////////////////
+// WRITE A NOTE VALUE TO A CV OUTPUT
+// pitch_bend units = MIDI note * 256
+static void cv_write_note_hzvolt(byte which, long note, int pitch_bend) {
+
+	// convert pitch bend to whole notes and fractional (1/256) notes
+	note <<= 8;
+	note += pitch_bend;
+	pitch_bend = note & 0xFF;
+	note >>= 8;
+
+	// use a hard coded lookup table to get the
+	// the DAC value for note in top octave
+	int dac;
+	if(note == 72)
+		dac = 4000;	// we can just about manage a C6!
+	else switch((byte)note % 12) {	
+		case 0: dac = 2000; break;
+		case 1: dac = 2119; break;
+		case 2: dac = 2245; break;
+		case 3: dac = 2378; break;
+		case 4: dac = 2520; break;
+		case 5: dac = 2670; break;
+		case 6: dac = 2828; break;
+		case 7: dac = 2997; break;
+		case 8: dac = 3175; break;
+		case 9: dac = 3364; break;
+		case 10: dac = 3564; break;
+		case 11: dac = 3775; break;	
+	}
+
+	/*
+		next dac note will be dac*(2^(1/12))
+		approximately equal to dac * (1 + 244/(16*256))
+		pitch_bend contains 256 * fractional note (signed)
+		so dac offset for fractional bend = 
+			dac * (pitch_bend/256)*(244/(16*256))
+		
+			= (dac * 244 * pitch_bend) / (16*256*256)
+			= (dac * 244 * pitch_bend) / 1048576 		(0x100000L)
+			
+		
+		NB: this results in linear interpolation between the notes, 
+		which is a bad approximation of a smooth bend since the 
+		mapping of V to Hz is logarithmic not linear!
+		
+		It'll have to do for now...
+	*/
+	dac += (int)(((long)dac*244*pitch_bend)/0x100000L);
+	
+	// transpose to the requested octave by 
+	// right shifting
+	byte octave = ((byte)note)/12;
+	if(octave > 5) octave = 5;
+	dac >>= (5-octave);
+		
+	// finally update dac
+	cv_update(which, dac);
 }
 
 ////////////////////////////////////////////////////////////
@@ -204,6 +266,7 @@ void cv_event(byte event, byte stack_id) {
 		/////////////////////////////////////////////
 		// CV OUTPUT TIED TO INPUT NOTE
 		case CV_NOTE:	
+		case CV_NOTE_HZV:
 			switch(event) {
 				case EV_NOTE_A:
 				case EV_NOTE_B:
@@ -215,11 +278,15 @@ void cv_event(byte event, byte stack_id) {
 						while(note < 0) note += 12; 	
 						while(note > 120) note -= 12; 	
 						l_note[which_cv] = note;
+					}
+					// fall through
+				case EV_BEND:
+					if(pcv->event.mode == CV_NOTE_HZV) {
+						cv_write_note_hzvolt(which_cv, l_note[which_cv], pstack->bend);
+					}
+					else {
 						cv_write_note(which_cv, l_note[which_cv], pstack->bend);
 					}
-					break;
-				case EV_BEND:
-					cv_write_note(which_cv, l_note[which_cv], pstack->bend);
 					break;
 			}
 			break;
@@ -373,12 +440,12 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 				pcv->event.mode = CV_VEL;
 				pcv->event.volts = DEFAULT_CV_VEL_MAX_VOLTS;
 				return 1;
-			}
+		}
 		}
 		break;
 	// SELECT TRANSPOSE AMOUNT
 	case NRPNL_TRANSPOSE:
-		if(CV_NOTE == pcv->event.mode) {
+		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
 			pcv->event.transpose = value_lo - 64;
 			return 1;
 		}
@@ -391,6 +458,14 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			return 1;
 		}
 		break;	
+
+	// SELECT PITCH SCHEME
+	case NRPNL_PITCH_SCHEME:
+		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
+			pcv->event.mode = (value_lo == NRPVH_PITCH_HZV) ? CV_NOTE_HZV : CV_NOTE;
+			return 1;
+		}
+		
 	}
 	return 0;
 }
