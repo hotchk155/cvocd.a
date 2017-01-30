@@ -485,7 +485,7 @@ void cv_init() {
 	memset(l_note, 0, sizeof(l_note));
 	cv_config_dac();
 	
-	l_cv[0].event.mode = CV_NOTE;
+	/*l_cv[0].event.mode = CV_NOTE;
 	l_cv[0].event.out = 0;	
 	l_cv[1].event.mode = CV_NOTE;
 	l_cv[1].event.out = 1;	
@@ -493,6 +493,7 @@ void cv_init() {
 	l_cv[2].event.out = 2;	
 	l_cv[3].event.mode = CV_NOTE;
 	l_cv[3].event.out = 3;		
+	*/
 }
 
 ////////////////////////////////////////////////////////////

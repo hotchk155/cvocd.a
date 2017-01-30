@@ -71,7 +71,8 @@ enum {
 	GATE_MIDI_CLOCK_RUN_TICK	= NRPVH_SRC_MIDITICKRUN,// clock tick if clock running
 	GATE_MIDI_CLOCK_RUN			= NRPVH_SRC_MIDIRUN,	// clock running
 	GATE_MIDI_CLOCK_START		= NRPVH_SRC_MIDISTART,	// start message
-	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP	// stop message
+	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP,	// stop message
+	GATE_MIDI_CLOCK_STARTSTOP	= NRPVH_SRC_MIDISTARTSTOP	// start or stop message
 };
 
 //
@@ -410,6 +411,7 @@ void gate_midi_clock(byte msg) {
 				if(msg != MIDI_SYNCH_START) {
 					break;
 				}// else fall through				
+			case GATE_MIDI_CLOCK_STARTSTOP:
 			case GATE_MIDI_CLOCK_RUN:
 			//case GATE_MIDI_CLOCK_STARTCONT:
 				trigger(pgate, pcfg, which_gate, true, false);
@@ -431,6 +433,7 @@ void gate_midi_clock(byte msg) {
 				trigger(pgate, pcfg, which_gate, false, false);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
+			case GATE_MIDI_CLOCK_STARTSTOP:
 				trigger(pgate, pcfg, which_gate, true, false);
 				break;
 			}
@@ -492,24 +495,7 @@ void gate_init() {
 		pcfg->event.mode = GATE_DISABLE;
 		pcfg->event.flags = 0;
 		pcfg->event.duration = DEFAULT_GATE_DURATION;
-	}
-	
-	l_gate_cfg[0].event.mode = GATE_NOTE_GATEA;	
-	l_gate_cfg[0].event.duration = 0;	
-
-	l_gate_cfg[1].event.mode = GATE_NOTE_GATEB;	
-	l_gate_cfg[1].event.duration = 0;	
-
-	l_gate_cfg[2].event.mode = GATE_NOTE_GATEC;	
-	l_gate_cfg[2].event.duration = 0;	
-
-	l_gate_cfg[3].event.mode = GATE_NOTE_GATED;	
-	l_gate_cfg[3].event.duration = 0;	
-
-	l_gate_cfg[11].event.mode = GATE_MIDI_CLOCK_TICK;	
-	l_gate_cfg[11].clock.div = 24;
-	l_gate_cfg[11].event.duration = 15;	
-
+	}	
 	gate_reset();
 }
 
@@ -590,6 +576,7 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 		case NRPVH_SRC_MIDISTART:
 		//case NRPVH_SRC_MIDICONT:
 		case NRPVH_SRC_MIDISTOP:
+		case NRPVH_SRC_MIDISTARTSTOP:
 			pcfg->clock.mode = value_hi; // relies on alignment of values!
 			pcfg->clock.tick_ofs = 0;
 			if(value_lo) {

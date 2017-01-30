@@ -26,6 +26,7 @@
 // INCLUDES
 //
 #include <system.h>
+#include <memory.h>
 #include "cvocd.h"
 
 
@@ -400,15 +401,7 @@ void stack_reset() {
 // INITIALISE NOTE STACK CONFIG
 void stack_init()
 {
-	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
-		g_stack_cfg[i].chan = CHAN_DISABLE;
-		g_stack_cfg[i].note_min = 0;
-		g_stack_cfg[i].note_max = 127;
-		g_stack_cfg[i].vel_min = 0;
-		g_stack_cfg[i].bend_range = 3;		
-		g_stack_cfg[i].priority = PRIORITY_LOW;		
-	}
-	g_stack_cfg[0].chan = 0;
+	memset(g_stack_cfg, 0, sizeof(g_stack_cfg));
 }
 
 //
