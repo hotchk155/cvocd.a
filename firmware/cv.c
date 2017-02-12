@@ -311,7 +311,7 @@ void cv_event(byte event, byte stack_id) {
 void cv_midi_cc(byte chan, byte cc, byte value) {
 	for(byte which_cv=0; which_cv<CV_MAX; ++which_cv) {
 		CV_OUT *pcv = &l_cv[which_cv];
-		
+	
 		// is this CV output configured for CC?
 		if(pcv->event.mode != CV_MIDI_CC) {
 			continue;
@@ -443,6 +443,30 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 		}
 		}
 		break;
+		
+	////////////////////////////////////////////////////////////////
+	// SELECT MIDI CHANNEL
+	case NRPNL_CHAN:	
+		if(pcv->event.mode == CV_MIDI_BEND || 
+			pcv->event.mode == CV_MIDI_TOUCH ||
+			pcv->event.mode == CV_MIDI_CC ) {
+			switch(value_hi) {
+			case NRPVH_CHAN_SPECIFIC:
+				if(value_lo >= 1 && value_lo <= 16) {
+					pcv->midi.chan = value_lo - 1; // relies on alignment of chan member in cc too
+					return 1;
+				}
+				break;
+			case NRPVH_CHAN_OMNI:
+				pcv->midi.chan = CHAN_OMNI;
+				return 1;
+			case NRPVH_CHAN_GLOBAL:
+				pcv->midi.chan = CHAN_GLOBAL;
+				return 1;
+			}
+		}
+		break;		
+		
 	// SELECT TRANSPOSE AMOUNT
 	case NRPNL_TRANSPOSE:
 		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
