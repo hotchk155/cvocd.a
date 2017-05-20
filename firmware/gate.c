@@ -592,63 +592,46 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI CHANNEL
 	case NRPNL_CHAN:
-		if(pcfg->event.mode == GATE_MIDI_NOTE || 
-			pcfg->event.mode == GATE_MIDI_CC ||
-			pcfg->event.mode == GATE_MIDI_CC_NEG ) {
-			switch(value_hi) {
-			case NRPVH_CHAN_SPECIFIC:
-				if(value_lo >= 1 && value_lo <= 16) {
-					pcfg->note.chan = value_lo - 1; // relies on alignment of chan member in cc too
-					return 1;
-				}
-				break;
-			case NRPVH_CHAN_OMNI:
-				pcfg->note.chan = CHAN_OMNI;
-				return 1;
-			case NRPVH_CHAN_GLOBAL:
-				pcfg->note.chan = CHAN_GLOBAL;
+		switch(value_hi) {
+		case NRPVH_CHAN_SPECIFIC:
+			if(value_lo >= 1 && value_lo <= 16) {
+				pcfg->note.chan = value_lo - 1; // relies on alignment of chan member in cc too
 				return 1;
 			}
+			break;
+		case NRPVH_CHAN_OMNI:
+			pcfg->note.chan = CHAN_OMNI;
+			return 1;
+		case NRPVH_CHAN_GLOBAL:
+			pcfg->note.chan = CHAN_GLOBAL;
+			return 1;
 		}
 		break;
 		
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI NOTE 
 	case NRPNL_NOTE_MIN:
-		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.note = value_lo;
-			pcfg->note.note_max = 0;
-			return 1;
-		}
-		break;
+		pcfg->note.note = value_lo;
+		pcfg->note.note_max = 0;
+		return 1;
 
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI NOTE RANGE
 	case NRPNL_NOTE_MAX:
-		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.note_max = value_lo;
-			return 1;
-		}
-		break;
+		pcfg->note.note_max = value_lo;
+		return 1;
 
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI VELOCITY THRESHOLD
 	case NRPNL_VEL_MIN:
-		if(pcfg->event.mode == GATE_MIDI_NOTE) {
-			pcfg->note.vel_min = value_lo;
-			return 1;
-		}
-		break;
+		pcfg->note.vel_min = value_lo;
+		return 1;
 
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI CC SWITCHING THRESHOLD
 	case NRPNL_THRESHOLD:
-		if(pcfg->event.mode == GATE_MIDI_CC ||
-			pcfg->event.mode == NRPVH_SRC_MIDICC_NEG) {
-			pcfg->cc.threshold = value_lo;
-			return 1;
-		}
-		break;
+		pcfg->cc.threshold = value_lo;
+		return 1;
 			
 	////////////////////////////////////////////////////////////////
 	// SELECT GATE DURATION
@@ -673,12 +656,8 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 	////////////////////////////////////////////////////////////////
 	// SELECT CLOCK COUNT INITIAL VALUE
 	case NRPNL_TICK_OFS:
-		if(pcfg->event.mode == GATE_MIDI_CLOCK_TICK || 
-			pcfg->event.mode == GATE_MIDI_CLOCK_RUN_TICK) {
-			pcfg->clock.tick_ofs = value_lo;
-			return 1;
-		}
-		break;
+		pcfg->clock.tick_ofs = value_lo;
+		return 1;
 	}	
 	return 0;
 }		

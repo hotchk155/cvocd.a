@@ -49,7 +49,8 @@ enum {
 	CV_MIDI_CC,	// mapped to midi CC
 	CV_MIDI_BPM, // mapped to midi CC
 	CV_TEST,			// mapped to test voltage	
-	CV_NOTE_HZV // mapped to Hz/Volt note
+	CV_NOTE_HZV, // mapped to Hz/Volt note
+	CV_NOTE_12VO // mapped to 1.2V/oct
 };
 
 typedef struct {
@@ -119,10 +120,10 @@ static void cv_update(byte which, int value) {
 ////////////////////////////////////////////////////////////
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
-static void cv_write_note(byte which, long note, int pitch_bend) {
+static void cv_write_note(byte which, long note, int pitch_bend, long dacs_per_oct) {
 	note <<= 8;
 	note += pitch_bend;
-	note *= 500;
+	note *= dacs_per_oct;
 	note /= 12;	
 	note >>= 8;
 	cv_update(which, note);
@@ -267,6 +268,7 @@ void cv_event(byte event, byte stack_id) {
 		// CV OUTPUT TIED TO INPUT NOTE
 		case CV_NOTE:	
 		case CV_NOTE_HZV:
+		case CV_NOTE_12VO:
 			switch(event) {
 				case EV_NOTE_A:
 				case EV_NOTE_B:
@@ -284,8 +286,11 @@ void cv_event(byte event, byte stack_id) {
 					if(pcv->event.mode == CV_NOTE_HZV) {
 						cv_write_note_hzvolt(which_cv, l_note[which_cv], pstack->bend);
 					}
+					else if(pcv->event.mode == CV_NOTE_12VO) {
+						cv_write_note(which_cv, l_note[which_cv], pstack->bend, 600);
+					}
 					else {
-						cv_write_note(which_cv, l_note[which_cv], pstack->bend);
+						cv_write_note(which_cv, l_note[which_cv], pstack->bend, 500);
 					}
 					break;
 			}
@@ -447,33 +452,26 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 	////////////////////////////////////////////////////////////////
 	// SELECT MIDI CHANNEL
 	case NRPNL_CHAN:	
-		if(pcv->event.mode == CV_MIDI_BEND || 
-			pcv->event.mode == CV_MIDI_TOUCH ||
-			pcv->event.mode == CV_MIDI_CC ) {
-			switch(value_hi) {
-			case NRPVH_CHAN_SPECIFIC:
-				if(value_lo >= 1 && value_lo <= 16) {
-					pcv->midi.chan = value_lo - 1; // relies on alignment of chan member in cc too
-					return 1;
-				}
-				break;
-			case NRPVH_CHAN_OMNI:
-				pcv->midi.chan = CHAN_OMNI;
-				return 1;
-			case NRPVH_CHAN_GLOBAL:
-				pcv->midi.chan = CHAN_GLOBAL;
+		switch(value_hi) {
+		case NRPVH_CHAN_SPECIFIC:
+			if(value_lo >= 1 && value_lo <= 16) {
+				pcv->midi.chan = value_lo - 1; // relies on alignment of chan member in cc too
 				return 1;
 			}
+			break;
+		case NRPVH_CHAN_OMNI:
+			pcv->midi.chan = CHAN_OMNI;
+			return 1;
+		case NRPVH_CHAN_GLOBAL:
+			pcv->midi.chan = CHAN_GLOBAL;
+			return 1;
 		}
 		break;		
 		
 	// SELECT TRANSPOSE AMOUNT
 	case NRPNL_TRANSPOSE:
-		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
-			pcv->event.transpose = value_lo;
-			return 1;
-		}
-		break;
+		pcv->event.transpose = value_lo; 
+		return 1;
 
 	// SELECT VOLTAGE RANGE
 	case NRPNL_VOLTS:
@@ -485,11 +483,16 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 
 	// SELECT PITCH SCHEME
 	case NRPNL_PITCH_SCHEME:
-		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
-			pcv->event.mode = (value_lo == NRPVH_PITCH_HZV) ? CV_NOTE_HZV : CV_NOTE;
-			return 1;
+		if(value_lo == NRPVH_PITCH_HZV) {
+			pcv->event.mode = CV_NOTE_HZV;
 		}
-		
+		else if(value_lo == NRPVH_PITCH_12VO) {
+			pcv->event.mode = CV_NOTE_12VO;
+		}
+		else {
+			pcv->event.mode = CV_NOTE;
+		}
+		return 1;		
 	}
 	return 0;
 }

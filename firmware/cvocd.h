@@ -232,7 +232,8 @@ enum {
 	NRPVH_DUR_RETRIG		= 3,
 
 	NRPVH_PITCH_VOCT		= 0,
-	NRPVH_PITCH_HZV			= 1
+	NRPVH_PITCH_HZV			= 1,
+	NRPVH_PITCH_12VO		= 2
 };
 
 // Parameter Value Low Byte
