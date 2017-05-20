@@ -57,7 +57,7 @@ typedef struct {
 	byte volts;	
 	byte stack_id;
 	byte out;
-	char transpose;	// note offset 
+	byte transpose;  
 } T_CV_EVENT;
 
 typedef struct {
@@ -274,7 +274,7 @@ void cv_event(byte event, byte stack_id) {
 				case EV_NOTE_D:
 					output_id = event - EV_NOTE_A;
 					if(pcv->event.out == output_id) {			
-						note = pstack->out[output_id] + pcv->event.transpose - 24;
+						note = (int)pstack->out[output_id] + ((int)pcv->event.transpose - TRANSPOSE_NONE) - 24;
 						while(note < 0) note += 12; 	
 						while(note > 120) note -= 12; 	
 						l_note[which_cv] = note;
@@ -434,7 +434,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			case NRPVL_SRC_NOTE4:
 				pcv->event.mode = CV_NOTE;
 				pcv->event.out = value_lo - NRPVL_SRC_NOTE1;
-				pcv->event.transpose = 0;
+				pcv->event.transpose = TRANSPOSE_NONE;
 				return 1;				
 			case NRPVL_SRC_VEL:		// NOTE VELOCITY
 				pcv->event.mode = CV_VEL;
@@ -470,7 +470,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 	// SELECT TRANSPOSE AMOUNT
 	case NRPNL_TRANSPOSE:
 		if(CV_NOTE == pcv->event.mode || CV_NOTE_HZV == pcv->event.mode) {		
-			pcv->event.transpose = value_lo - 64;
+			pcv->event.transpose = value_lo;
 			return 1;
 		}
 		break;

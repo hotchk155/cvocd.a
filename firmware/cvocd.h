@@ -146,6 +146,10 @@ enum {
 	PRIORITY_MAX			= 12
 };
 
+enum {
+	TRANSPOSE_NONE			= 64	// transpose value for no transpose
+};
+
 // Parameter Number High Byte 
 enum {
 	// global settings
