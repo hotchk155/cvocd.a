@@ -5011,7 +5011,7 @@ Based on the following sources:
 <attribute name="NAME" x="54.356" y="27.305" size="1.27" layer="25" ratio="10"/>
 </element>
 <element name="IC3" library="74xx-eu" package="SO16" value="74HC595D" x="86.741" y="7.62" smashed="yes" rot="R270">
-<attribute name="NAME" x="84.836" y="13.081" size="1.27" layer="25" ratio="10"/>
+<attribute name="NAME" x="85.5218" y="0.7366" size="1.27" layer="25" ratio="10"/>
 </element>
 <element name="R14" library="rcl" package="R0805" value="" x="66.04" y="28.448" smashed="yes" rot="R180">
 <attribute name="NAME" x="60.579" y="27.813" size="1.27" layer="25"/>
@@ -5102,7 +5102,7 @@ Based on the following sources:
 <attribute name="MPN" value="REG1117" x="101.6" y="-35.56" size="1.778" layer="27" display="off"/>
 <attribute name="MF" value="" x="101.6" y="-35.56" size="1.778" layer="27" display="off"/>
 <attribute name="OC_FARNELL" value="1097566" x="101.6" y="-35.56" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="84.709" y="39.37" size="1.27" layer="25" ratio="10"/>
+<attribute name="NAME" x="76.5556" y="32.893" size="1.27" layer="25" ratio="10"/>
 </element>
 <element name="C10" library="rcl" package="C0805" value="" x="85.344" y="30.988" smashed="yes" rot="R180">
 <attribute name="NAME" x="87.122" y="29.845" size="1.27" layer="25" rot="R180"/>
@@ -5154,7 +5154,7 @@ Based on the following sources:
 <attribute name="VALUE" x="140.589" y="25.908" size="1.27" layer="27"/>
 </element>
 <element name="R12" library="rcl" package="R0805" value="" x="106.68" y="1.143" smashed="yes">
-<attribute name="NAME" x="101.219" y="-0.508" size="1.27" layer="25"/>
+<attribute name="NAME" x="109.0676" y="0.635" size="1.27" layer="25"/>
 <attribute name="VALUE" x="106.045" y="-1.397" size="1.27" layer="27"/>
 </element>
 <element name="R11" library="rcl" package="R0805" value="" x="119.634" y="1.016" smashed="yes">

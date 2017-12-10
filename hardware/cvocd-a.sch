@@ -18624,6 +18624,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <approved hash="113,1,-127,75.8105,S1,,,,,"/>
 <approved hash="113,1,-96.9924,166.37,C21,,,,,"/>
 <approved hash="113,1,-53.8124,166.37,C20,,,,,"/>
+<approved hash="113,1,-106.68,175.747,D2,,,,,"/>
 </errors>
 </schematic>
 </drawing>
