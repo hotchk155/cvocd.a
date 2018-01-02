@@ -5,7 +5,7 @@ void setup() {
   pinMode(P_LED, OUTPUT);
   Wire.begin();
   Serial.begin(9600);
-  Serial.print("Begin");
+  Serial.println("Begin");
   
   Serial1.begin(31250);
   
@@ -127,23 +127,20 @@ void set_ofs_adj(byte which, int amount)
 }
 
 #define OCTAVES 8
-boolean calibrate(byte which, int& scale, int &ofs, boolean& scale_done, boolean &ofs_done) 
+boolean calibrate_gain(byte which, int& scale, boolean& done) 
 {
   int mv[4] = {0};
   int result = 0;
   int last_result = 0;
   int note = 36;
-  int expected = 1000;
-  int error;
-  double error_total = 0;
   int delta = 0;
   double  delta_total = 0;
   int i;
-  Serial.print("=== CALIBRATE CV ");
+  Serial.print("=== CALIBRATE GAIN ");
   Serial.println(which);
   
   set_scale_adj(which,scale);
-  set_ofs_adj(which,ofs);
+  set_ofs_adj(which,0);
   
   for(i=0; i<OCTAVES; ++i) {
     if(!test_note(note,mv)) {
@@ -154,66 +151,126 @@ boolean calibrate(byte which, int& scale, int &ofs, boolean& scale_done, boolean
     Serial.print(i+1, DEC);
     Serial.print("->");
     Serial.print(mv[which], DEC);
-    Serial.print("mV [");
+    Serial.print("mV ");
     result = mv[which];
     if(i>0) {
       delta = result - last_result;
       delta_total += delta;
+      Serial.print("[octave step ");
       Serial.print(delta);
-      Serial.print("diff, ");
+      Serial.print("mV]");
       if(delta < 800 || delta > 1200) {
         Serial.println(" *** FAIL");
         return false;
       }
     }
-    error = result - expected;
-    error_total += error;
-    expected += 1000;
-    Serial.print(error);
-    Serial.print(" err]");
+    Serial.println("");
     last_result = result;
-    Serial.println(", ");
     note += 12;
   }
   delta_total = (delta_total/(i-1));
-  Serial.print("Gain error ");
-  Serial.print(delta_total-1000);
+  Serial.print(" Gain error ");
+  Serial.println(delta_total-1000);
 
-  error_total = (error_total/i);
-  Serial.print(", offet error ");
-  Serial.println(error_total);
-  
   int gain_correction = 0.5 + 4.0 * (1000 - delta_total); 
-  gain_correction = constrain(gain_correction, -63, 63);
-  //correction *= 8; // correction is applied over 8 octaves
-//  correction /= 2; // 2 DAC units per mV
-
-  int ofs_correction = 0.5 + error_total/2.0;
-  ofs_correction = constrain(ofs_correction, -63, 63);
-  
-  if(!scale_done) {
-    if(gain_correction != 0) {
-      Serial.print("Gain correction ");
+  gain_correction = constrain(gain_correction, -63, 63);  
+  if(abs(delta_total-1000) > 0.2) {
+      Serial.print(" Gain correction ");
       Serial.print(gain_correction);
       set_scale_adj(which,gain_correction);
       Serial.println(" set");
       scale = gain_correction;
-    }
-    else {
-      Serial.print("Offset correction ");
-      Serial.print(ofs_correction);
-      set_ofs_adj(which,ofs_correction);
-      Serial.println(" set");
-      ofs = ofs_correction;
-      scale_done = true;
-    }
   }
   else {
-     return true;
+    done = true;
   }
-  return false;  
+  return true;  
 }
 
+
+boolean calibrate_offset(byte which, int &ofs) 
+{
+  int mv[4] = {0};
+  int note;
+  int expected;
+  int error;
+  double error_total = 0;
+  double min_error = 99999999;
+  int this_ofs = 0;
+  int i;
+ 
+  
+  Serial.print("=== CALIBRATE OFFSET ");
+  Serial.println(which);  
+  ofs = 0;
+  // multiple attempts to find the offset value which works best
+  for(int count = 0; count < 5; ++count) {
+    set_ofs_adj(which,this_ofs);
+    note = 36;
+    expected = 1000;
+    for(i=0; i<OCTAVES; ++i) {
+      if(!test_note(note,mv)) {
+        Serial.println("*** COMMS ERROR ***");
+        return false;
+      }      
+      error = expected - mv[which];
+      error_total += error;
+      expected += 1000;      
+      note += 12;
+    }
+  
+    error_total = (error_total/i);
+    // one unit is 2mV
+    int ofs_correction = (0.5 + error_total/2.0);
+    ofs_correction = ofs_correction + ofs; // remember there is already an offset 
+    this_ofs = constrain(ofs_correction, -63, 63);  
+    
+    if(abs(error_total) < min_error) {
+      // tracking best value
+      min_error = error_total;
+      ofs = this_ofs;
+    }     
+  }
+
+  // store best value
+  set_ofs_adj(which,ofs);
+  Serial.print("Correction ");
+  Serial.print(ofs);
+  Serial.println(" set");
+  
+  // re-evaluate
+  note = 36;
+  expected = 1000;
+  for(i=0; i<OCTAVES; ++i) {
+    if(!test_note(note,mv)) {
+      Serial.println("*** COMMS ERROR ***");
+      return false;
+    }
+    
+    error = expected - mv[which];
+    error_total += error;
+    expected += 1000;
+    
+    Serial.print("C");
+    Serial.print(i+1, DEC);
+    Serial.print("->");
+    Serial.print(mv[which], DEC);
+    Serial.print("mV");
+    Serial.print(" expected ");
+    Serial.print(expected);
+    Serial.print("mV");
+    Serial.print(" error ");
+    Serial.print(error);
+    Serial.println("mV");    
+    note += 12;
+  }
+  error_total = (error_total/i);
+  Serial.print("Mean offset error ");
+  Serial.print(error_total);
+  Serial.println("mV");
+   
+  return true;    
+}
 
 void loop() {
 
@@ -222,13 +279,11 @@ void loop() {
   for(int i=0; i<4; ++i) {
     all_notes_off();
     delay(1000);
-    boolean scale_done = false;
-    boolean ofs_done = false;
-    for(;;) {
-      if(calibrate(i, scale[i], ofs[i], scale_done, ofs_done)) {
-        break;
-      }
+    boolean done = false;
+    while(!done) {
+      calibrate_gain(i, scale[i], done);
     }  
+    calibrate_offset(i, ofs[i]);
   }
   Serial.println("Done...");
   Serial.print("scale ");
