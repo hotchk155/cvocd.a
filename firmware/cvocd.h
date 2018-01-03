@@ -195,6 +195,8 @@ enum {
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
 	NRPNL_PITCH_SCHEME  = 16,
+	NRPNL_CAL_SCALE  	= 98,
+	NRPNL_CAL_OFS  		= 99,
 	NRPNL_SAVE			= 100
 };
 
@@ -342,7 +344,7 @@ void cv_event(byte event, byte stack_id);
 void cv_midi_cc(byte chan, byte cc, byte value);
 void cv_midi_touch(byte chan, byte value);
 void cv_midi_bend(byte chan, int bend);
-void cv_midi_bpm(long value);
+//void cv_midi_bpm(long value);
 void cv_init(); 
 void cv_reset();
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);

@@ -56,6 +56,8 @@ enum {
 typedef struct {
 	byte mode;	// CV_xxx enum
 	byte volts;	
+	byte ofs;
+	byte scale;
 	byte stack_id;
 	byte out;
 	byte transpose;  
@@ -64,6 +66,8 @@ typedef struct {
 typedef struct {
 	byte mode;	// CV_xxx enum
 	byte volts;	
+	byte ofs;
+	byte scale;
 	byte chan;
 	byte cc;
 } T_CV_MIDI;
@@ -105,6 +109,13 @@ static void cv_config_dac() {
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
 static void cv_update(byte which, int value) {
+	
+	if(l_cv[which].event.scale) {
+		long scale = (long)l_cv[which].event.scale - 64;
+		long ofs = (long)l_cv[which].event.ofs - 64;
+		value = (((long)value * (4096 + scale))/4096) + ofs;
+	}
+	
 	if(value < 0) 
 		value = 0;
 	if(value > 4095) 
@@ -373,6 +384,7 @@ void cv_midi_bend(byte chan, int value)
 ////////////////////////////////////////////////////////////
 // HANDLE BPM
 // BPM is upscaled by 256
+/*
 void cv_midi_bpm(long value) {
 	if(value & (long)0xFFFF0000)
 		value = 0xFFFF;
@@ -384,8 +396,8 @@ void cv_midi_bpm(long value) {
 		value *= (500 * pcv->event.volts);
 		cv_update(which_cv, value>>16);
 	}
-}					
- 
+}
+*/
 ////////////////////////////////////////////////////////////
 // CONFIGURE A CV OUTPUT
 // return nonzero if any change was made
@@ -492,6 +504,14 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 		else {
 			pcv->event.mode = CV_NOTE;
 		}
+		return 1;		
+		
+	// CALIBRATION
+	case NRPNL_CAL_SCALE:
+		pcv->event.scale = value_lo; // zero here is "off"
+		return 1;
+	case NRPNL_CAL_OFS:
+		pcv->event.ofs = value_lo;
 		return 1;		
 	}
 	return 0;

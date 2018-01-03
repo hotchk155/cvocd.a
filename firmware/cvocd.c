@@ -78,7 +78,7 @@ byte sysex_state = SYSEX_NONE;			// whether we are currently inside a sysex bloc
 // Timer related stuff
 #define TIMER_0_INIT_SCALAR		5		// Timer 0 initialiser to overlow at 1ms intervals
 volatile byte ms_tick = 0;				// once per millisecond tick flag used to synchronise stuff
-volatile int millis = 0;				// millisecond counter
+//volatile int millis = 0;				// millisecond counter
 
 byte nrpn_hi = 0;						// value of last NRPN param high byte			
 byte nrpn_lo = 0;						// value of last NRPN param low byte
@@ -112,7 +112,7 @@ void interrupt( void )
 	{
 		tmr0 = TIMER_0_INIT_SCALAR;
 		ms_tick = 1;
-		++millis;
+//		++millis;
 		intcon.2 = 0;		
 	}		
 	
@@ -559,10 +559,10 @@ void main()
 			case MIDI_SYNCH_TICK:
 				if(!midi_ticks) {
 					LED_2_PULSE(LED_PULSE_MIDI_BEAT);				
-					if(millis>0) {		
-						cv_midi_bpm(((long)256*60000)/millis);					
-						millis = 0;
-					}
+//					if(millis>0) {		
+//						cv_midi_bpm(((long)256*60000)/millis);					
+//						millis = 0;
+//					}
 				}
 				if(++midi_ticks>=24) {
 					midi_ticks = 0;

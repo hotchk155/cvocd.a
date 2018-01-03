@@ -34,7 +34,7 @@
 // LOCAL DATA
 //
 
-#define MAGIC_COOKIE 0xA6
+#define MAGIC_COOKIE 0xA9
 
 //
 // LOCAL FUNCTIONS
