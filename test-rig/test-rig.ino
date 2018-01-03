@@ -1,8 +1,38 @@
 #include <Wire.h>
 #define P_LED 11
+#define P_YELLOW 19
+#define P_GREEN 20
+#define P_RED 21
+
+#define P_CAL_BUTTON 1
+#define P_TEST_BUTTON 4
+
 #define I2C_ADDR 0b1001100
-void setup() {
+void setup() {  
+  
   pinMode(P_LED, OUTPUT);
+  pinMode(P_YELLOW, OUTPUT);
+  pinMode(P_GREEN, OUTPUT);
+  pinMode(P_RED, OUTPUT);
+
+  pinMode(P_CAL_BUTTON, INPUT_PULLUP);
+  pinMode(P_TEST_BUTTON, INPUT_PULLUP);
+  
+  for(;;) {
+    digitalWrite(P_YELLOW, digitalRead(P_CAL_BUTTON));
+    digitalWrite(P_RED, digitalRead(P_TEST_BUTTON));
+  }
+  
+  digitalWrite(P_YELLOW,HIGH);
+  delay(1000);
+  digitalWrite(P_YELLOW,LOW);
+  digitalWrite(P_GREEN,HIGH);
+  delay(1000);
+  digitalWrite(P_GREEN,LOW);
+  digitalWrite(P_RED,HIGH);
+  delay(1000);
+  digitalWrite(P_RED,LOW);
+  
   Wire.begin();
   Serial.begin(9600);
   Serial.println("Begin");
