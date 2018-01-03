@@ -65,7 +65,6 @@ Desktop.ini
 *.stat
 *.tree
 makefile.*
-*.__f
 *.exe
 *.pp
 cv-strip.hex
