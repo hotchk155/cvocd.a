@@ -4828,31 +4828,43 @@ Based on the following sources:
 <class number="0" name="default" width="0" drill="0">
 </class>
 </classes>
-<designrules name="dirt_cheap_dirty_boards.v1">
-<description language="en">&lt;b&gt;Dirty Cheap Dirty Board Design Rules&lt;/b&gt;
-&lt;br&gt;
-&lt;br&gt;Min width/Spacing: 5/5mil
-&lt;br&gt;Min diameter of finished hole 12mil</description>
+<designrules name="hackvana">
+<description language="de">&lt;b&gt;EAGLE Design Rules für Hackvana&lt;/b&gt;
+&lt;p&gt;
+Die Standard-Design-Rules sind so gewählt, dass sie für 
+die meisten Anwendungen passen. Sollte ihre Platine 
+besondere Anforderungen haben, treffen Sie die erforderlichen
+Einstellungen hier und speichern die Design Rules unter 
+einem neuen Namen ab.</description>
+<description language="en">&lt;b&gt;EAGLE Design Rules for Hackvana&lt;/b&gt;
+&lt;p&gt;
+The default Design Rules have been set to cover
+a wide range of applications. Your particular design
+may have different requirements, so please make the
+necessary adjustments and save your customized
+design rules under a new name.</description>
+<description language="zh">&lt;b&gt;EAGLE Design Rules for Hackvana&lt;/b&gt;
+</description>
 <param name="layerSetup" value="(1*16)"/>
-<param name="mtCopper" value="0.035mm 0.0175mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.0175mm 0.035mm"/>
-<param name="mtIsolate" value="1.5mm 1.1mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
-<param name="mdWireWire" value="5mil"/>
-<param name="mdWirePad" value="5mil"/>
-<param name="mdWireVia" value="5mil"/>
-<param name="mdPadPad" value="5mil"/>
-<param name="mdPadVia" value="5mil"/>
-<param name="mdViaVia" value="5mil"/>
+<param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
+<param name="mtIsolate" value="1.5mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
+<param name="mdWireWire" value="6mil"/>
+<param name="mdWirePad" value="9mil"/>
+<param name="mdWireVia" value="6mil"/>
+<param name="mdPadPad" value="6mil"/>
+<param name="mdPadVia" value="6mil"/>
+<param name="mdViaVia" value="6mil"/>
 <param name="mdSmdPad" value="0mil"/>
 <param name="mdSmdVia" value="0mil"/>
 <param name="mdSmdSmd" value="0mil"/>
 <param name="mdViaViaSameLayer" value="8mil"/>
 <param name="mnLayersViaInSmd" value="2"/>
-<param name="mdCopperDimension" value="10mil"/>
-<param name="mdDrill" value="10mil"/>
+<param name="mdCopperDimension" value="6mil"/>
+<param name="mdDrill" value="6mil"/>
 <param name="mdSmdStop" value="0mil"/>
-<param name="msWidth" value="5mil"/>
-<param name="msDrill" value="12mil"/>
-<param name="msMicroVia" value="12mil"/>
+<param name="msWidth" value="6mil"/>
+<param name="msDrill" value="0.3mm"/>
+<param name="msMicroVia" value="0.25mm"/>
 <param name="msBlindViaRatio" value="0.5"/>
 <param name="rvPadTop" value="0.25"/>
 <param name="rvPadInner" value="0.25"/>
@@ -4886,7 +4898,7 @@ Based on the following sources:
 <param name="mlMaxStopFrame" value="2mil"/>
 <param name="mlMinCreamFrame" value="0mil"/>
 <param name="mlMaxCreamFrame" value="0mil"/>
-<param name="mlViaStopLimit" value="25mil"/>
+<param name="mlViaStopLimit" value="100mil"/>
 <param name="srRoundness" value="0"/>
 <param name="srMinRoundness" value="0mil"/>
 <param name="srMaxRoundness" value="0mil"/>
@@ -5198,7 +5210,7 @@ Based on the following sources:
 </element>
 <element name="U$2" library="jason_eagle6" package="PWR_SOCKET_2_1MM" value="PWR_SOCKET_2_1MM" x="138.905" y="35.687" smashed="yes" rot="R45"/>
 <element name="C21" library="rcl" package="PANASONIC_C" value="" x="89.535" y="38.1" smashed="yes" rot="R90">
-<attribute name="NAME" x="93.516" y="36.135" size="1.27" layer="25" rot="R90"/>
+<attribute name="NAME" x="93.77" y="36.77" size="1.27" layer="25" rot="R90"/>
 <attribute name="VALUE" x="93.31" y="35.45" size="1.016" layer="27" rot="R90"/>
 </element>
 <element name="C20" library="rcl" package="PANASONIC_C" value="" x="75.692" y="38.1" smashed="yes" rot="R90">
@@ -5288,6 +5300,14 @@ Based on the following sources:
 <via x="91.567" y="5.715" extent="1-16" drill="0.6"/>
 <via x="91.6432" y="8.2296" extent="1-16" drill="0.6"/>
 <via x="91.6432" y="15.8496" extent="1-16" drill="0.6"/>
+<via x="109.8042" y="1.6256" extent="1-16" drill="0.6"/>
+<via x="110.9472" y="1.6256" extent="1-16" drill="0.6"/>
+<via x="112.0902" y="1.6256" extent="1-16" drill="0.6"/>
+<wire x1="53.6399" y1="29.853" x2="54.729" y2="29.853" width="0.254" layer="1"/>
+<wire x1="54.729" y1="29.853" x2="54.864" y2="29.718" width="0.254" layer="1"/>
+<wire x1="54.864" y1="29.718" x2="54.864" y2="29.464" width="0.254" layer="1"/>
+<wire x1="57.8661" y1="31.353" x2="59.42" y2="31.353" width="0.254" layer="1"/>
+<wire x1="59.42" y1="31.353" x2="59.436" y2="31.369" width="0.254" layer="1"/>
 </signal>
 <signal name="N$1">
 <contactref element="R15" pad="2"/>
@@ -5658,13 +5678,15 @@ Based on the following sources:
 <signal name="N$34">
 <contactref element="IC1" pad="4"/>
 <contactref element="ICSP" pad="1"/>
-<via x="92.964" y="25.4" extent="1-16" drill="0.6"/>
+<via x="95.504" y="25.4" extent="1-16" drill="0.6"/>
 <via x="82.55" y="21.59" extent="1-16" drill="0.6"/>
 <wire x1="82.55" y1="21.59" x2="85.03" y2="21.59" width="0.3048" layer="1"/>
 <wire x1="92.71" y1="21.59" x2="82.55" y2="21.59" width="0.3048" layer="16"/>
-<wire x1="92.964" y1="25.4" x2="96.774" y2="25.4" width="0.3048" layer="1"/>
-<wire x1="92.964" y1="25.4" x2="92.964" y2="21.844" width="0.3048" layer="16"/>
+<wire x1="95.504" y1="25.4" x2="96.774" y2="25.4" width="0.3048" layer="1"/>
 <wire x1="92.964" y1="21.844" x2="92.71" y2="21.59" width="0.3048" layer="16"/>
+<wire x1="92.964" y1="21.844" x2="92.964" y2="24.511" width="0.3048" layer="16"/>
+<wire x1="95.504" y1="25.4" x2="93.853" y2="25.4" width="0.3048" layer="16"/>
+<wire x1="93.853" y1="25.4" x2="92.964" y2="24.511" width="0.3048" layer="16"/>
 </signal>
 <signal name="N$35">
 <contactref element="R1" pad="1"/>
@@ -5739,8 +5761,6 @@ Based on the following sources:
 <contactref element="IC2" pad="10"/>
 <contactref element="R4" pad="1"/>
 <contactref element="C20" pad="+"/>
-<wire x1="53.6399" y1="31.353" x2="53.229" y2="31.353" width="0.3048" layer="1"/>
-<wire x1="53.229" y1="31.353" x2="53.102" y2="31.353" width="0.254" layer="1"/>
 <wire x1="53.102" y1="31.353" x2="52.705" y2="31.75" width="0.254" layer="1"/>
 <wire x1="52.705" y1="31.75" x2="48.387" y2="31.75" width="0.254" layer="1"/>
 <wire x1="47.879" y1="30.419" x2="47.945" y2="30.48" width="0.254" layer="1"/>
@@ -5822,6 +5842,7 @@ Based on the following sources:
 <wire x1="96.266" y1="28.448" x2="98.552" y2="28.448" width="0.8128" layer="1"/>
 <wire x1="88.265" y1="25.019" x2="91.694" y2="28.448" width="0.8128" layer="16"/>
 <wire x1="91.694" y1="28.448" x2="96.266" y2="28.448" width="0.8128" layer="16"/>
+<wire x1="53.102" y1="31.353" x2="53.6399" y2="31.353" width="0.254" layer="1"/>
 </signal>
 <signal name="VIN">
 <contactref element="IC6" pad="3"/>
@@ -5939,10 +5960,9 @@ Based on the following sources:
 <contactref element="R12" pad="2"/>
 <contactref element="GATE9" pad="4"/>
 <wire x1="106.68" y1="12.64" x2="106.68" y2="9.271" width="0.3048" layer="1"/>
-<wire x1="106.68" y1="9.271" x2="111.633" y2="4.318" width="0.3048" layer="1"/>
-<wire x1="111.633" y1="4.318" x2="111.633" y2="2.286" width="0.3048" layer="1"/>
-<wire x1="111.633" y1="2.286" x2="110.49" y2="1.143" width="0.3048" layer="1"/>
-<wire x1="110.49" y1="1.143" x2="107.63" y2="1.143" width="0.3048" layer="1"/>
+<wire x1="106.68" y1="9.271" x2="109.601" y2="6.35" width="0.3048" layer="1"/>
+<wire x1="109.601" y1="6.35" x2="109.601" y2="3.114" width="0.3048" layer="1"/>
+<wire x1="109.601" y1="3.114" x2="107.63" y2="1.143" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$39">
 <contactref element="R11" pad="2"/>
