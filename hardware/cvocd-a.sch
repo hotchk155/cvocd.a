@@ -18906,6 +18906,21 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <sheets>
 <sheet>
 <plain>
+<text x="59.436" y="172.212" size="3.81" layer="95">CV.OCD MIDI TO CV CONVERTER</text>
+<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 4, 30 JAN 2018</text>
+<text x="59.944" y="160.782" size="3.81" layer="95">Jason Hotchkiss, Sixty-Four Pixels Ltd</text>
+<text x="-152.4" y="185.42" size="3.81" layer="95">POWER SUPPLY</text>
+<text x="-152.4" y="154.94" size="3.81" layer="95">MIDI IN</text>
+<text x="-86.868" y="65.024" size="3.81" layer="95">PROCESSOR</text>
+<text x="16.256" y="62.738" size="3.81" layer="95">12 BIT DAC</text>
+<text x="93.726" y="123.444" size="3.81" layer="95">CV 2 X GAIN OUTPUT BUFFER</text>
+<text x="-91.694" y="-16.256" size="3.81" layer="95">GATES 1-4</text>
+<text x="103.886" y="-36.576" size="3.81" layer="95">GATES 5-12</text>
+<text x="-1.778" y="120.142" size="3.81" layer="95">INDICATORS</text>
+<wire x1="58.42" y1="177.8" x2="58.42" y2="158.496" width="0.1524" layer="95"/>
+<wire x1="58.42" y1="158.496" x2="154.94" y2="158.496" width="0.1524" layer="95"/>
+<wire x1="154.94" y1="158.496" x2="154.94" y2="177.8" width="0.1524" layer="95"/>
+<wire x1="154.94" y1="177.8" x2="58.42" y2="177.8" width="0.1524" layer="95"/>
 </plain>
 <instances>
 <instance part="CVB" gate="G$1" x="172.72" y="99.06" rot="R180"/>
@@ -18960,15 +18975,15 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <instance part="ICSP" gate="G$1" x="-124.46" y="48.26" rot="MR0"/>
 <instance part="GND18" gate="1" x="-93.98" y="33.02"/>
 <instance part="GND19" gate="1" x="7.62" y="58.42"/>
-<instance part="LED3" gate="G$1" x="5.08" y="182.88"/>
-<instance part="LED1" gate="G$1" x="12.7" y="182.88"/>
-<instance part="R25" gate="G$1" x="5.08" y="170.18" rot="R270"/>
-<instance part="R23" gate="G$1" x="12.7" y="170.18" rot="R270"/>
-<instance part="R24" gate="G$1" x="20.32" y="170.18" rot="R270"/>
-<instance part="LED2" gate="G$1" x="20.32" y="182.88"/>
-<instance part="GND21" gate="1" x="5.08" y="160.02"/>
-<instance part="GND22" gate="1" x="12.7" y="160.02"/>
-<instance part="GND23" gate="1" x="20.32" y="160.02"/>
+<instance part="LED3" gate="G$1" x="5.08" y="152.4"/>
+<instance part="LED1" gate="G$1" x="12.7" y="152.4"/>
+<instance part="R25" gate="G$1" x="5.08" y="139.7" rot="R270"/>
+<instance part="R23" gate="G$1" x="12.7" y="139.7" rot="R270"/>
+<instance part="R24" gate="G$1" x="20.32" y="139.7" rot="R270"/>
+<instance part="LED2" gate="G$1" x="20.32" y="152.4"/>
+<instance part="GND21" gate="1" x="5.08" y="129.54"/>
+<instance part="GND22" gate="1" x="12.7" y="129.54"/>
+<instance part="GND23" gate="1" x="20.32" y="129.54"/>
 <instance part="IC4" gate="G$1" x="-76.2" y="175.26"/>
 <instance part="GND4" gate="1" x="-76.2" y="154.94"/>
 <instance part="C5" gate="G$1" x="-91.44" y="165.1" rot="R180"/>
@@ -19143,17 +19158,17 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <segment>
 <pinref part="GND21" gate="1" pin="GND"/>
 <pinref part="R25" gate="G$1" pin="2"/>
-<wire x1="5.08" y1="162.56" x2="5.08" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="132.08" x2="5.08" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND22" gate="1" pin="GND"/>
 <pinref part="R23" gate="G$1" pin="2"/>
-<wire x1="12.7" y1="162.56" x2="12.7" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="132.08" x2="12.7" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND23" gate="1" pin="GND"/>
 <pinref part="R24" gate="G$1" pin="2"/>
-<wire x1="20.32" y1="162.56" x2="20.32" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="132.08" x2="20.32" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="-132.08" y1="172.72" x2="-101.6" y2="172.72" width="0.1524" layer="91"/>
@@ -19515,28 +19530,28 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <segment>
 <pinref part="R25" gate="G$1" pin="1"/>
 <pinref part="LED3" gate="G$1" pin="C"/>
-<wire x1="5.08" y1="175.26" x2="5.08" y2="177.8" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="144.78" x2="5.08" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$36" class="0">
 <segment>
 <pinref part="R23" gate="G$1" pin="1"/>
 <pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="12.7" y1="175.26" x2="12.7" y2="177.8" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="144.78" x2="12.7" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$37" class="0">
 <segment>
 <pinref part="R24" gate="G$1" pin="1"/>
 <pinref part="LED2" gate="G$1" pin="C"/>
-<wire x1="20.32" y1="175.26" x2="20.32" y2="177.8" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="144.78" x2="20.32" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="ACT_LED" class="0">
 <segment>
 <pinref part="LED1" gate="G$1" pin="A"/>
-<wire x1="12.7" y1="185.42" x2="12.7" y2="193.04" width="0.1524" layer="91"/>
-<label x="12.7" y="190.5" size="1.778" layer="95" rot="R90"/>
+<wire x1="12.7" y1="154.94" x2="12.7" y2="162.56" width="0.1524" layer="91"/>
+<label x="12.7" y="160.02" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <pinref part="IC5" gate="G$1" pin="RA2/INT"/>
@@ -19548,8 +19563,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <net name="STATUS_LED" class="0">
 <segment>
 <pinref part="LED2" gate="G$1" pin="A"/>
-<wire x1="20.32" y1="185.42" x2="20.32" y2="193.04" width="0.1524" layer="91"/>
-<label x="20.32" y="190.5" size="1.778" layer="95" rot="R90"/>
+<wire x1="20.32" y1="154.94" x2="20.32" y2="162.56" width="0.1524" layer="91"/>
+<label x="20.32" y="160.02" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <pinref part="IC5" gate="G$1" pin="RC2"/>
@@ -19561,8 +19576,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <net name="VDD" class="0">
 <segment>
 <pinref part="LED3" gate="G$1" pin="A"/>
-<wire x1="5.08" y1="185.42" x2="5.08" y2="193.04" width="0.1524" layer="91"/>
-<label x="2.54" y="193.04" size="1.778" layer="95"/>
+<wire x1="5.08" y1="154.94" x2="5.08" y2="162.56" width="0.1524" layer="91"/>
+<label x="2.54" y="162.56" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="IC6" gate="P" pin="VCC"/>
@@ -20059,46 +20074,46 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,-48.26,88.9,IC1,VSS,GND,,,"/>
-<approved hash="104,1,45.72,81.28,IC4,VSS,GND,,,"/>
-<approved hash="104,1,-127,-17.78,IC3P,VCC,VDD,,,"/>
-<approved hash="104,1,88.9,121.92,IC5P,V+,VIN,,,"/>
-<approved hash="104,1,88.9,106.68,IC5P,V-,GND,,,"/>
+<approved hash="104,1,-48.26,88.9,IC5,VSS,GND,,,"/>
+<approved hash="104,1,45.72,81.28,IC3,VSS,GND,,,"/>
+<approved hash="104,1,-127,-17.78,IC6P,VCC,VDD,,,"/>
+<approved hash="104,1,88.9,121.92,IC2P,V+,VIN,,,"/>
+<approved hash="104,1,88.9,106.68,IC2P,V-,GND,,,"/>
 <approved hash="104,1,-111.76,50.8,ICSP,VSS(GND),GND,,,"/>
-<approved hash="104,1,58.42,-10.16,IC2P,VCC,VDD,,,"/>
+<approved hash="104,1,58.42,-10.16,IC7P,VCC,VDD,,,"/>
 <approved hash="106,1,-91.44,76.2,MIDI_OUT,,,,,"/>
-<approved hash="113,1,-83.82,3.53483,R14,,,,,"/>
-<approved hash="113,1,-83.82,-4.08517,R13,,,,,"/>
-<approved hash="113,1,-83.82,18.7748,R15,,,,,"/>
-<approved hash="113,1,-83.82,11.1548,R16,,,,,"/>
-<approved hash="113,1,-133.35,-25.2409,C13,,,,,"/>
+<approved hash="113,1,-83.82,3.53483,R16,,,,,"/>
+<approved hash="113,1,-83.82,-4.08517,R17,,,,,"/>
+<approved hash="113,1,-83.82,18.7748,R19,,,,,"/>
+<approved hash="113,1,-83.82,11.1548,R18,,,,,"/>
+<approved hash="113,1,-133.35,-24.5313,C7,,,,,"/>
 <approved hash="113,1,-120.46,49.53,ICSP,,,,,"/>
-<approved hash="113,1,5.40173,181.61,L3,,,,,"/>
-<approved hash="113,1,13.0217,181.61,L1,,,,,"/>
-<approved hash="113,1,6.07483,170.18,R1,,,,,"/>
-<approved hash="113,1,13.6948,170.18,R3,,,,,"/>
-<approved hash="113,1,21.3148,170.18,R2,,,,,"/>
-<approved hash="113,1,20.6417,181.61,L2,,,,,"/>
-<approved hash="113,1,-93.8209,166.37,C10,,,,,"/>
-<approved hash="113,1,-63.2472,166.37,C11,,,,,"/>
-<approved hash="113,1,-109.22,127.995,R29,,,,,"/>
-<approved hash="113,1,88.9,11.1548,R6,,,,,"/>
-<approved hash="113,1,88.9,3.53483,R5,,,,,"/>
-<approved hash="113,1,88.9,-4.08517,R12,,,,,"/>
-<approved hash="113,1,88.9,-11.7052,R11,,,,,"/>
-<approved hash="113,1,88.9,-19.3252,R10,,,,,"/>
-<approved hash="113,1,88.9,26.3948,R8,,,,,"/>
-<approved hash="113,1,88.9,18.7748,R7,,,,,"/>
-<approved hash="113,1,52.07,-17.6209,C12,,,,,"/>
-<approved hash="113,1,88.9,-26.9452,R9,,,,,"/>
-<approved hash="113,1,-127,75.8105,S1,,,,,"/>
-<approved hash="113,1,-96.9924,166.37,C21,,,,,"/>
-<approved hash="113,1,-53.8124,166.37,C20,,,,,"/>
+<approved hash="113,1,5.40173,181.61,LED3,,,,,"/>
+<approved hash="113,1,13.0217,181.61,LED1,,,,,"/>
+<approved hash="113,1,6.07483,170.18,R25,,,,,"/>
+<approved hash="113,1,13.6948,170.18,R23,,,,,"/>
+<approved hash="113,1,21.3148,170.18,R24,,,,,"/>
+<approved hash="113,1,20.6417,181.61,LED2,,,,,"/>
+<approved hash="113,1,-93.1113,166.37,C5,,,,,"/>
+<approved hash="113,1,-62.6313,166.37,C6,,,,,"/>
+<approved hash="113,1,-109.22,127.995,R1,,,,,"/>
+<approved hash="113,1,88.9,11.1548,R28,,,,,"/>
+<approved hash="113,1,88.9,3.53483,R29,,,,,"/>
+<approved hash="113,1,88.9,-4.08517,R30,,,,,"/>
+<approved hash="113,1,88.9,-11.7052,R31,,,,,"/>
+<approved hash="113,1,88.9,-19.3252,R32,,,,,"/>
+<approved hash="113,1,88.9,26.3948,R26,,,,,"/>
+<approved hash="113,1,88.9,18.7748,R27,,,,,"/>
+<approved hash="113,1,52.07,-16.9113,C8,,,,,"/>
+<approved hash="113,1,88.9,-26.9452,R33,,,,,"/>
+<approved hash="113,1,-127,75.8105,SW1,,,,,"/>
+<approved hash="113,1,-97.702,166.37,C3,,,,,"/>
+<approved hash="113,1,-54.522,166.37,C2,,,,,"/>
 <approved hash="113,1,-106.68,175.747,D2,,,,,"/>
-<approved hash="113,1,111.76,61.4892,R34,,,,,"/>
-<approved hash="113,1,111.76,76.7292,R35,,,,,"/>
-<approved hash="113,1,111.76,91.9692,R36,,,,,"/>
-<approved hash="113,1,111.76,107.209,R37,,,,,"/>
+<approved hash="113,1,111.76,61.4892,PC,,,,,"/>
+<approved hash="113,1,111.76,76.7292,PA,,,,,"/>
+<approved hash="113,1,111.76,91.9692,PB,,,,,"/>
+<approved hash="113,1,111.76,107.209,PD,,,,,"/>
 </errors>
 </schematic>
 </drawing>

@@ -236,6 +236,7 @@ void gate_event(byte event, byte stack_id)
 		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
 		
 		// check this output is watching this note stack
+//TODO also check that it is in stack mode!!		
 		if(pcfg->event.stack_id != stack_id)
 			continue;
 			

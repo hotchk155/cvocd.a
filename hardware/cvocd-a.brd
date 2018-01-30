@@ -5053,7 +5053,7 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="66.675" y="30.988" size="1.27" layer="27" rot="R180"/>
 </element>
 <element name="R17" library="rcl" package="R0805" value="" x="78.74" y="28.448" smashed="yes" rot="R180">
-<attribute name="NAME" x="76.708" y="29.464" size="1.27" layer="25" rot="R180"/>
+<attribute name="NAME" x="76.581" y="29.21" size="1.27" layer="25" rot="R180"/>
 <attribute name="VALUE" x="79.375" y="30.988" size="1.27" layer="27" rot="R180"/>
 </element>
 <element name="R19" library="rcl" package="R0805" value="" x="78.74" y="1.016" smashed="yes" rot="R180">
@@ -5065,10 +5065,10 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="59.055" y="3.556" size="1.27" layer="27" rot="R180"/>
 </element>
 <element name="R21" library="rcl" package="R0805" value="4k7" x="78.74" y="30.734" smashed="yes" rot="R180">
-<attribute name="NAME" x="76.835" y="31.115" size="1.27" layer="25" rot="R180"/>
+<attribute name="NAME" x="76.708" y="30.988" size="1.27" layer="25" rot="R180"/>
 </element>
 <element name="R20" library="rcl" package="R0805" value="4k7" x="78.74" y="33.02" smashed="yes" rot="R180">
-<attribute name="NAME" x="76.835" y="32.766" size="1.27" layer="25" rot="R180"/>
+<attribute name="NAME" x="75.184" y="34.798" size="1.27" layer="25" rot="R270"/>
 </element>
 <element name="IC2" library="linear" package="SO14" value="LM324D" x="55.753" y="36.83" smashed="yes" rot="R270">
 <attribute name="NAME" x="59.817" y="36.322" size="1.016" layer="25"/>
@@ -5242,16 +5242,16 @@ design rules under a new name.</description>
 <attribute name="VALUE" x="101.516" y="38.34" size="1.27" layer="27"/>
 </element>
 <element name="R8" library="rcl" package="R0805" value="220r" x="49.911" y="39.243" smashed="yes" rot="R270">
-<attribute name="NAME" x="46.101" y="31.115" size="1.016" layer="25" rot="R270"/>
+<attribute name="NAME" x="46.228" y="31.242" size="1.016" layer="25" rot="R270"/>
 </element>
 <element name="R9" library="rcl" package="R0805" value="220r" x="49.911" y="34.163" smashed="yes" rot="R90">
-<attribute name="NAME" x="46.99" y="27.305" size="1.016" layer="25" rot="R90"/>
+<attribute name="NAME" x="46.99" y="27.432" size="1.016" layer="25" rot="R90"/>
 </element>
 <element name="R11" library="rcl" package="R0805" value="220r" x="61.722" y="34.163" smashed="yes" rot="R90">
-<attribute name="NAME" x="59.182" y="29.464" size="1.016" layer="25" rot="R270"/>
+<attribute name="NAME" x="59.182" y="29.718" size="1.016" layer="25" rot="R270"/>
 </element>
 <element name="R10" library="rcl" package="R0805" value="220r" x="61.722" y="39.243" smashed="yes" rot="R270">
-<attribute name="NAME" x="60.198" y="29.718" size="1.016" layer="25" rot="R90"/>
+<attribute name="NAME" x="59.817" y="29.718" size="1.016" layer="25" rot="R90"/>
 </element>
 <element name="PC" library="rcl" package="RTRIM3314G" value="" x="71.12" y="39.243" smashed="yes" rot="R270">
 <attribute name="NAME" x="73.591" y="40.613" size="1.27" layer="25"/>
