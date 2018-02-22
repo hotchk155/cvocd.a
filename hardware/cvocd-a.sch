@@ -17531,7 +17531,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <sheet>
 <plain>
 <text x="59.436" y="172.212" size="3.81" layer="95">CV.OCD MIDI TO CV CONVERTER</text>
-<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 4, 30 JAN 2018</text>
+<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 5, 22 FEB 2018</text>
 <text x="59.944" y="160.782" size="3.81" layer="95">Jason Hotchkiss, Sixty-Four Pixels Ltd</text>
 <text x="-152.4" y="185.42" size="3.81" layer="95">POWER SUPPLY</text>
 <text x="-152.4" y="154.94" size="3.81" layer="95">MIDI IN</text>
@@ -18007,6 +18007,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="C9" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="114.3" x2="147.32" y2="114.3" width="0.1524" layer="91"/>
 <junction x="137.16" y="114.3"/>
+<junction x="147.32" y="114.3"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -18017,6 +18018,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="99.06" x2="147.32" y2="99.06" width="0.1524" layer="91"/>
 <junction x="137.16" y="99.06"/>
+<junction x="147.32" y="99.06"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -18027,6 +18029,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="C11" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="83.82" x2="147.32" y2="83.82" width="0.1524" layer="91"/>
 <junction x="137.16" y="83.82"/>
+<junction x="147.32" y="83.82"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -18037,6 +18040,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="C12" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="68.58" x2="147.32" y2="68.58" width="0.1524" layer="91"/>
 <junction x="137.16" y="68.58"/>
+<junction x="147.32" y="68.58"/>
 </segment>
 </net>
 <net name="N$26" class="0">
@@ -18578,6 +18582,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="157.48" y1="106.68" x2="162.56" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="106.68" x2="162.56" y2="114.3" width="0.1524" layer="91"/>
 <junction x="162.56" y="114.3"/>
+<junction x="157.48" y="114.3"/>
+<junction x="157.48" y="106.68"/>
 </segment>
 </net>
 <net name="N$19" class="0">
@@ -18590,6 +18596,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="157.48" y1="91.44" x2="162.56" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="91.44" x2="162.56" y2="99.06" width="0.1524" layer="91"/>
 <junction x="162.56" y="99.06"/>
+<junction x="157.48" y="99.06"/>
+<junction x="157.48" y="91.44"/>
 </segment>
 </net>
 <net name="N$38" class="0">
@@ -18602,6 +18610,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="157.48" y1="76.2" x2="162.56" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="76.2" x2="162.56" y2="83.82" width="0.1524" layer="91"/>
 <junction x="162.56" y="83.82"/>
+<junction x="157.48" y="83.82"/>
+<junction x="157.48" y="76.2"/>
 </segment>
 </net>
 <net name="N$44" class="0">
@@ -18614,6 +18624,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <wire x1="157.48" y1="60.96" x2="162.56" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="60.96" x2="162.56" y2="68.58" width="0.1524" layer="91"/>
 <junction x="162.56" y="68.58"/>
+<junction x="157.48" y="68.58"/>
+<junction x="157.48" y="60.96"/>
 </segment>
 </net>
 <net name="N$10" class="0">
@@ -18688,6 +18700,12 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <approved hash="113,1,-83.82,11.1548,R18,,,,,"/>
 <approved hash="113,1,-133.35,-24.5313,C7,,,,,"/>
 <approved hash="113,1,-120.46,49.53,ICSP,,,,,"/>
+<approved hash="113,1,5.40173,151.13,LED3,,,,,"/>
+<approved hash="113,1,13.0217,151.13,LED1,,,,,"/>
+<approved hash="113,1,6.07483,139.7,R25,,,,,"/>
+<approved hash="113,1,13.6948,139.7,R23,,,,,"/>
+<approved hash="113,1,21.3148,139.7,R24,,,,,"/>
+<approved hash="113,1,20.6417,151.13,LED2,,,,,"/>
 <approved hash="113,1,-93.1113,166.37,C5,,,,,"/>
 <approved hash="113,1,-62.6313,166.37,C6,,,,,"/>
 <approved hash="113,1,-109.22,127.995,R1,,,,,"/>

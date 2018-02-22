@@ -5557,10 +5557,11 @@ design rules under a new name.</description>
 <wire x1="50.8" y1="35.56" x2="49.723" y2="35.56" width="0.3048" layer="1"/>
 <wire x1="49.723" y1="35.56" x2="49.53" y2="35.367" width="0.3048" layer="1"/>
 <wire x1="41.402" y1="33.467" x2="41.402" y2="33.147" width="0.3048" layer="1"/>
-<wire x1="41.402" y1="33.147" x2="45.212" y2="33.147" width="0.3048" layer="1"/>
+<wire x1="41.402" y1="33.147" x2="43.815" y2="33.147" width="0.3048" layer="1"/>
 <wire x1="45.212" y1="33.147" x2="45.466" y2="33.401" width="0.3048" layer="1"/>
 <wire x1="45.466" y1="33.401" x2="45.466" y2="34.29" width="0.3048" layer="1"/>
-<wire x1="45.212" y1="33.147" x2="43.815" y2="33.467" width="0" layer="19" extent="1-1"/>
+<wire x1="45.212" y1="33.147" x2="43.815" y2="33.147" width="0.3048" layer="1"/>
+<wire x1="43.815" y1="33.147" x2="43.815" y2="33.467" width="0.3048" layer="1"/>
 </signal>
 <signal name="VOUTA">
 <contactref element="IC3" pad="6"/>
@@ -6163,7 +6164,8 @@ design rules under a new name.</description>
 <wire x1="43.815" y1="28.321" x2="46.736" y2="25.4" width="0.3048" layer="1"/>
 <wire x1="46.736" y1="25.4" x2="49.47" y2="25.4" width="0.3048" layer="1"/>
 <wire x1="49.47" y1="25.4" x2="49.53" y2="25.34" width="0.3048" layer="1"/>
-<wire x1="43.815" y1="35.052" x2="43.815" y2="35.367" width="0" layer="19" extent="1-16"/>
+<wire x1="43.815" y1="35.367" x2="43.18" y2="35.367" width="0.3048" layer="1"/>
+<wire x1="43.18" y1="35.367" x2="43.18" y2="35.56" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$38">
 <contactref element="R14" pad="2"/>
