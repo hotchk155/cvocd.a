@@ -69,12 +69,16 @@
 #define LED_PULSE_PARAM 255
 
 // MIDI message bytes
+#define MIDI_MTC_QTR_FRAME 		0xf1
+#define MIDI_SPP 				0xf2
+#define MIDI_SONG_SELECT 		0xf3 
 #define MIDI_SYNCH_TICK     	0xf8
 #define MIDI_SYNCH_START    	0xfa
 #define MIDI_SYNCH_CONTINUE 	0xfb
 #define MIDI_SYNCH_STOP     	0xfc
 #define MIDI_SYSEX_BEGIN     	0xf0
 #define MIDI_SYSEX_END     		0xf7
+
 #define MIDI_CC_NRPN_HI 		99
 #define MIDI_CC_NRPN_LO 		98
 #define MIDI_CC_DATA_HI 		6

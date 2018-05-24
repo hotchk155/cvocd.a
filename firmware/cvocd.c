@@ -1,3 +1,4 @@
+
 //////////////////////////////////////////////////////////////
 //
 //       ///// //   //          /////    /////  /////
@@ -311,17 +312,25 @@ byte midi_in()
 		++rx_tail;
 		rx_tail&=SZ_RXBUFFER_MASK;
 
-		// REALTIME MESSAGE
+		// SYSTEM MESSAGE
 		if((ch & 0xf0) == 0xf0)
 		{
 			switch(ch)
 			{
-			// REALTIME MESSAGES
+			// RELEVANT REALTIME MESSAGE 
 			case MIDI_SYNCH_TICK:
 			case MIDI_SYNCH_START:
 			case MIDI_SYNCH_CONTINUE:
 			case MIDI_SYNCH_STOP:
 				return ch;		
+			// SYSTEM COMMON MESSAGES WITH PARAMETERS
+			case MIDI_MTC_QTR_FRAME:	// 1 param byte follows
+			case MIDI_SONG_SELECT:		// 1 param byte follows			
+			case MIDI_SPP:				// 2 param bytes follow
+				midi_param = 0;
+				midi_status = ch; 
+				midi_num_params = (ch==MIDI_SPP)? 2:1;
+				break;
 			// START OF SYSEX	
 			case MIDI_SYSEX_BEGIN:
 				sysex_state = SYSEX_ID0; 
@@ -358,6 +367,14 @@ byte midi_in()
 				sysex_state = SYSEX_NONE; 
 				break;
 			}
+			// Ignoring....			
+			//  0xF4	RESERVED
+			//  0xF5	RESERVED
+			//  0xF6	TUNE REQUEST
+			//	0xF9	RESERVED
+			//	0xFD	RESERVED
+			//	0xFE	ACTIVE SENSING
+			//	0xFF	RESET
 		}    
 		// STATUS BYTE
 		else if(!!(ch & 0x80))
@@ -369,11 +386,11 @@ byte midi_in()
 			midi_status = ch; 
 			switch(ch & 0xF0)
 			{
-			case 0xA0: //  Aftertouch  1  key  touch  
 			case 0xC0: //  Patch change  1  instrument #   
 			case 0xD0: //  Channel Pressure  1  pressure  
 				midi_num_params = 1;
 				break;    
+			case 0xA0: //  Polyphonic aftertouch  2  key  touch  
 			case 0x80: //  Note-off  2  key  velocity  
 			case 0x90: //  Note-on  2  key  veolcity  
 			case 0xB0: //  Continuous controller  2  controller #  controller value  
@@ -413,7 +430,7 @@ byte midi_in()
 						case 0x90: // note on
 						case 0xE0: // pitch bend
 						case 0xB0: // cc
-						case 0xD0: // aftertouch
+						case 0xD0: // channel pressure
 							return midi_status; 
 						}
 					}
