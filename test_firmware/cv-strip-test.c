@@ -1,9 +1,11 @@
-/*
-	CV STRIP
-	BASIC HARDWARE TEST
-
-	REVISION 1
-*/
+///////////////////////////////////////////////////////////////////////////
+//
+// CV.OCD BASIC HARDWARE TEST
+// SPECIAL FIRMWARE
+// 
+// REV 2 
+//
+///////////////////////////////////////////////////////////////////////////
 
 //
 // HEADER FILES
@@ -37,14 +39,32 @@
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
 
-//
-// MACRO DEFS
-//
 #define I2C_ADDRESS 0b1100000
+
+//
+// CONST DATA
+//
+const unsigned int gate_bit[12] = {
+	0x0004,
+	0x0008,
+	0x0002,
+	0x0001,
+	0x0100,
+	0x0200,
+	0x0400,
+	0x0800,
+	0x1000,
+	0x2000,
+	0x4000,
+	0x8000
+};
+
 
 int cv_a, cv_b, cv_c, cv_d;
 typedef unsigned char byte;
 
+////////////////////////////////////////////////////////////
+// INITIALISE THE I2C BUS
 void i2c_init() {
 	// disable output drivers on i2c pins
 	trisc.0 = 1;
@@ -89,22 +109,8 @@ void i2c_end() {
 	while(!pir1.3); // wait for it to complete
 }
 
-
-
-unsigned int x[12] = {
-	0x0004,
-	0x0008,
-	0x0002,
-	0x0001,
-	0x0100,
-	0x0200,
-	0x0400,
-	0x0800,
-	0x1000,
-	0x2000,
-	0x4000,
-	0x8000
-};
+////////////////////////////////////////////////////////////
+// WRITE TO GATE SHIFT REGISTERS
 void sr_write(unsigned int d) {
 	unsigned int m1 = 0x0080;
 	unsigned int m2 = 0x8000;
@@ -119,34 +125,9 @@ void sr_write(unsigned int d) {
 	}
 	P_SRLAT = 1;
 }
-void gates(int i) {
-	unsigned int q = 0;
-	if(i&1) {
-		q |= x[0];
-		q |= x[4];
-		q |= x[8];
-	}
-	if(i&2) {
-		q |= x[1];
-		q |= x[5];
-		q |= x[9];
-	}
-	if(i&4) {
-		q |= x[2];
-		q |= x[6];
-		q |= x[10];
-	}
-	if(i&8) {
-		q |= x[3];
-		q |= x[7];
-		q |= x[11];
-	}
-	sr_write(q);
-}
 
-
-
-
+////////////////////////////////////////////////////////////
+// CONFIGURE THE DAC
 void dac_cfg() {
 	i2c_begin_write(I2C_ADDRESS);
 	i2c_send(0b10001111); // set each channel to use internal vref
@@ -157,6 +138,8 @@ void dac_cfg() {
 	i2c_end();	
 }
 
+////////////////////////////////////////////////////////////
+// WRITE RAW VALUES TO EACH DAC CHANNEL
 void dac_send(int a, int b, int c, int d) {		
 	i2c_begin_write(I2C_ADDRESS);
 	i2c_send((b>>8) & 0xF);
@@ -171,54 +154,71 @@ void dac_send(int a, int b, int c, int d) {
 	
 }
 
-
-
-void test_v()
-{
-	unsigned int i=0;
-	P_LED1 = 0;
-	P_LED2 = 1;
-	for(;;) {	
-		int a = 1000*(i%4);
-		int b = 1000*((i+1)%4);
-		int c = 1000*((i+2)%4);
-		int d = 1000*((i+3)%4);
-		dac_send(a, b, c, d);
-		gates(i);
-		while(P_SWITCH);
-		delay_ms(100);
-		while(!P_SWITCH);
-		delay_ms(100);
-		++i;
-		P_LED1 = !P_LED1;
-		P_LED2 = !P_LED1;
-	}
+////////////////////////////////////////////////////////////
+// GENERATE 12 BIT TRIANGLE WAVE FROM 13 BIT COUNTER
+// 13 bit counter 0x0000 - 0x1FFF
+// if value between 0x0000-0x0FFF then write value to DAC
+// if value between 0x1000-0x1FFF then write (0x2000-value) to DAC
+inline int wave(int i) {
+	i &= 0x1FFF;
+	if(i<0x1000) 
+		return i;
+	return 0x1FFF - i;
 }
 
-void test_vg() 
+////////////////////////////////////////////////////////////
+// GENERATE TEST OUTPUTS
+void generate_test_outputs() 
 {
-	byte count = 0;
-	unsigned int index = 0;
-	unsigned int a = 0;
-	unsigned int b = 1024;
-	unsigned int c = 2048;
-	unsigned int d = 3072;
+	int i = 0;
+	int j = 0;
+	
 	while(1) {
-		if(!a) {
-				if(++index > 3) {
-					index = 0;
-				}
-				sr_write(x[index]|x[4+index]|x[8+index]);
+	
+		dac_send(
+			wave(i),
+			wave(i + 0x0800),
+			wave(i + 0x1000),
+			wave(i + 0x1800)
+		);
+		
+		switch(j) {
+		case 0x0000: 
+			sr_write(
+				gate_bit[0]|gate_bit[4]|gate_bit[8]
+			);
+			P_LED1 = 0;
+			P_LED2 = 0;
+			break;			
+		case 0x1000:
+			sr_write(
+				gate_bit[1]|gate_bit[5]|gate_bit[9]
+			);
+			P_LED1 = 0;
+			P_LED2 = 1;
+			break;
+		case 0x2000:
+			sr_write(
+				gate_bit[2]|gate_bit[6]|gate_bit[10]
+			);
+			P_LED1 = 1;
+			P_LED2 = 0;
+			break;
+		case 0x3000:
+			sr_write(
+				gate_bit[3]|gate_bit[7]|gate_bit[11]
+			);
+			P_LED1 = 1;
+			P_LED2 = 1;
+			break;
 		}
 		
-		dac_send(a, b, c, d);
-		a+=8;
-		b+=8;
-		c+=8;
-		d+=8;
+		++i;
+		i&=0x1FFF;
+		++j;
+		j&=0x3FFF;
 	}
 }
-
 
 ////////////////////////////////////////////////////////////
 // MAIN
@@ -239,7 +239,7 @@ void main()
 	delay_ms(255);
 	i2c_init();
 	dac_cfg();
-	test_vg();
+	generate_test_outputs();
 }
 
 
