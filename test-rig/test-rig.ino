@@ -141,11 +141,12 @@ unsigned int adc_read(unsigned int chan) {
   //digitalWrite(P_SS, HIGH);
   
   //delay(1);
-  SPI.beginTransaction(SPISettings(1200000UL, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(1000000UL, MSBFIRST, SPI_MODE0));
   digitalWrite(P_SS, LOW);
+  //delay(10);
   SPI.transfer(((3-chan)<<5) | ADC_CONFIG);
 //  while(digitalRead(P_NEOC));
-  delayMicroseconds(10);
+
   byte b1 =  SPI.transfer(0);
   byte b0 =  SPI.transfer(0);
   digitalWrite(P_SS, HIGH);  
@@ -156,11 +157,13 @@ unsigned int adc_read(unsigned int chan) {
   return (unsigned int)result;
 }
 
-#define ITERATIONS 1
+#define ITERATIONS 8
   //long sum = (4+adc_read(chan))>>3;
 unsigned int mv_read(unsigned int chan) {
+  delay(1);
   long sum = adc_read(chan);  
   for(int i=1; i<ITERATIONS; ++i) {
+    delay(1);
     sum += adc_read(chan);
   }
   return (4+(sum/ITERATIONS))>>3;
@@ -594,10 +597,27 @@ void scale_check()
   //Serial.println("Calibration check");
   //all_notes_off();
   //delay(1000);
- 
+
+  double td0 = 0.0;
+  double td1 = 0.0;
+  double td2 = 0.0;
+  double td3 = 0.0;
+  int readings = 0;
   while(note <= 120) {
     test_note(0,note,mv);
     int e = (int)(0.5+expected);
+
+    int d0 = mv[0]-e;
+    int d1 = mv[1]-e;
+    int d2 = mv[2]-e;
+    int d3 = mv[3]-e;
+
+    td0 += d0;
+    td1 += d1;
+    td2 += d2;
+    td3 += d3;
+    ++readings;
+    
     pad(note,3,false);
     Serial.print(" | ");
     pad(e,4,false);
@@ -610,17 +630,22 @@ void scale_check()
     Serial.print(" | ");
     pad(mv[3],4,false);
     Serial.print(" | ");
-    pad(((int)mv[0])-e,4,true);
+    pad(d0,5,true);
     Serial.print(" | ");
-    pad(((int)mv[1])-e,4,true);
+    pad(d1,5,true);
     Serial.print(" | ");
-    pad(((int)mv[2])-e,4,true);
+    pad(d2,5,true);
     Serial.print(" | ");
-    pad(((int)mv[3])-e,4,true);
+    pad(d3,5,true);
     Serial.println("");    
     expected += 1000.0/12.0;
     note ++;
   }
+  Serial.print("Mean error CV0: ");  Serial.println(td0/readings);
+  Serial.print("Mean error CV1: ");  Serial.println(td1/readings);
+  Serial.print("Mean error CV2: ");  Serial.println(td2/readings);
+  Serial.print("Mean error CV3: ");  Serial.println(td3/readings);
+  
 }
 
 void adc_test() {
@@ -638,7 +663,7 @@ void adc_test() {
     unsigned int value = (int)(0.5 + smoothed);    
     int error = result - value;
     int warning = 0;
-    if(error < -16) {error = -16; warning = 1;}
+    if(error < -16) {error = -16; warning = -1;}
     if(error > 16) {error = 16; warning = 1;}
     Serial.print(adc_test_channel);
     Serial.print(") ");
@@ -646,11 +671,11 @@ void adc_test() {
     Serial.print(ADC_COMP[adc_test_channel]);
     Serial.print(" ");
     Serial.print(value, DEC);
-    Serial.print(" [");    
+    Serial.print((warning < 0)? " <" : " [");    
     for(int i=-16; i<=16; ++i) {
       Serial.print((i==error)? "*": (i==0)? "+" : ".");
     }
-    Serial.print("] ");
+    Serial.print((warning > 0)? "> " : "] ");    
     Serial.print(((long)(10.0*(smoothed/8.0))), DEC);
     Serial.print(" mV x10 ");
     
@@ -728,9 +753,9 @@ void setup() {
 
   read_adc_comp();
   
-  //if(!digitalRead(P_BUTTON1)) {
+  if(!digitalRead(P_BUTTON1)) {
     adc_test();  
-  //}
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
