@@ -40,10 +40,21 @@
 #define NRPNL_CAL_OFS  		  99
 #define NRPNL_SAVE          100
 
-#define GAIN_CAL_CYCLES     5
-#define OCTAVES             8
+#define GAIN_CAL_BASE_NOTE  36
+#define GAIN_CAL_INTERVAL   1
+#define GAIN_CAL_INTERVAL_MV ((1000.0*(GAIN_CAL_INTERVAL))/12.0)
+#define GAIN_CAL_CYCLES     72
+
+#define OFFSET_CAL_OCTAVES     6
 
 #define ZERO_VOLTS_THRESHOLD 100
+
+#define EEPROM_COOKIE_ADDR 9
+#define EEPROM_COOKIE_VALUE 123
+#define ADC_COMP_ADDR 10
+
+#define ADC_READ_ITERATIONS 100
+
 //////////////////////////////////////////////////////////////////////////
 // SYSEX PATCH MAPS OUTPUTS 1,2,3,4 TO RESPECTIVE MIDI CHANNEL
 byte calibration_patch[] = {
@@ -86,11 +97,21 @@ byte test_patch[] = {
 0x29, 0x01, 0x00, 0x00, 0x29, 0x0C, 0x01, 0x00, 0x2A, 0x01, 0x00, 0x00, 0x2A, 0x0C, 0x01, 0x00, 0xF7 
 };
 
-#define EEPROM_COOKIE_ADDR 9
-#define EEPROM_COOKIE_VALUE 123
-#define ADC_COMP_ADDR 10
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// EEPROM ROUTINES TO LOAD/SAVE ADC COMPENSATION DATA
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 int ADC_COMP[4];
 
+//////////////////////////////////////////////////////////////////////////
+// Write ADC compensation data
 void write_adc_comp() {
   int addr = ADC_COMP_ADDR;
   for(int i = 0; i<4; ++i) {
@@ -99,6 +120,9 @@ void write_adc_comp() {
   }
   EEPROM.write(EEPROM_COOKIE_ADDR, EEPROM_COOKIE_VALUE);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Read ADC compensation data
 void read_adc_comp() {
   if(EEPROM.read(EEPROM_COOKIE_ADDR) != EEPROM_COOKIE_VALUE) {
     memset(ADC_COMP,0,sizeof ADC_COMP);
@@ -112,6 +136,7 @@ void read_adc_comp() {
     }    
   }
 }
+
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -133,48 +158,61 @@ void adc_setup() {
   delay(10);   
 }
 
-// fetch just a single ADC channel reading
-// value in micro volts
+// Get a single reading from a single ADC channel
 unsigned int adc_read(unsigned int chan) {
-  //digitalWrite(P_SS, LOW);
-  //SPI.transfer(((3-chan)<<5) | ADC_CONFIG);
-  //digitalWrite(P_SS, HIGH);
-  
-  //delay(1);
-  SPI.beginTransaction(SPISettings(1000000UL, MSBFIRST, SPI_MODE0));
-  digitalWrite(P_SS, LOW);
-  //delay(10);
-  SPI.transfer(((3-chan)<<5) | ADC_CONFIG);
-//  while(digitalRead(P_NEOC));
 
+  // Configure SPI clock speed
+  SPI.beginTransaction(SPISettings(1000000UL, MSBFIRST, SPI_MODE0));
+
+  // Assert chip select. Note that the ADC needs a falling edge on 
+  // chip select line for every reading
+  digitalWrite(P_SS, LOW);
+
+  // Send the configuration word, pointing the ADC at the correct channel
+  // The conversion starts on 3rd bit and is completed by 8th bit
+  SPI.transfer(((3-chan)<<5) | ADC_CONFIG);
+
+  // Read the two byte result
   byte b1 =  SPI.transfer(0);
   byte b0 =  SPI.transfer(0);
+
+  // release chip select
   digitalWrite(P_SS, HIGH);  
   SPI.endTransaction();
-  long result = ((unsigned)b1)<<8 | b0; // DAC units, 16 bits, 8192 mV range  
+
+  // Form the 16-bit result (4096 mV range), adding on the ADC compensation for the channel
+  long result = ((unsigned)b1)<<8 | b0; 
   result += ADC_COMP[chan];
   if(result < 0) result = 0;
   return (unsigned int)result;
 }
 
-#define ITERATIONS 8
-  //long sum = (4+adc_read(chan))>>3;
+// Read the voltage for a channel and return as millivolts
+// The result is averaged over multiple readings 
 unsigned int mv_read(unsigned int chan) {
   delay(1);
-  long sum = adc_read(chan);  
-  for(int i=1; i<ITERATIONS; ++i) {
-    delay(1);
-    sum += adc_read(chan);
+  double result = adc_read(chan);  
+  for(int i=1; i<ADC_READ_ITERATIONS; ++i) {
+    result += adc_read(chan);
   }
-  return (4+(sum/ITERATIONS))>>3;
+  result /= ADC_READ_ITERATIONS;
+
+  // result now holds the average of all the 16-bit readings 
+  // since the original input voltage is halved before reaching the ADC, 
+  // the 0-65535 range of the ADC maps to 0-8191mV input voltage
+  // so we need a division by 8
+  return (unsigned int)(0.5+(result/8.0));
 }
     
-
 //////////////////////////////////////////////////////////////////////////
-
-
-
-
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// TRANSMIT MIDI TO CVOCD
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
 // SEND A SYSEX BLOCK
@@ -208,33 +246,6 @@ void send_nrpn(byte ph, byte pl, byte dh, byte dl) {
   delay(5);  
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-// TURN ALL NOTES OFF ON MIDI CHANNEL 0
-void all_notes_off() {
-
-  /*
-  for(int i=0; i<128; ++i) {
-    Serial1.write((byte)0x90);
-    Serial1.write((byte)i);
-    Serial1.write((byte)0x00);
-    delay(2);
-  }*/
-
-  for(int i=0; i<4; ++i) {
-    Serial1.write((byte)0x90|i);
-    Serial1.write((byte)0);
-    Serial1.write((byte)0x7f);
-    delay(2);
-    Serial1.write((byte)0x90|i);
-    Serial1.write((byte)0);
-    Serial1.write((byte)0x00);
-    delay(2);
-  }
-  
-  
-}
-
 //////////////////////////////////////////////////////////////////////////
 // SEND NRPN TO SET GAIN
 void set_scale_adj(byte which, int amount) 
@@ -260,6 +271,20 @@ void save_calibration()
   send_nrpn(NRPNH_GLOBAL, NRPNL_SAVE, 0, 0);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// TURN ALL NOTES OFF ON CVOCD AND SET OUTPUTS TO 0
+void all_notes_off() {
+  for(int i=0; i<4; ++i) {
+    Serial1.write((byte)0x90|i);
+    Serial1.write((byte)0);
+    Serial1.write((byte)0x7f);
+    delay(2);
+    Serial1.write((byte)0x90|i);
+    Serial1.write((byte)0);
+    Serial1.write((byte)0x00);
+    delay(2);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////
 // SEND MIDI NOTE THEN READ ALL CV OUTPUTS
@@ -283,159 +308,144 @@ void test_note(byte chan, byte note, unsigned int *mv) {
   Serial1.write((byte)0x90|chan);
   Serial1.write((byte)note);
   Serial1.write((byte)0x00);
-
 }
 
-/*
 //////////////////////////////////////////////////////////////////////////
-// SANITY CHECK ENSURES ALL CV LEADS CONNECTED IN RIGHT ORDER
-boolean sanity_check() {
-  unsigned int mv[4];
-  send_sysex(sanity_patch, sizeof sanity_patch);
-  delay(2000);
-  for(int i=0; i<4; ++i) {
-    test_note(i, 100, mv);
-    Serial.print("Sanity check output ");                 
-    Serial.print(i, DEC);                 
-    Serial.print(": ");                 
-    Serial.print(mv[0], DEC);
-    Serial.print(", ");                 
-    Serial.print(mv[1], DEC);
-    Serial.print(", ");                 
-    Serial.print(mv[2], DEC);
-    Serial.print(", ");                 
-    Serial.println(mv[3], DEC);
-    
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// GAIN CALIBRATION ROUTINES
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+// Try a gain adjustment on a channel and return the mean error
+boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error) 
+{
+ 
+  // set the requested gain adjustment
+  set_scale_adj(which,gain_adj);
+
+  Serial.print("try ");
+  Serial.println(gain_adj);
+  
+  // Scan through the required number of octaves
+  int note = GAIN_CAL_BASE_NOTE;
+  double delta_total = 0;
+  int delta = 0;
+  unsigned int last_result;
+  for(int i=0; i<GAIN_CAL_CYCLES; ++i) {
+    unsigned int mv[4];
+    test_note(which,note,mv);
     for(int j=0; j<4; ++j) {
-      if(i==j) {
-        if(mv[j] < 100) {
-          Serial.print("**** output should be HIGH:");                 
-          Serial.println(j, DEC);                 
-          return false;
-        }
+      if(j==which) {
+        continue;
       }
-      else {
-        if(mv[j] > 100) {
-          Serial.print("**** output should be LOW:");                 
-          Serial.println(j, DEC);                 
-          return false;          
-        }
+      if(mv[j] > ZERO_VOLTS_THRESHOLD) {
+        Serial.print("*** VOLTAGE ERROR *** Channel ");
+        Serial.print(j);
+        Serial.print(" has unexpected non-zero output of ");
+        Serial.print(mv[j]);
+        Serial.println(" mV - check cables are connected correctly ");
+        return false;
       }
     }
-    test_note(i, 0, mv);
+    unsigned int result = mv[which];
+    if(i>0) {
+      // get difference between this and the last result
+      delta = result - last_result;
+      if(abs(GAIN_CAL_INTERVAL_MV-delta) > (GAIN_CAL_INTERVAL_MV/10)) {
+        Serial.print(" *** FAIL - OUT OF TOLERANCE ");
+        Serial.println(delta);
+        return false;
+      }
+      // subtract the expected 1000mV between octaves so that we get the 
+      // deviation from the expected difference
+      delta -= GAIN_CAL_INTERVAL_MV;
+      
+      // total up all the deviations from expected
+      delta_total += delta;
+    }
+    
+    // store last result
+    last_result = result;
+        
+    Serial.print("Note ");
+    Serial.print(note, DEC);
+    Serial.print("->");
+    Serial.print(result);
+    Serial.print(" diff ");
+    Serial.println(delta);
+
+    // ready for the next octave
+    note += GAIN_CAL_INTERVAL;
+    
   }
-  Serial.println("Sanity check OK");                 
+  
+  // get the mean deviation from 1V/octave across all octaves
+  delta_total /= GAIN_CAL_CYCLES;
+  Serial.print("mean ");
+  Serial.println(delta_total);
+  mean_error = delta_total;  
   return true;
 }
-*/
 
-/////////////////////////////////////////////////////////////////////////
-// GAIN CALIBRATION
-boolean calibrate_gain(byte which, int &gain) 
+//////////////////////////////////////////////////////////////////////////
+boolean gain_calibration(byte which, int &gain_adj) 
 {
+  double mean_error = 0;
 
-  unsigned int mv[4];
-  int note;
-  int result;
-  int last_result;
-  int delta;
-  double delta_total;
-  double min_error;
-  int this_gain;
-  int i;
 
+  gain_adj = 0;
 
   Serial.print("Calibrating gain on CV");
   Serial.println(which);  
   
-  // start from zero
-  gain = 0;
-  this_gain = 0;
-  min_error = 99999999;
+  // establish the initial gain adjustment
+  if(!try_gain_adjustment(which, 0, mean_error)) 
+    return false;
+  gain_adj = 0.5 - 4.0 * mean_error;
+  if(gain_adj < -60 || gain_adj > 60) {
+    Serial.println("*** ERROR: OUT OF TOLERANCE ***");
+    return false;
+  }
+
+  
+  double min_mean_error = mean_error;
+  int low_adj;
+  int high_adj;
+  if(mean_error < 0) {
+    low_adj = gain_adj - 2;
+    high_adj = gain_adj + 5;
+  }
+  else {
+    low_adj = gain_adj - 5;
+    high_adj = gain_adj + 2;    
+  }
+  low_adj = constrain(low_adj, -63, 63);
+  high_adj = constrain(high_adj, -63, 63);
   
   // multiple attempts to find the offset value which works best
-  for(int count = 0; count < GAIN_CAL_CYCLES; ++count) {
-    
-    Serial.print("try ");
-    Serial.println(this_gain);
-    // set the offset in CVOCD
-    set_scale_adj(which,this_gain);
-    
-    // prepare for scan through octaves
-    note = 36;
-    delta_total = 0;
-    delta = 0;
-    for(i=0; i<OCTAVES; ++i) {
-      test_note(which,note,mv);
-      for(int j=0; j<4; ++j) {
-        if(j==which) {
-          continue;
-        }
-        if(mv[j] > ZERO_VOLTS_THRESHOLD) {
-          Serial.print("*** VOLTAGE ERROR *** Channel ");
-          Serial.print(j);
-          Serial.print(" has unexpected non-zero output of ");
-          Serial.print(mv[j]);
-          Serial.println(" mV - check cables are connected correctly ");
-          return false;
-        }
-      }
-      result = mv[which];
-      if(i>0) {
-        // get difference between this and the last result
-        delta = result - last_result;
-        if(delta < 800 || delta > 1200) {
-          Serial.print(" *** FAIL - OUT OF TOLERANCE ");
-          Serial.println(delta);
-          return false;
-        }
-        // subtract the expected 1000mV between octaves so that we get the 
-        // deviation from the expected difference
-        delta -= 1000.0;
-        
-        // total up all the deviations from expected
-        delta_total += delta;
-      }
-      
-      // store last result
-      last_result = result;
-      
-      // ready for the next octave
-      note += 12;
-      
-      Serial.print("C");
-      Serial.print(i+1, DEC);
-      Serial.print("->");
-      Serial.print(result);
-      Serial.print(" diff ");
-      Serial.println(delta);
-      //Serial.print(".");      
-    }
-    
-    // get the mean deviation from 1V/octave across all octaves
-    delta_total = (delta_total/(i-1));
-    Serial.print("mean ");
-    Serial.println(delta_total);
+  for(int this_adj = low_adj; this_adj <= high_adj; ++this_adj) {
+
+    if(!try_gain_adjustment(which, this_adj, mean_error)) 
+      return false;
     
     // is this the best one yet?
-    if(abs(delta_total) < min_error) {
-      min_error = abs(delta_total);
-      
-      // remember the gain value that 
-      gain = this_gain;
-      
+    if(abs(mean_error) < min_mean_error) {
+      min_mean_error = abs(mean_error);
+      gain_adj = this_adj;
       Serial.println("STORED");
     }     
-
-    int gain_correction = 0.5 - 4.0 * delta_total; 
-    this_gain = constrain(gain_correction, -63, 63);  
   }
 
   // store best value
-  set_scale_adj(which,gain);
+  set_scale_adj(which,gain_adj);
   Serial.println("");
-  Serial.print("GAIN correction=");
-  Serial.println(gain);
+  Serial.print("GAIN adjustment =");
+  Serial.println(gain_adj);
+  return true;
 }
 
 
@@ -460,12 +470,12 @@ boolean calibrate_offset(byte which, int &ofs)
   this_ofs = 0;
   min_error = 99999999;
   // multiple attempts to find the offset value which works best
-  for(int count = 0; count < OFFSET_CAL_CYCLES; ++count) {
+  for(int count = 0; count < OFFSET_CAL_OCTAVES; ++count) {
     set_ofs_adj(which,this_ofs);
     note = 36;
     expected = 1000;
     error_total = 0;
-    for(i=0; i<OCTAVES; ++i) {
+    for(i=0; i<OFFSET_CAL_OCTAVES; ++i) {
       test_note(which,note,mv);
       error = expected - mv[which];
       error_total += error;
@@ -546,7 +556,7 @@ boolean calibrate() {
     all_notes_off();
     delay(1000);
     //octave_check(i);    
-    if(!calibrate_gain(i, scale[i])) {
+    if(!gain_calibration(i, scale[i])) {
         return false;
      }
     if(!calibrate_offset(i, ofs[i])) {
