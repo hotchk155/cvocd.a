@@ -349,6 +349,7 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
  
   // set the requested gain adjustment
   set_scale_adj(which,gain_adj);
+  set_ofs_adj(which,0);
 
   Serial.print("GAIN:");Serial.print(which);Serial.print(":");
   Serial.print("trying ");
@@ -410,7 +411,7 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
   }
   
   // get the mean deviation from 1V/octave across all octaves
-  delta_total /= GAIN_CAL_CYCLES;
+  delta_total /= (GAIN_CAL_CYCLES-1);
   Serial.print("mean ");
   Serial.println(delta_total);
   mean_error = delta_total;  
@@ -437,17 +438,9 @@ boolean gain_calibration(byte which, int &gain_adj)
   Serial.println(gain_adj);  
 
   
-  double min_mean_error = mean_error;
-  int low_adj;
-  int high_adj;
-  if(mean_error < 0) {
-    low_adj = gain_adj - 2;
-    high_adj = gain_adj + 5;
-  }
-  else {
-    low_adj = gain_adj - 5;
-    high_adj = gain_adj + 2;    
-  }
+  double min_mean_error = 9999999;
+  int low_adj = gain_adj - 5;
+  int high_adj = gain_adj + 5;
   low_adj = constrain(low_adj, -63, 63);
   high_adj = constrain(high_adj, -63, 63);
   
@@ -558,7 +551,7 @@ boolean offset_calibration(byte which, int &ofs_adj)
   // intial offset adjustment is (-e
   ofs_adj = (int)(0.5 - mean_error);
 
-  double min_mean_error = mean_error;
+  double min_mean_error = 9999999999;
   
   if(mean_error < 0) { // voltages are too low
     ofs_adj = (int)(fabs(mean_error/2)+0.5);
