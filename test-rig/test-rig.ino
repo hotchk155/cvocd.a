@@ -41,9 +41,9 @@
 #define NRPNL_SAVE          100
 
 #define GAIN_CAL_BASE_NOTE  36
-#define GAIN_CAL_INTERVAL   1
+#define GAIN_CAL_INTERVAL   12
 #define GAIN_CAL_INTERVAL_MV ((1000.0*(GAIN_CAL_INTERVAL))/12.0)
-#define GAIN_CAL_CYCLES     72
+#define GAIN_CAL_CYCLES     6
 
 #define OFFSET_CAL_OCTAVES     6
 
@@ -189,7 +189,7 @@ unsigned int adc_read(unsigned int chan) {
 
 // Read the voltage for a channel and return as millivolts
 // The result is averaged over multiple readings 
-unsigned int mv_read(unsigned int chan) {
+double mv_read(unsigned int chan) {
   delay(1);
   double result = adc_read(chan);  
   for(int i=1; i<ADC_READ_ITERATIONS; ++i) {
@@ -201,7 +201,7 @@ unsigned int mv_read(unsigned int chan) {
   // since the original input voltage is halved before reaching the ADC, 
   // the 0-65535 range of the ADC maps to 0-8191mV input voltage
   // so we need a division by 8
-  return (unsigned int)(0.5+(result/8.0));
+  return result/8.0;
 }
     
 //////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ void all_notes_off() {
 
 //////////////////////////////////////////////////////////////////////////
 // SEND MIDI NOTE THEN READ ALL CV OUTPUTS
-void test_note(byte chan, byte note, unsigned int *mv) {
+void test_note(byte chan, byte note, double *mv) {
   
   // Send the note
   Serial1.write((byte)0x90|chan);
@@ -333,10 +333,10 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
   // Scan through the required number of octaves
   int note = GAIN_CAL_BASE_NOTE;
   double delta_total = 0;
-  int delta = 0;
-  unsigned int last_result;
+  double delta = 0;
+  double last_result = 0;
   for(int i=0; i<GAIN_CAL_CYCLES; ++i) {
-    unsigned int mv[4];
+    double mv[4];
     test_note(which,note,mv);
     for(int j=0; j<4; ++j) {
       if(j==which) {
@@ -351,7 +351,11 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
         return false;
       }
     }
-    unsigned int result = mv[which];
+    double result = mv[which];
+    Serial.print("Note ");
+    Serial.print(note, DEC);
+    Serial.print("->");
+    Serial.print(result);
     if(i>0) {
       // get difference between this and the last result
       delta = result - last_result;
@@ -363,20 +367,17 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
       // subtract the expected 1000mV between octaves so that we get the 
       // deviation from the expected difference
       delta -= GAIN_CAL_INTERVAL_MV;
-      
+      Serial.print(" diff ");
+      Serial.print(delta);
+
       // total up all the deviations from expected
       delta_total += delta;
-    }
+    }    
+    Serial.println("");
     
     // store last result
     last_result = result;
         
-    Serial.print("Note ");
-    Serial.print(note, DEC);
-    Serial.print("->");
-    Serial.print(result);
-    Serial.print(" diff ");
-    Serial.println(delta);
 
     // ready for the next octave
     note += GAIN_CAL_INTERVAL;
@@ -394,9 +395,7 @@ boolean try_gain_adjustment(byte which, int gain_adj, double& mean_error)
 //////////////////////////////////////////////////////////////////////////
 boolean gain_calibration(byte which, int &gain_adj) 
 {
-  double mean_error = 0;
-
-
+  double mean_error;
   gain_adj = 0;
 
   Serial.print("Calibrating gain on CV");
@@ -410,6 +409,10 @@ boolean gain_calibration(byte which, int &gain_adj)
     Serial.println("*** ERROR: OUT OF TOLERANCE ***");
     return false;
   }
+  Serial.print("Initial adjustment ");
+  Serial.print(gain_adj);  
+  Serial.print(" for ");
+  Serial.println(mean_error);
 
   
   double min_mean_error = mean_error;
@@ -433,10 +436,10 @@ boolean gain_calibration(byte which, int &gain_adj)
       return false;
     
     // is this the best one yet?
-    if(abs(mean_error) < min_mean_error) {
-      min_mean_error = abs(mean_error);
+    if(abs(mean_error) < abs(min_mean_error)) {
+      min_mean_error = mean_error;
       gain_adj = this_adj;
-      Serial.println("STORED");
+      Serial.println("---best result so far");
     }     
   }
 
@@ -444,7 +447,9 @@ boolean gain_calibration(byte which, int &gain_adj)
   set_scale_adj(which,gain_adj);
   Serial.println("");
   Serial.print("GAIN adjustment =");
-  Serial.println(gain_adj);
+  Serial.print(gain_adj);
+  Serial.print(" with mean error of ");
+  Serial.println(min_mean_error);
   return true;
 }
 
@@ -454,10 +459,10 @@ boolean gain_calibration(byte which, int &gain_adj)
 #define OFFSET_CAL_CYCLES 5
 boolean calibrate_offset(byte which, int &ofs) 
 {
-  unsigned int mv[4];
+  double mv[4];
   int note;
-  int expected;
-  int error;
+  double expected;
+  double error;
   double error_total;
   double min_error;
   int this_ofs;
@@ -473,7 +478,7 @@ boolean calibrate_offset(byte which, int &ofs)
   for(int count = 0; count < OFFSET_CAL_OCTAVES; ++count) {
     set_ofs_adj(which,this_ofs);
     note = 36;
-    expected = 1000;
+    expected = 1000.0;
     error_total = 0;
     for(i=0; i<OFFSET_CAL_OCTAVES; ++i) {
       test_note(which,note,mv);
@@ -504,47 +509,6 @@ boolean calibrate_offset(byte which, int &ofs)
   Serial.println(ofs);
   return true;    
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////
-// OCTAVE CHECK
-void octave_check(byte which) 
-{  
-  // re-evaluate
-  int note = 36;
-  int error;
-  int i;
-  double error_total = 0;
-  int expected = 1000;
-  unsigned int mv[4] = {   0  };
-  
-  Serial.print("Calibration check CV");
-  Serial.println(which);  
-
-  for(i=0; i<OCTAVES; ++i) {
-    if(!test_note(0,note,mv)) {
-      Serial.println("*** COMMS ERROR ***");
-    }
-
-    error = mv[which] - expected;
-    error_total += error;
-
-    Serial.print("C");
-    Serial.print(i+1, DEC);
-    Serial.print("->");
-    Serial.print(mv[which], DEC);
-    Serial.print("mV");
-    Serial.print(" expected ");
-    Serial.print(expected);
-    Serial.print("mV");
-    Serial.print(" error ");
-    Serial.print(error);
-    Serial.println("mV");    
-    expected += 1000;
-    note += 12;
-  }
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////
 // CALIBRATION
@@ -601,8 +565,8 @@ void scale_check()
 {  
   // re-evaluate
   int note = 36;
-  float expected = 1000;
-  unsigned int mv[4] = {   0  };
+  double expected = 1000.0;
+  double mv[4] = {   0  };
   
   //Serial.println("Calibration check");
   //all_notes_off();
@@ -615,12 +579,11 @@ void scale_check()
   int readings = 0;
   while(note <= 120) {
     test_note(0,note,mv);
-    int e = (int)(0.5+expected);
 
-    int d0 = mv[0]-e;
-    int d1 = mv[1]-e;
-    int d2 = mv[2]-e;
-    int d3 = mv[3]-e;
+    double d0 = mv[0]-expected;
+    double d1 = mv[1]-expected;
+    double d2 = mv[2]-expected;
+    double d3 = mv[3]-expected;
 
     td0 += d0;
     td1 += d1;
@@ -630,7 +593,27 @@ void scale_check()
     
     pad(note,3,false);
     Serial.print(" | ");
-    pad(e,4,false);
+
+    Serial.print(expected);
+    Serial.print(" | ");
+    Serial.print(mv[0]);
+    Serial.print(" | ");
+    Serial.print(mv[1]);
+    Serial.print(" | ");
+    Serial.print(mv[2]);
+    Serial.print(" | ");
+    Serial.print(mv[3]);
+    Serial.print(" | ");
+    pad((int)(0.5+d0),5,true);
+    Serial.print(" | ");
+    pad((int)(0.5+d1),5,true);
+    Serial.print(" | ");
+    pad((int)(0.5+d2),5,true);
+    Serial.print(" | ");
+    pad((int)(0.5+d3),5,true);
+
+    /*
+    pad(expected,4,false);
     Serial.print(" | ");
     pad(mv[0],4,false);
     Serial.print(" | ");
@@ -647,14 +630,16 @@ void scale_check()
     pad(d2,5,true);
     Serial.print(" | ");
     pad(d3,5,true);
+    */
+    
     Serial.println("");    
     expected += 1000.0/12.0;
     note ++;
   }
-  Serial.print("Mean error CV0: ");  Serial.println(td0/readings);
-  Serial.print("Mean error CV1: ");  Serial.println(td1/readings);
-  Serial.print("Mean error CV2: ");  Serial.println(td2/readings);
-  Serial.print("Mean error CV3: ");  Serial.println(td3/readings);
+  Serial.print("Total error CV0: ");  Serial.println(td0);
+  Serial.print("Total error CV1: ");  Serial.println(td1);
+  Serial.print("Total error CV2: ");  Serial.println(td2);
+  Serial.print("Total error CV3: ");  Serial.println(td3);
   
 }
 
