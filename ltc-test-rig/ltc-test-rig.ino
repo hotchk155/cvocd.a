@@ -243,6 +243,7 @@ boolean calibrate_gain(byte which, int &gain)
     Serial.println(this_gain);
     // set the offset in CVOCD
     set_scale_adj(which,this_gain);
+    set_ofs_adj(which,0);
     
     // prepare for scan through octaves
     note = 36;
