@@ -54,14 +54,6 @@
 // List of modes for a gate output to be triggered
 enum {
 	GATE_DISABLE,
-	
-	// respond to events from a note stack
-	GATE_NOTE_ON,			// when any note on is received
-	GATE_NOTES_OFF,			// when no notes are pressed		
-	GATE_NOTE_GATEA,		// when note out A is playing
-	GATE_NOTE_GATEB,		// when note out B is playing
-	GATE_NOTE_GATEC,		// when note out C is playing
-	GATE_NOTE_GATED,		// when note out D is playing
 		
 	// Respond to raw MIDI events
 	GATE_MIDI_NOTE 				= NRPVH_SRC_MIDINOTE,	// arbitrary note mapping
@@ -72,11 +64,21 @@ enum {
 	GATE_MIDI_CLOCK_RUN			= NRPVH_SRC_MIDIRUN,	// clock running
 	GATE_MIDI_CLOCK_START		= NRPVH_SRC_MIDISTART,	// start message
 	GATE_MIDI_CLOCK_STOP		= NRPVH_SRC_MIDISTOP,	// stop message
-	GATE_MIDI_CLOCK_STARTSTOP	= NRPVH_SRC_MIDISTARTSTOP	// start or stop message
+	GATE_MIDI_CLOCK_STARTSTOP	= NRPVH_SRC_MIDISTARTSTOP,	// start or stop message
+	
+	// respond to events from a note stack
+	GATE_NOTE_EVENT_BASE		= 128,
+	GATE_NOTE_ON,								// when any note on is received
+	GATE_NOTES_OFF,								// when no notes are pressed		
+	GATE_NOTE_GATEA,							// when note out A is playing
+	GATE_NOTE_GATEB,							// when note out B is playing
+	GATE_NOTE_GATEC,							// when note out C is playing
+	GATE_NOTE_GATED								// when note out D is playing
+	
 };
 
 //
-// STRUCT DEFS
+// STRUCT DEFS TODO
 //
 typedef struct {
 	byte counter;		
@@ -235,12 +237,13 @@ void gate_event(byte event, byte stack_id)
 		GATE_OUT *pgate = &l_gate[which_gate];
 		GATE_OUT_CFG *pcfg = &l_gate_cfg[which_gate];
 		
-		// check this output is watching this note stack
-//TODO also check that it is in stack mode!!		
+		// check if this output is possibly watching the note stack
+		// that sourced the event
 		if(pcfg->event.stack_id != stack_id)
 			continue;
 			
-		// check the mode of this gate against the event
+		// check the mode of this gate against the event. only modes
+		// which watch note stacks are matched
 		switch(pcfg->event.mode) {
 			case GATE_NOTE_ON: // Any note on/changed
 				if(EV_NOTE_ON == event) {
