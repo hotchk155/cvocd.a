@@ -78,7 +78,7 @@ enum {
 };
 
 //
-// STRUCT DEFS TODO
+// STRUCT DEFS 
 //
 typedef struct {
 	byte counter;		
