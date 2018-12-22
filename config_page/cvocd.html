@@ -1,452 +1,100 @@
 <html>
+
+<head>
+<style>
+body {
+    font-family: arial;
+}
+
+table {
+    font-family: arial;
+    font-size: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    padding: 0px;
+	line-height: 1;
+}
+</style>
+<script language="Javascript" src="cvocd.js">
+</script>
+</head>
 <body>
 
+<hr>
+<p><b>Globals</b> (TIP: hover mouse over field names for a description)</p>
+<table id="global_settings">
+<tr>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="Select the MIDI channel to use for all mapings that use MIDI channel '(default)'">Default Channel</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="Select the millsecond duration for gate outputs that are set as '(trig)'">Default Trigger</td>
+</tr>
+</table>
+<hr>
 
-<script language="JavaScript">
-const SYSEX_BEGIN 		= 0xF0;
-const SYSEX_END 		= 0xF7;
-const MANUF_ID_0 		= 0x00;
-const MANUF_ID_1 		= 0x7F;
-const MANUF_ID_2 		= 0x15;		
-const NUM_NOTE_INPUTS 	= 4;
-const NUM_CV_OUTPUTS 	= 4;
-const NUM_GATE_OUTPUTS 	= 12;
+<p><b>Note Inputs</b></p>
+<table id="note_inputs">
+<tr>
+<td></td>
+<td title="Select whether this note input is enabled and listening to MIDI.&#10;You should disable any inputs you don't need.">Enable</td>
+<td title="Select the MIDI channel that this note input will listen to">Channel</td>
+<td title="When multiple notes are held, this setting determines which of the notes should be be played on the outputs">Mode</td>
+<td title="You can limit the range of notes that this note input will play (for example to split the keyboard between two outputs)&#10;Select min note = 0 and max note = 127 to play any note on the selected MIDI channel">Min.Note</td>
+<td title="Maximum note of the range. If you select 'single' then only the single note selected in min note will play.">Max.Note</td>
+<td title="You can filter notes that will play on the input based on their MIDI note velocity.&#10;Only notes that are equal or higher in velocity can play.">Min Vel.</td>
+<td title="Select the pitch bend range for this note input.">Pitch Bend</td>
+</tr>
+</table>
 
-const NRPNH_GLOBAL 	= 1;
-const NRPNH_STACK1 	= 11;
-const NRPNH_STACK2 	= 12;
-const NRPNH_STACK3 	= 13;
-const NRPNH_STACK4 	= 14;
-const NRPNH_CV1		= 21;
-const NRPNH_CV2		= 22;
-const NRPNH_CV3		= 23;
-const NRPNH_CV4		= 24;
-const NRPNH_GATE1 	= 31;
-const NRPNH_GATE2 	= 32;
-const NRPNH_GATE3 	= 33;
-const NRPNH_GATE4 	= 34;
-const NRPNH_GATE5 	= 35;
-const NRPNH_GATE6 	= 36;
-const NRPNH_GATE7 	= 37;
-const NRPNH_GATE8 	= 38;
-const NRPNH_GATE9 	= 39;
-const NRPNH_GATE10	= 40;
-const NRPNH_GATE11	= 41;
-const NRPNH_GATE12	= 42;
 
-const NRPNL_SRC			= 1;
-const NRPNL_CHAN		= 2;
-const NRPNL_NOTE_MIN  	= 3;
-const NRPNL_NOTE		= 3;
-const NRPNL_NOTE_MAX  	= 4;
-const NRPNL_VEL_MIN  	= 5;
-const NRPNL_PB_RANGE	= 7;
-const NRPNL_PRIORITY	= 8;
-const NRPNL_SPLIT  		= 9;
-const NRPNL_TICK_OFS	= 11;
-const NRPNL_GATE_DUR	= 12;
-const NRPNL_THRESHOLD	= 13;
-const NRPNL_TRANSPOSE	= 14;
-const NRPNL_VOLTS		= 15;
-const NRPNL_PITCHSCHEME	= 16;
-const NRPNL_GLIDETIME	= 17;
-const NRPNL_CAL_SCALE  	= 98;
-const NRPNL_CAL_OFS  	= 99;
-const NRPNL_SAVE		= 100;
+<hr>
+<p><b>CV outputs</b></p>
+<table id="cv_outputs">
+<tr>
+<td></td>
+<td title="Select the source of the note or voltage level that this CV output will play.">CV Source</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select a note input, this decides which note (or other parameter)&#10;from that note input will be mapped to the CV output">Note input</td>
+<td title="If you select a note input, you can transpose the output note CV.&#10;This only works for notes (not velocity, bend etc)">Transpose</td>
+<td title="For note pitch CV this is the voltage scaling scheme">Scheme</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select a MIDI CC as input, you specify the channel here">Chan</td>
+<td title="If you select a MIDI CC as input, you specify the CC number here">CC#</td>
+<td title="For non-musical note CV this is the full voltage range">Range</td>
+</tr>
+</table>
 
-const NRPVH_SRC_DISABLE		= 0;
-const NRPVH_SRC_MIDINOTE	= 1;
-const NRPVH_SRC_MIDICC		= 2;
-const NRPVH_SRC_MIDICC_NEG	= 3;
-const NRPVH_SRC_MIDIBEND	= 4;
-const NRPVH_SRC_MIDITOUCH	= 5;
-const NRPVH_SRC_STACK1		= 11;
-const NRPVH_SRC_STACK2		= 12;
-const NRPVH_SRC_STACK3		= 13;
-const NRPVH_SRC_STACK4		= 14;
-const NRPVH_SRC_MIDITICK	= 20;
-const NRPVH_SRC_MIDITICKRUN	= 21;
-const NRPVH_SRC_MIDIRUN		= 22;
-const NRPVH_SRC_MIDISTART	= 23;
-const NRPVH_SRC_MIDISTOP	= 25;
-const NRPVH_SRC_MIDISTARTSTOP	= 26;
-const NRPVH_SRC_TESTVOLTAGE = 127;
-const NRPVH_CHAN_SPECIFIC	= 0;
-const NRPVH_CHAN_OMNI		= 1;
-const NRPVH_CHAN_GLOBAL		= 2;
-const NRPVH_DUR_INF			= 0;
-const NRPVH_DUR_MS			= 1;
-const NRPVH_DUR_GLOBAL		= 2;
-const NRPVH_DUR_RETRIG		= 3;
 
-///////////////////////////////////////////////////////////////////////////////////
-// Object to hold configuration of a CV.OCD Note Input	
-class NoteInput {
+<hr>
+<p><b>Gate Outputs</b></p>
+<table id="gate_outputs">
+<tr>
+<td></td>
+<td title="Select the source of event that will activate this gate output">Source</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select a note input, the gate can activate when&#10;a note is played from that input">Note input event</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select MIDI note or MIDI CC to activate the gate output&#10;then you can select the MIDI channel here">Chan</td>
+<td title="If you select MIDI note to activate the output, select the note value here">Min.Note</td>
+<td title="Select a single note, or upper limit of a range of notes to activate the output when received">Max.Note</td>
+<td title="The output can activate only when notes are received that are equal or higher than this velocity">Min Vel.</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select MIDI CC to activate the output, select the CC number here">CC#</td>
+<td title="If you select MIDI CC to activate the output, select the switching threshold here">Switch@</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="If you select MIDI clock to activate the output, select the clock rate (divider) here">Ck.Rate</td>
+<td title="You can also offset MIDI clock outputs so they activate 'late' by a number of ticks (There are 24 ticks per beat)">Tk.Ofs</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td title="Select (trig) to pulse output with the default trigger time or&#10;select (gate) to have the output switch on until the activating condition is over (e.g. note released)&#10;You can also set a specific trigger time for this output">Trig</td>
+</tr>
+</table>
 
-	///////////////////////////////////////////////////////////////////////////////
-	constructor(i) {
-		this.Index 			= NRPNH_STACK1 + i;
-		this.Source 		= NRPVH_SRC_DISABLE;
-		this.ChanType  		= NRPVH_CHAN_GLOBAL;
-		this.ChanNumber		= 0;
-		this.Priority  		= 3;
-		this.MinNote 		= 0;
-		this.MaxNote		= 127;
-		this.MinVel 		= 0;
-		this.BendRange		= 3;
-	}
 
-	///////////////////////////////////////////////////////////////////////////////
-	syxify() {
-		return [
-			this.Index, NRPNL_SRC, this.Source, 0,
-			this.Index, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-			this.Index, NRPNL_NOTE_MIN, 0, this.MinNote,
-			this.Index, NRPNL_NOTE_MAX, 0, this.MaxNote,
-			this.Index, NRPNL_VEL_MIN, 0, this.MinVel,
-			this.Index, NRPNL_PB_RANGE, 0, this.BendRange,
-			this.Index, NRPNL_PRIORITY, 0, this.Priority
-		];
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	unsyxify(data) {
-		switch(data[1]) {
-			case NRPNL_SRC:
-				this.Source = data[2];
-				break;
-			case NRPNL_CHAN:
-				this.ChanType = data[2];
-				this.ChanNumber = data[3];
-				break;
-			case NRPNL_NOTE_MIN:
-				this.MinNote = data[3];
-				break;
-			case NRPNL_NOTE_MAX:
-				this.MaxNote = data[3];
-				break;
-			case NRPNL_VEL_MIN:
-				this.MinVel = data[3];
-				break;
-			case NRPNL_PB_RANGE:
-				this.BendRange = data[3];
-				break;
-			case NRPNL_PRIORITY:
-				this.Priority = data[3];
-				break;
-		}
-	}	
-};
-
-///////////////////////////////////////////////////////////////////////////////////
-// Object to hold configuration of a CV.OCD CV Output
-class CVOutput {
-	
-	///////////////////////////////////////////////////////////////////////////////
-	constructor(i) {
-		this.Index 			= NRPNH_CV1 + i;
-		this.Source 		= NRPVH_SRC_DISABLE;
-		this.InputEvent		= 0;
-		this.Transpose		= 64;
-		this.ChanType		= NRPVH_CHAN_GLOBAL;
-		this.ChanNumber		= 0;
-		this.CC				= 1;
-		this.Volts			= 5;
-		this.PitchScheme	= 0;
-	}
-		
-	///////////////////////////////////////////////////////////////////////////////
-	syxify(data) {
-		let d;
-		switch(this.Source) {
-			case NRPVH_SRC_STACK1:
-			case NRPVH_SRC_STACK2: 
-			case NRPVH_SRC_STACK3: 
-			case NRPVH_SRC_STACK4:
-				d = [this.Index, NRPNL_SRC, this.Source, this.InputEvent];
-				switch(this.InputEvent) {
-					case 1: case 2: case 3: case 4:
-						return d.concat([
-							this.Index, NRPNL_PITCHSCHEME, 0, this.PitchScheme,
-							this.Index, NRPNL_TRANSPOSE, 0, this.Transpose
-						]);
-					case 20:
-						return d.concat([
-							this.Index, NRPNL_VOLTS, 0, this.Volts
-						]);
-					default:
-						return d;
-				}
-			case NRPVH_SRC_MIDICC:
-			case NRPVH_SRC_MIDICC_NEG:
-				return [
-					this.Index, NRPNL_SRC, this.Source, this.CC,
-					this.Index, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-					this.Index, NRPNL_VOLTS, 0, this.Volts
-				];
-			case NRPVH_SRC_MIDIBEND:
-			case NRPVH_SRC_MIDITOUCH:
-				return [
-					this.Index, NRPNL_SRC, this.Source, 0,
-					this.Index, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-					this.Index, NRPNL_VOLTS, 0, this.Volts
-				];
-			default:
-				return [
-					this.Index, NRPNL_SRC, this.Source, 0,
-				];
-		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	unsyxify(data) {
-		switch(data[1]) {
-			case 1:
-				switch(data[2]) {				
-					case NRPVH_SRC_STACK1:
-					case NRPVH_SRC_STACK2: 
-					case NRPVH_SRC_STACK3: 
-					case NRPVH_SRC_STACK4:
-						this.Source = data[2];
-						this.InputEvent = data[3]
-						break;
-					case NRPVH_SRC_MIDICC:
-					case NRPVH_SRC_MIDICC_NEG:
-						this.Source = data[2];
-						this.CC = data[3];
-						break;
-					default:
-						this.Source = data[2];
-				}
-				break;
-			case NRPNL_CHAN:
-				this.ChanType = data[2];
-				this.ChanNumber = data[3];
-				break;
-			case NRPNL_VOLTS:
-				this.Volts = data[3];
-				break;
-			case NRPNL_PITCHSCHEME:
-				this.PitchScheme = data[3];
-				break;
-			case NRPNL_TRANSPOSE:
-				this.Transpose = data[3];
-				break;
-		}
-	}		
-};
-
-///////////////////////////////////////////////////////////////////////////////////
-// Object to hold configuration of a CV.OCD Gate Output
-class GateOutput {
-	
-	///////////////////////////////////////////////////////////////////////////////
-	constructor(i) {
-		this.Index 			= NRPNH_GATE1 + i;
-		this.Source			= NRPVH_SRC_DISABLE;
-		this.InputEvent		= 1;
-		this.ChanType		= NRPVH_CHAN_GLOBAL;
-		this.ChanNumber		= 0;
-		this.MinNote		= 0;
-		this.MaxNote		= 127;
-		this.MinVel			= 0;
-		this.CC				= 1;
-		this.Threshold		= 64;
-		this.Divider		= 6;
-		this.Offset			= 0;
-		this.DurationType	= NRPVH_DUR_GLOBAL;
-		this.Duration		= 0;
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	syxify() {
-		let d;
-		switch(this.Source) {		
-			case NRPVH_SRC_STACK1:
-			case NRPVH_SRC_STACK2:
-			case NRPVH_SRC_STACK3:
-			case NRPVH_SRC_STACK4:
-				d = [
-					this.Index, NRPNL_SRC, this.Source, this.InputEvent
-				];
-				break;
-			case NRPVH_SRC_MIDINOTE:
-				d = [
-					this.Index, NRPNL_SRC, NRPVH_SRC_MIDINOTE, this.MinNote,
-					this.Index, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-					this.Index, NRPNL_NOTE_MAX, 0, this.MaxNote,
-					this.Index, NRPNL_VEL_MIN, 0, this.MinVel
-				];		
-				break;				
-			case NRPVH_SRC_MIDICC:
-			case NRPVH_SRC_MIDICC_NEG:
-				d = [
-					this.Index, NRPNL_SRC, this.Source, this.CC,
-					this.Index, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-					this.Index, NRPNL_THRESHOLD, 0, this.Threshold
-				];
-				break;
-			case NRPVH_SRC_MIDITICK:
-			case NRPVH_SRC_MIDITICKRUN:
-				d = [
-					this.Index, NRPNL_SRC, this.Source, this.Divider,
-					this.Index, NRPNL_TICK_OFS, 0, this.Offset			
-				];
-				break;
-			default:
-				d = [
-					this.Index, NRPNL_SRC, this.Source, 0
-				];
-				break;
-		}
-		return d.concat([
-			this.Index, NRPNL_GATE_DUR, this.DurationType, this.Duration	
-		]);
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	unsyxify(data) {
-		switch(data[1]) {
-			case NRPNL_SRC:
-				switch(data[2]) {
-					case NRPVH_SRC_STACK1:
-					case NRPVH_SRC_STACK2: 
-					case NRPVH_SRC_STACK3: 
-					case NRPVH_SRC_STACK4:
-						this.Source = data[2];
-						this.InputEvent = data[3];
-						break;
-					case NRPVH_SRC_MIDINOTE:
-						this.Source = data[2];
-						this.MinNote = data[3];
-						break;
-					case NRPVH_SRC_MIDICC:
-					case NRPVH_SRC_MIDICC_NEG:
-						this.Source = data[2];
-						this.CC = data[3];
-						break;
-					case NRPVH_SRC_MIDITICK:
-					case NRPVH_SRC_MIDITICKRUN:
-						this.Source = data[2];
-						this.Divider = data[3];			
-						break;
-					default:
-						this.Source = data[2];
-						break;
-				}
-				break;
-			case NRPNL_CHAN:
-				this.ChanType = data[2];
-				this.ChanNumber = data[3];
-				break;
-			case NRPNL_NOTE_MAX:
-				this.MaxNote = data[3];
-				break;
-			case NRPNL_VEL_MIN:
-				this.MinVel = data[3];
-				break;
-			case NRPNL_GATE_DUR:
-				this.DurationType = data[2];
-				this.Duration = data[3];
-				break;
-			case NRPNL_TICK_OFS:
-				this.Offset = data[3];
-				break;
-			case NRPNL_THRESHOLD:
-				this.Threshold = data[3];
-				break;
-		}
-	}
-};
-
-///////////////////////////////////////////////////////////////////////////////////
-// Object to hold complete CV.OCD configuration patch
-class Patch {
-	
-	///////////////////////////////////////////////////////////////////////////////
-	constructor() {
-		this.ChanType 		= NRPVH_CHAN_SPECIFIC;
-		this.ChanNumber		= 1;
-		this.DurationType	= NRPVH_CHAN_SPECIFIC;
-		this.Duration		= 15;
-		this.AutoSave		= 1;
-		this.NoteInputs		= [];
-		this.CVOutputs		= [];
-		this.GateOutputs	= [];
-		for(let i=0;i<NUM_NOTE_INPUTS; ++i) {
-			this.NoteInputs.push(new NoteInput(i));
-		}
-		for(let i=0;i<NUM_CV_OUTPUTS; ++i) {
-			this.CVOutputs.push(new CVOutput(i));
-		}
-		for(let i=0;i<NUM_GATE_OUTPUTS; ++i) {
-			this.GateOutputs.push(new GateOutput(i));
-		}
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	syxify() {
-		let sysex = [ 
-			SYSEX_BEGIN, MANUF_ID_0, MANUF_ID_1, MANUF_ID_2,		
-			NRPNH_GLOBAL, NRPNL_CHAN, this.ChanType, this.ChanNumber,
-			NRPNH_GLOBAL, NRPNL_GATE_DUR, this.DurationType, this.Duration		
-		];		
-		for(let o of this.NoteInputs) {
-			sysex = sysex.concat(o.syxify());
-		}
-		for(let o of this.CVOutputs) {
-			sysex = sysex.concat(o.syxify());
-		}
-		for(let o of this.GateOutputs) {
-			sysex = sysex.concat(o.syxify());
-		}
-		return sysex.concat([SYSEX_END]);
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	unsyxify(data) {
-		if((data[0] != SYSEX_BEGIN) ||
-			(data[1] != MANUF_ID_0) ||
-			(data[2] != MANUF_ID_1) ||
-			(data[3] != MANUF_ID_2)) {
-			return false;
-		}
-		while(data.length >= 4) {
-			if(data[0] == NRPNH_GLOBAL) {
-				switch(data[1]) {
-					case NRPNL_CHAN:
-						this.ChanType = data[2];
-						this.ChanNumber = data[3];
-						break;
-					case NRPNL_GATE_DUR:
-						this.DurationType = data[2];
-						this.Duration = data[3];
-						break;
-					default:
-						return false;
-				}
-			}
-			else if(data[0] >= NRPNH_STACK1 && data[0] <= NRPNH_STACK4) {				 
-				this.NoteInputs[data[0]-NRPNH_STACK1].unsyxify(data);
-			}
-			else if(data[0] >= NRPNH_CV1 && data[0] <= NRPNH_CV4) {
-				this.CVOutputs[data[0]-NRPNH_CV1].unsyxify(data);
-			}
-			else if(data[0] >= NRPNH_GATE1 && data[0] <= NRPNH_GATE12) {
-				this.GateOutputs[data[0]-NRPNH_GATE1].unsyxify(data);
-			}
-			data = data.slice(4);
-		}	
-		if(data.length != 1 || data[0] != SYSEX_END) {
-			return false;
-		}
-		return true;
-	}
-};
-
+<script>
 let patch = new Patch();
-document.write(JSON.stringify(patch));
-document.write(patch.syxify().toString());
+patch.render();
 </script>
 
 </body>
