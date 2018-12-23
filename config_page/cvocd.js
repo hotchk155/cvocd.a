@@ -1,3 +1,12 @@
+///////////////////////////////////////////////////////////////////////////////////
+//
+// CV.OCD CONFIG PAGE SUPPORT CLASSES
+//
+///////////////////////////////////////////////////////////////////////////////////
+
+//
+// CONSTS
+//
 const SYSEX_BEGIN 		= 0xF0;
 const SYSEX_END 		= 0xF7;
 const MANUF_ID_0 		= 0x00;
@@ -74,16 +83,17 @@ const NRPVH_DUR_MS			= 1;
 const NRPVH_DUR_GLOBAL		= 2;
 const NRPVH_DUR_RETRIG		= 3;
 
-const TAG_CHAN_GLOBAL		= "@";
-const TAG_CHAN_OMNI			= "*";
-
+///////////////////////////////////////////////////////////////////////////////////
+// UTILITY CLASS
 class CfgPage {
 
+	//////////////////////////////////////////////////////////////////////////////
 	static renderBlankCell(row) {
 		let cell = document.createElement("TD");
 		row.appendChild(cell);	
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	static renderSelection(row, opts, value) {
 		let cell = document.createElement("TD");
 		let el = document.createElement("SELECT");
@@ -105,8 +115,8 @@ class CfgPage {
 		row.appendChild(cell);
 		return el;
 	}
-	
-	
+		
+	//////////////////////////////////////////////////////////////////////////////
 	static renderMidiChannel(row, includeDefault, chanType, chanNumber) {
 		let opts = []
 		if(includeDefault) {
@@ -121,6 +131,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, 256*chanType+chanNumber);
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	static renderGateDuration(row, includeDefault, durationType, duration) {	
 		let opts = []
 		if(includeDefault) {
@@ -141,6 +152,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, 256*durationType+duration);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////
 	static renderNote(row, value) {
 		const notes = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 		let opts = []
@@ -150,6 +162,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, value);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////
 	static render7Bit(row, value) {
 		let opts = []
 		for(let i = 1; i<=127; ++i) {			
@@ -158,6 +171,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, value);
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	static renderBendRange(row, value) {
 		let opts = []
 		for(let i = 0; i<=24; ++i) {			
@@ -166,6 +180,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, value);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////
 	static renderTranspose(row, value) {
 		let opts = []
 		opts.push([100, "+3oct"]);
@@ -185,6 +200,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, value);
 	}
 		
+	//////////////////////////////////////////////////////////////////////////////
 	static renderCC(row, value) {
 		let opts = []
 		for(let i=1; i<=127; ++i) {
@@ -211,6 +227,7 @@ class CfgPage {
 		return CfgPage.renderSelection(row, opts, value);
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////
 	static renderClockOffset(row, value) {
 		let opts = [];
 		opts.push([0, "(none)"]);		
@@ -219,8 +236,6 @@ class CfgPage {
 		}
 		return CfgPage.renderSelection(row, opts, value);
 	}
-
-	
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -281,6 +296,7 @@ class NoteInput {
 		}
 	}	
 	
+	//////////////////////////////////////////////////////////////////////////////
 	xable() {
 		let dis = (this.Source == 0);
 		this.ctrlChan.disabled = dis;
@@ -290,6 +306,8 @@ class NoteInput {
 		this.ctrlMinVel.disabled = dis;
 		this.ctrlBendRange.disabled = dis;
 	}	
+
+	//////////////////////////////////////////////////////////////////////////////
 	render(row) {
 		let ctrl;
 		let obj = this;
@@ -344,10 +362,6 @@ class NoteInput {
 	
 		this.xable();
 	}
-	
-	
-	
-	
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +461,7 @@ class CVOutput {
 		}
 	}		
 	
-	
+	//////////////////////////////////////////////////////////////////////////////	
 	xable() {
 		this.ctrlInputEvent.disabled = !(this.Source>=11 &&  this.Source<=14);
 		this.ctrlTranspose.disabled = !(this.Source>=11 &&  this.Source<=14);
@@ -457,6 +471,8 @@ class CVOutput {
 		this.ctrlVolts.disabled = !(this.Source==2||this.Source==4||this.Source==5||this.Source==20||this.Source==127);
 		
 	}	
+
+	//////////////////////////////////////////////////////////////////////////////
 	render(row) {
 		let ctrl;
 		let obj = this;
@@ -657,8 +673,12 @@ class GateOutput {
 				break;
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////////////////
 	xable() {
 	}	
+
+	//////////////////////////////////////////////////////////////////////////////
 	render(row) {
 		let ctrl;
 		let obj = this;
@@ -803,7 +823,6 @@ class Patch {
 	///////////////////////////////////////////////////////////////////////////////
 	syxify() {
 		let sysex = [ 
-			SYSEX_BEGIN, MANUF_ID_0, MANUF_ID_1, MANUF_ID_2,		
 			NRPNH_GLOBAL, NRPNL_CHAN, this.ChanType, this.ChanNumber,
 			NRPNH_GLOBAL, NRPNL_GATE_DUR, this.DurationType, this.Duration		
 		];		
@@ -816,7 +835,7 @@ class Patch {
 		for(let o of this.GateOutputs) {
 			sysex = sysex.concat(o.syxify());
 		}
-		return sysex.concat([SYSEX_END]);
+		return sysex;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////
@@ -853,6 +872,7 @@ class Patch {
 		return true;
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////
 	render() {
 		let table, ctrl, tr;
 		let obj = this;		
@@ -902,8 +922,6 @@ class Patch {
 			tr.appendChild(cell);
 			this.GateOutputs[i].render(tr);
 			table.appendChild(tr);
-		}
-		
-	}
-	
+		}		
+	}	
 };
