@@ -123,9 +123,9 @@ class CfgPage {
 
 	static renderGateDuration(row, includeDefault, durationType, duration) {	
 		let opts = []
-		opts.push([0, "(gate)"])
-		opts.push([(256*3), "(retrig)"])
 		if(includeDefault) {
+			opts.push([0, "(gate)"])
+			opts.push([(256*3), "(retrig)"])
 			opts.push([(256*2), "(default)"])
 		}
 		let i=1;
@@ -821,12 +821,6 @@ class Patch {
 	
 	///////////////////////////////////////////////////////////////////////////////
 	unsyxify(data) {
-		if((data[0] != SYSEX_BEGIN) ||
-			(data[1] != MANUF_ID_0) ||
-			(data[2] != MANUF_ID_1) ||
-			(data[3] != MANUF_ID_2)) {
-			return false;
-		}
 		while(data.length >= 4) {
 			if(data[0] == NRPNH_GLOBAL) {
 				switch(data[1]) {
@@ -853,7 +847,7 @@ class Patch {
 			}
 			data = data.slice(4);
 		}	
-		if(data.length != 1 || data[0] != SYSEX_END) {
+		if(data.length != 0) {
 			return false;
 		}
 		return true;

@@ -1,5 +1,7 @@
 <html>
-
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
 <head>
 <style>
 body {
@@ -20,7 +22,84 @@ table {
 <script language="Javascript" src="cvocd.js">
 </script>
 </head>
+
 <body>
+
+<h1>CV.OCD SysEx Builder</h1>
+<%	
+	Dim strSysex
+	strSysex = ""
+	
+	
+	Const MANUF_ID_0 = &H00
+	Const MANUF_ID_1 = &H7F 
+	Const MANUF_ID_2 = &H15		
+	
+	function ReadSysEx
+		Dim data
+		ReadSysEx = ""
+		data = request.BinaryRead(request.TotalBytes)
+		
+		index = 0
+		for i=1 to lenb(data) - 4
+			if midb(data,i,4) = (chrb(13) & chrb(10) & chrb(13) & chrb(10)) then
+				index = i + 4
+				exit for
+			end if
+		next	
+		if index = 0 then
+			ReadSysEx = "NO FILE, OR FILE IS EMPTY"
+			exit function 
+		end if
+		if (midb(data,index,4) <> (ChrB(&HF0) & ChrB(MANUF_ID_0) & ChrB(MANUF_ID_1) & ChrB(&H12))) and _   
+			(midb(data,index,4) <> (ChrB(&HF0) & ChrB(MANUF_ID_0) & ChrB(MANUF_ID_1) & ChrB(MANUF_ID_2))) then
+			ReadSysEx = "NOT A CVOCD PATCH"
+			exit function 
+		end if
+		index = index + 4
+		
+		do while index <= lenb(data) 
+			if midb(data,index,1) = chrb(&hF7) then exit do
+			if index + 4 >= lenb(data) then 
+				ReadSysEx = "INCOMPLETE OR CORRUPTED SYSEX FILE"			
+				exit function
+			End If
+			strSysex = strSysex & "," & ascb(midb(data,index,1))
+			index = index + 1		
+		loop
+		strSysex = Mid(strSysex,2)
+	end function
+
+	
+	If Request.QueryString("file") <> "" Then
+		Dim strError
+		strError = ReadSysex
+		If strError <> "" Then
+%><b style="color:red">ERROR IN SYSEX FILE - <%=strError%></b><%		
+		End If
+	End If
+%>
+
+<hr>
+<table width=800><tr><td>
+<center>
+<img width=600 src="img/cvocd.gif">
+</center>
+<hr>
+<form name="sysex_file" action="cvocd.asp?file=true" enctype="multipart/form-data" method="post">
+<table>
+<tr><td>You can load an existing CV.OCD sysex into this form, or create a new one from scratch<br>
+Click <a href="https://github.com/hotchk155/cvocd.a/blob/master/patches/cvocd_default.syx?raw=true">here</a> to download the default patch (as loaded on a new CV.OCD)
+</td>
+<td>:</td>
+<td><input type="file" name="file" value="File"></td>
+<td><input type="submit" value="Load SysEx Into Form"></td>
+<tr>
+</table>
+</form>
+<form name="sysex" action="get_sysex.asp" method="post">
+
+<input type="hidden" name="sysex_data" id="sysex_data" value="<%=strSysex%>">
 
 <hr>
 <p><b>Globals</b> (TIP: hover mouse over field names for a description)</p>
@@ -91,11 +170,28 @@ table {
 </tr>
 </table>
 
+<p>&dagger;&nbsp;Some settings have specific firmware requirements. Make sure you have an <a href="firmwares.html">appropriate firmware version</a> to use settings marked with the &dagger; symbol</p>
+
+<hr>
+<input type="submit" value="I WANT YOUR SYSEX!">
+
+
+</td></tr></table>
+
+</form>
 
 <script>
+let syx_string = document.getElementById("sysex_data").value;
+let syx = syx_string.split(",")
+for(let o in syx) {
+	syx[o] = parseInt(syx[o],10);
+}
 let patch = new Patch();
+patch.unsyxify(syx);
 patch.render();
 </script>
+
+
 
 </body>
 </html>
