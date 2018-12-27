@@ -83,6 +83,12 @@ const NRPVH_DUR_RETRIG		= 3;
 class CfgPage {
 
 	//////////////////////////////////////////////////////////////////////////////
+	static removeChildren(el) {
+		while (el.firstChild) {
+			el.removeChild(el.firstChild);
+		}		
+	}
+	//////////////////////////////////////////////////////////////////////////////
 	static renderBlankCell(row) {
 		let cell = document.createElement("TD");
 		row.appendChild(cell);	
@@ -798,7 +804,7 @@ class Patch {
 	constructor() {
 		this.ChanType 		= NRPVH_CHAN_SPECIFIC;
 		this.ChanNumber		= 1;
-		this.DurationType	= NRPVH_CHAN_SPECIFIC;
+		this.DurationType	= NRPVH_DUR_MS;
 		this.Duration		= 15;
 		this.AutoSave		= 1;
 		this.NoteInputs		= [];
@@ -873,23 +879,20 @@ class Patch {
 		let obj = this;		
 
 		table = document.getElementById("global_settings");		
+		CfgPage.removeChildren(table);
 		tr = document.createElement("TR");
-
-		CfgPage.renderBlankCell(tr);
-		
+		CfgPage.renderBlankCell(tr);		
 		ctrl = CfgPage.renderMidiChannel(tr, false, this.ChanType, this.ChanNumber);
 		ctrl.onchange = function() {obj.ChanType = this.value>>8; obj.ChanNumber = this.value&0xFF; }
 		this.ctrlChan = ctrl;
-
 		CfgPage.renderBlankCell(tr);
-		
 		ctrl = CfgPage.renderGateDuration(tr, false, this.DurationType, this.Duration);
 		ctrl.onchange = function() {obj.DurationType = this.value>>8; obj.Duration = this.value&0xFF; }
 		this.ctrlDuration = ctrl;
-
 		table.appendChild(tr);
-	
+			
 		table = document.getElementById("note_inputs");		
+		CfgPage.removeChildren(table);
 		for(let i=0; i<NUM_NOTE_INPUTS; ++i) {
 			let tr = document.createElement("TR");
 			let cell = document.createElement("TD");
@@ -900,6 +903,7 @@ class Patch {
 		}
 
 		table = document.getElementById("cv_outputs");
+		CfgPage.removeChildren(table);
 		for(let i=0; i<NUM_CV_OUTPUTS; ++i) {
 			let tr = document.createElement("TR");
 			let cell = document.createElement("TD");
@@ -910,6 +914,7 @@ class Patch {
 		}
 
 		table = document.getElementById("gate_outputs");
+		CfgPage.removeChildren(table);
 		for(let i=0; i<NUM_CV_OUTPUTS; ++i) {
 			let tr = document.createElement("TR");
 			let cell = document.createElement("TD");
