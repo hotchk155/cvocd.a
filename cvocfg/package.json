@@ -1,0 +1,14 @@
+{
+  "name": "cvocfg",
+  "version": "1.0.0",
+  "description": "configurator for CV.OCD",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Jason Hotchkiss",
+  "license": "CC-NC-BY-SA",
+  "dependencies": {
+    "electron": "^4.0.0"
+  }
+}

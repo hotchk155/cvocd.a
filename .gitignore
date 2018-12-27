@@ -75,3 +75,5 @@ cv-strip.hex
 
 old/*.*
 Backup_of_*.cdr
+
+cvocfg/node_modules
