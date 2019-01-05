@@ -10,40 +10,51 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 const {app, dialog, BrowserWindow, Menu, ipcMain } = electron;
-let mainWindow;
+let mainWindow = null;
+let midiLinkWindow = null;
 let currentFileName = null;
+let midiOutputTag = null;
 
+///////////////////////////////////////////////////////////////////////////////
 function setCurrentFileName(name) {
     currentFileName = name;
     if(name == null) {
-        mainWindow.setTitle(app.getName());    
+        mainWindow.setTitle(productName + " Configuration");    
     }
     else {
-        mainWindow.setTitle(app.getName() + ' - ' +name);    
+        mainWindow.setTitle(productName + " Configuration" + ' - ' +name);    
     }
 }
 
 
-app.on('ready', function() {
-    mainWindow = new BrowserWindow({});
-
-    mainWindow.webContents.on('did-finish-load', function() {
-        mainWindow.webContents.send('init-rq');
+///////////////////////////////////////////////////////////////////////////////
+function doMidiLink() {
+    ipcMain.removeAllListeners('syxify-rs');
+    ipcMain.once('syxify-rs', function(e, mode, data) {
+        showMidiLinkWindow(data);
     });
+    mainWindow.webContents.send('syxify-rq', null);
+}
 
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'patch.html'),
+///////////////////////////////////////////////////////////////////////////////
+function showMidiLinkWindow(data) {
+    midiLinkWindow= new BrowserWindow({parent:mainWindow, frame:false, modal:true, resizable:false});
+    midiLinkWindow.setMenu(null);
+    midiLinkWindow.webContents.on('did-finish-load', function() {
+        midiLinkWindow.webContents.send('midi-init-rq', data, midiOutputTag);
+    });
+    midiLinkWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'midilink.html'),
         protocol:'file:',
         slashes:true
     }));
-
-    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-    Menu.setApplicationMenu(mainMenu);
-
-        
-});
+    midiLinkWindow.webContents.on('destroyed', function() {
+        midiLinkWindow = null;
+    });
+}
 
 
+///////////////////////////////////////////////////////////////////////////////
 const mainMenuTemplate = [
     {
         label: 'File',
@@ -51,19 +62,19 @@ const mainMenuTemplate = [
             {
                 label: 'Open...',
                 click() {
-                    loadSysex();
+                    onOpenSysex();
                 }
             },
             {
                 label: 'Save',
-                click() {                    
-                    mainWindow.webContents.send('save-rq', currentFileName);
+                click() {    
+                    onSaveSysex(currentFileName);
                 }
             },
             {
                 label: 'Save As...',
                 click() {                    
-                    mainWindow.webContents.send('save-rq', null);
+                    onSaveSysex(null);
                 }
             },
             {
@@ -79,6 +90,20 @@ const mainMenuTemplate = [
                     app.quit();
                 }
             },
+        ],
+    },
+    {
+        label: 'MIDI',
+        submenu:[
+            {
+                label: 'Interface...',
+                click() {
+                    doMidiLink(); 
+                }
+            },
+            {
+                label: 'Send Sysex'
+            }
         ]
     }
 ];
@@ -92,7 +117,8 @@ if(process.env.NODE_ENV !== 'production'){
     });
 }
 
-function loadSysex() {
+///////////////////////////////////////////////////////////////////////////////
+function onOpenSysex() {
     let file = dialog.showOpenDialog( mainWindow, {
         properties: ['openFile'],
         filters: [
@@ -122,7 +148,18 @@ function loadSysex() {
     }
 }
 
-ipcMain.on('save-rs', function(e, saveAs, data) {
+///////////////////////////////////////////////////////////////////////////////
+function onSaveSysex(fileName) {
+    ipcMain.removeAllListeners('syxify-rs');
+    ipcMain.once('syxify-rs', function(e, saveAs, data) {
+        saveSysexFile(saveAs, data);
+    });
+    mainWindow.webContents.send('syxify-rq', fileName);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+function saveSysexFile(saveAs, data) 
+{
     if(saveAs == null) {
         let file = dialog.showSaveDialog( mainWindow, {
             filters: [
@@ -146,5 +183,37 @@ ipcMain.on('save-rs', function(e, saveAs, data) {
     catch(e) {
         dialog.showErrorBox("Failed To Save", e.message);
     }
+}
 
+
+///////////////////////////////////////////////////////////////////////////////
+ipcMain.on('midi-hide-rq', function() {
+    midiLinkWindow.hide();
+    midiLinkWindow = null;    
 });
+
+///////////////////////////////////////////////////////////////////////////////
+ipcMain.on('midi-select-rq', function(e, tag) {
+    midiOutputTag = tag;
+});
+
+///////////////////////////////////////////////////////////////////////////////
+app.on('ready', function() {
+    mainWindow = new BrowserWindow({width: 1150, height: 700});
+
+    mainWindow.webContents.on('did-finish-load', function() {
+        mainWindow.webContents.send('init-rq');
+    });
+
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'patch.html'),
+        protocol:'file:',
+        slashes:true
+    }));
+
+    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+    Menu.setApplicationMenu(mainMenu);
+
+    setCurrentFileName(null);
+});
+

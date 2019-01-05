@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang='en'>
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+<head>
+<style>
+body {
+    font-family: arial;
+}
+
+table {
+    font-family: arial;
+    font-size: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    padding: 0px;
+	line-height: 1;
+}
+</style>
+
+<script>
+let midiInterface = null;
+let midiOutput = null;
+let midiOutputName = null;
+let sysexData = null;
+let remainingData = null;
+
+const electron = require('electron');
+const {ipcRenderer} = electron;
+
+// --------------------------------------------------------------------------
+// the main process sends us this event to request MIDI access and populate
+// the list of available MIDI outputs, optionally telling us which MIDI 
+// output to select
+ipcRenderer.on('midi-init-rq', function(e, data, tag) {
+    midiOutputName = tag;
+    sysexData = data;
+
+    // open webMIDI support
+    if (navigator.requestMIDIAccess) {
+        navigator.requestMIDIAccess({
+        sysex: false
+        }).then(onMIDISuccess, onMIDIFailure);
+    } else {
+        console.warn("No MIDI support");
+    }
+});
+
+
+// --------------------------------------------------------------------------
+// handler function for when MIDI is opened successfully
+function onMIDISuccess(handle) {
+    // get a handle to the MIDI system interface
+    midiInterface = handle;  
+    
+    if(midiOutputName == null) {
+        let opt = document.createElement("option");
+        document.getElementById("midi-outputs").add(opt);
+    }
+    // populate list of available MIDI devices
+    for (let output of midiInterface.outputs.values()) {
+        let opt = document.createElement("option");
+        opt.text = output.name;        
+        document.getElementById("midi-outputs").add(opt);
+        if(output.name == midiOutputName) {
+            opt.selected = true;
+            midiOutput = output;
+        }
+    }    
+}
+
+// --------------------------------------------------------------------------
+// handler function for when MIDI is not supported
+function onMIDIFailure() {
+    alert("failed");
+    //TODO
+}
+
+
+// --------------------------------------------------------------------------
+// handler function for when the MIDI output device is changed
+function onSelectMidiOutput() {
+    let tag = document.getElementById("midi-outputs").value;
+    for (let output of midiInterface.outputs.values()) {
+        if(output.name == tag) {
+            midiOutput = output;
+            ipcRenderer.send('midi-select-rq', tag);
+            return;
+        }
+    }  	
+    midiOutput = null;
+//TODO: bad	
+}
+
+
+
+/*
+document.getElementById("midi-outputs").onchange = onSelectMidiOutput;
+function sendMidiNote(channel, note, velocity) {
+    if(midiOutput != null) {
+        midiOutput.send( [ 0x90 | (channel-1), note, velocity] );
+    }
+}
+
+function sendMidiNrpn(paramMsb, paramLsb, valueMsb, valueLsb) {
+    if(midiOutput != null) {
+        midiOutput.send( [ 0xB0, 99, paramMsb ] );
+        midiOutput.send( [ 0xB0, 98, paramLsb ] );
+        midiOutput.send( [ 0xB0, 6, valueMsb ] );
+        midiOutput.send( [ 0xB0, 38, valueLsb ] );
+    }
+}
+*/
+function onClickClose() {
+    if(midiOutput != null) {
+        midiOutput.clear();
+        midiOutput.close();
+        midiOutput = null;
+    }
+    ipcRenderer.send('midi-hide-rq');
+}
+
+let x=0;
+function onClickSend() {
+    x=0;
+    document.getElementById("progress").innerHTML ="&nbsp;";
+    remainingData = sysexData;
+    if(remainingData != null) {
+        sendxData();
+    }
+}
+
+function sendxData() {    
+    //document.getElementById("progress").style.width = remainingData.length() + "px";
+    document.getElementById("progress").innerHTML =x+ "px";
+    //remainingData = remainingData.slice(4, remainingData.length);
+    x=x+1;
+    if(x<100) {
+        setTimeout(sendxData(), 1000);
+    }
+    else {
+        remainingData = null;
+    }
+}
+
+</script>
+</head>
+
+<body>
+<h1>MIDI</h1>    
+<table>
+    <tr>
+        <td>MIDI interface:</td>
+        <td>
+            <select id="midi-outputs" onchange="onSelectMidiOutput()">
+            </select>
+        </td>
+    </tr>
+</table>
+<div id="progress" style="width:10px;background:green">&nbsp;</div>
+<input type="button" value="Send" onclick="onClickSend();">
+<input type="button" value="Close" onclick="onClickClose();">
+</body>
+</html>
