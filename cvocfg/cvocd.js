@@ -78,6 +78,16 @@ const NRPVH_DUR_MS			= 1;
 const NRPVH_DUR_GLOBAL		= 2;
 const NRPVH_DUR_RETRIG		= 3;
 
+const SYSEX_BEGIN 		= 0xF0;
+const SYSEX_END 		= 0xF7;
+const MANUF_ID_0 		= 0x00;
+const MANUF_ID_1 		= 0x7F;
+const MANUF_ID_2 		= 0x15;		
+
+const ERR_BAD_FRAMING	= 1;
+const ERR_BAD_ID		= 2;
+const ERR_BAD_DATA		= 3;
+
 ///////////////////////////////////////////////////////////////////////////////////
 // UTILITY CLASS
 class CfgPage {
@@ -871,6 +881,30 @@ class Patch {
 			return false;
 		}
 		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	get_midi() {
+		let data = [SYSEX_BEGIN, MANUF_ID_0, MANUF_ID_1, MANUF_ID_2];
+		data = data.concat(this.syxify());
+		data = data.concat([SYSEX_END]);
+		return data;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	put_midi(data) {
+		if(data.length < 5 || data[0] !=SYSEX_BEGIN || data[data.length - 1] != SYSEX_END) {
+			throw new Error("Invalid or incomplete SYSEX file");
+		}
+			
+		if(data[1] != MANUF_ID_0 || data[2] != MANUF_ID_1 || data[3] != MANUF_ID_2) {
+			throw new Error("Incorrect type of SYSEX file");
+		}
+
+		let syx = data.slice(4, data.length-5);
+		if(!this.unsyxify(syx)) {
+			throw new Error("Urecognised SYSEX data");
+		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////

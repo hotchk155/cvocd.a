@@ -20,11 +20,13 @@ table {
 	line-height: 1;
 }
 </style>
-<script language="Javascript" src="cvocd.js">
-</script>
+<script language="Javascript" src="cvocd.js"></script>
+<script language="Javascript" src="patch.js"></script>
 </head>
 
 <body>
+
+                
 <p><b>Globals</b> (TIP: hover mouse over field names for a description)</p>
 <table >
 <thead>
@@ -105,23 +107,8 @@ table {
 </table>
 
 <script>
-    const electron = require('electron');
-    const {ipcRenderer} = electron;
-    let patch;
-
-    ipcRenderer.on('init-rq', function(e, data) {
-        patch = new Patch(); 
-        if(data != null)  {
-            patch.unsyxify(data);
-        }
-        patch.render();
-    });
-
-    ipcRenderer.on('syxify-rq', function(e, mode) {
-        let data = patch.syxify();  
-        e.sender.send('syxify-rs', mode, data)
-    });
-    
+let patch = new Patch();
+patch.render();
 </script>
 
 </body>
