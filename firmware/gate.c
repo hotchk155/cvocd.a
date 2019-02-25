@@ -213,8 +213,9 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 	// trigger OFF - no worries about synchronisation
 	else
 	{
+		g_sync_sr_data &= ~gate_bit; // cancel any deferred trigger
 		if(g_sr_data & gate_bit) {
-			g_sr_data &= ~gate_bit;
+			g_sr_data &= ~gate_bit;			
 			g_sr_data_pending = 1;	
 		}
 		pgate->counter = 0;

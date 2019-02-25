@@ -43,125 +43,94 @@ NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 //
 
 ///////////////////////////////////////////////////////////////
-// ADD A NOTE TO A STACK
-static byte add_note(NOTE_STACK *pstack, byte note) {
-	char i;
-
-	// if the note is already at top of stack
-	// there is nothing to do
-	if(pstack->count>0 && note == pstack->note[0]) {
-		return 0;
-	}
-	
-	// check if note is already in the stack
-	for(i = 0; i < pstack->count; ++i) {
-		if(pstack->note[i] == note) { // found it
-			// shuffle all lower indexed notes up one place
-			for(; i > 0; --i) {
-				pstack->note[i] = pstack->note[i-1];
-			}
-			// and place this note at the front
-			pstack->note[0] = note;
-			return 1;
-		}
-	}
-
-	// is the note stack full?
-	if(pstack->count == SZ_NOTE_STACK) { 
-		// ok, we're going to lose the oldest note
-		for(i = SZ_NOTE_STACK-1; i > 0; --i) {
-			pstack->note[i] = pstack->note[i-1];
-		}
-	}
-	else {
-		// otherwise make space for the new note
-		for(i = pstack->count; i > 0; --i) {
-			pstack->note[i] = pstack->note[i-1];
-		}
-		++pstack->count;
-	}
-	// add the new note
-	pstack->note[0] = note;	
-	return 1;
-}
-
-///////////////////////////////////////////////////////////////
-// REMOVE A NOTE FROM A STACK
-static byte remove_note(NOTE_STACK *pstack, byte note) 
-{
-	char i;
-	
-	// search for the note
-	for(i = 0; i < pstack->count; ++i) {
-		if(pstack->note[i] == note) { 
-			// remove the note by shufflng all later notes down
-			--pstack->count;
-			for(; i<pstack->count; ++i) {
-				pstack->note[i] = pstack->note[i+1];
-			}
-			return 1;
-		}
-	}
-	return 0;
-}
-
-///////////////////////////////////////////////////////////////
 // PRIORITIZE A NOTE
 static void prioritize_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
 {
-	byte i = 0;
-	byte new_note = NO_NOTE_OUT;
+	int i,pos;
 
-	// maintain stack of notes that are held
-	if(vel) {
-		add_note(pstack, note);
-	}
-	else {
-		remove_note(pstack, note);
-	}
+	// If this is a note on message, the note needs to be added into the buffer
+	if (vel) { 
 	
-	// handle according to prioritization setting	
-	switch(priority) {	
-					
-	case PRIORITY_HIGH:
-		for(i=0; i<pstack->count; ++i) {				
-			if(new_note == NO_NOTE_OUT || new_note < pstack->note[i]) {
-				new_note = pstack->note[i];
+		// determine the insertion point for the new note based on the 
+		// note prioritisation order
+		for (pos = 0; pos < pstack->count; ++pos) {
+			if ((note > pstack->note[pos] && priority == PRIORITY_HIGH) ||
+				(note < pstack->note[pos] && priority == PRIORITY_LOW) || 
+				priority == PRIORITY_LAST) {
+				break;
 			}
 		}
-		break;
 
-	case PRIORITY_LOW:
-		for(i=0; i<pstack->count; ++i) {				
-			if(new_note == NO_NOTE_OUT || new_note > pstack->note[i]) {
-				new_note = pstack->note[i];
-			}
+		// increase count of notes in the buffer if there is space
+		if (pstack->count < SZ_NOTE_STACK) {
+			++pstack->count;
 		}
-		break;
+
+		// can the new note be inserted in the buffer? (lower priority notes 
+		// will be shifted along if there is space, otherwise the lowest
+		// note will drop of the buffer)
+		if (pos < pstack->count) {
 		
-	case PRIORITY_LAST:
-	default:
-		if(pstack->count > 0) {				
-			new_note = pstack->note[0];
+			// shift down along which are after the insertion point
+			for (i = pstack->count - 2; i >= pos; --i) {
+				pstack->note[i + 1] = pstack->note[i];
+			}
+			// insert the new note in the buffer
+			pstack->note[pos] = note;
 		}
-		break;
 	}
+	else { // note off - remove from the buffer
 	
-	// check for a change to output
-	if(new_note != pstack->out[0]) {
-		pstack->out[0] = new_note;
-		if(new_note != NO_NOTE_OUT) {
-			// new note triggered on output
-			cv_event(EV_NOTE_A, which_stack);
+		// search for the note
+		for(i = 0; i < pstack->count; ++i) {
+			if(pstack->note[i] == note) { 
+				// remove the note by shufflng all later notes down
+				--pstack->count;
+				for(; i<pstack->count; ++i) {
+					pstack->note[i] = pstack->note[i+1];
+				}
+			}
+		}
+	}
+
+	// are there any notes to play?
+	if (pstack->count) {
+		// map the top four prioritised notes to the four slots for the 
+		// note stack. if there is no source note, use the top prioritised
+		// note to fill up the gap
+		byte prev = pstack->out[0];
+		for (i = 0; i < 4; ++i) {
+			if (i < pstack->count) {
+				// the slot is filled from the buffer note
+				note = pstack->note[i];
+			}
+			else {
+				// top priority note is used
+				note = pstack->note[0];
+			}
+			if (note != pstack->out[i]) {
+				// if the note in this slot will be changing, then 
+				// update the CV output
+				pstack->out[i] = note;
+				cv_event(EV_NOTE_A + i, which_stack);
+			}
+		}
+		if (pstack->out[0] != prev) {
+			// if the highest priority note changed then 
+			// trigger a note on event
 			gate_event(EV_NOTE_A, which_stack);
 			gate_event(EV_NOTE_ON, which_stack);
 		}
-		else {
-			// note untriggered on output
-			gate_event(EV_NO_NOTE_A, which_stack);
-			gate_event(EV_NOTES_OFF, which_stack);			
-		}
-	}	
+
+	}
+	// there are no held notes... we signal all notes off
+	// but do not change any CVs
+	else if(pstack->out[0] != NO_NOTE_OUT) {
+		pstack->out[0] = pstack->out[1] = pstack->out[2] = pstack->out[3] = NO_NOTE_OUT;
+		gate_event(EV_NO_NOTE_A, which_stack);
+		gate_event(EV_NOTES_OFF, which_stack);
+	}
+
 }
 
 ///////////////////////////////////////////////////////////////
