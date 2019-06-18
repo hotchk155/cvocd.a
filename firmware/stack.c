@@ -7,7 +7,7 @@
 //   /////   ///     //     //////   /////  //////
 //
 // CV.OCD MIDI-TO-CV CONVERTER
-// hotchk155/2016
+// hotchk155/2019
 // Sixty Four Pixels Limited
 //
 // This work is distibuted under terms of Creative Commons 
