@@ -29,6 +29,7 @@
 #include <memory.h>
 #include "cvocd.h"
 
+#define PARA_CHORD	1
 
 //
 // GLOBAL DATA
@@ -42,12 +43,8 @@ NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 // PRIVATE FUNCTIONS
 //
 
-///////////////////////////////////////////////////////////////
-// PRIORITIZE A NOTE
-static void prioritize_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
-{
+static void update_held_notes(NOTE_STACK *pstack, byte note, byte vel, byte priority) {
 	int i,pos;
-
 	// If this is a note on message, the note needs to be added into the buffer
 	if (vel) { 
 	
@@ -92,45 +89,29 @@ static void prioritize_note(NOTE_STACK *pstack, byte which_stack, byte priority,
 			}
 		}
 	}
+}
 
-	// are there any notes to play?
-	if (pstack->count) {
-		// map the top four prioritised notes to the four slots for the 
-		// note stack. if there is no source note, use the top prioritised
-		// note to fill up the gap
-		byte prev = pstack->out[0];
-		for (i = 0; i < 4; ++i) {
-			if (i < pstack->count) {
-				// the slot is filled from the buffer note
-				note = pstack->note[i];
-			}
-			else {
-				// top priority note is used
-				note = pstack->note[0];
-			}
-			if (note != pstack->out[i]) {
-				// if the note in this slot will be changing, then 
-				// update the CV output
-				pstack->out[i] = note;
-				cv_event(EV_NOTE_A + i, which_stack);
-			}
+///////////////////////////////////////////////////////////////
+// MONOPHONIC MODE
+static void prioritize_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
+{
+	update_held_notes(pstack, note, vel, priority);
+	byte prev_out = pstack->out[0];
+	if(!pstack->count) { // no notes held
+		if(prev_out != NO_NOTE_OUT) { // a note was playing
+			pstack->out[0] = NO_NOTE_OUT; // not any more!
+			gate_event(EV_NO_NOTE_A, which_stack);
+			gate_event(EV_NOTES_OFF, which_stack);
 		}
-		if (pstack->out[0] != prev) {
-			// if the highest priority note changed then 
-			// trigger a note on event
-			gate_event(EV_NOTE_A, which_stack);
-			gate_event(EV_NOTE_ON, which_stack);
-		}
-
 	}
-	// there are no held notes... we signal all notes off
-	// but do not change any CVs
-	else if(pstack->out[0] != NO_NOTE_OUT) {
-		pstack->out[0] = pstack->out[1] = pstack->out[2] = pstack->out[3] = NO_NOTE_OUT;
-		gate_event(EV_NO_NOTE_A, which_stack);
-		gate_event(EV_NOTES_OFF, which_stack);
+	else if(prev_out != pstack->note[0]) { 		// change in note to play?
+		pstack->out[0] = pstack->note[0]; 
+		cv_event(EV_NOTE_A, which_stack); 		// update CV out
+		gate_event(EV_NOTE_A, which_stack); 	// event for change of top note
+		if(prev_out == NO_NOTE_OUT) { 
+			gate_event(EV_NOTE_ON, which_stack); // event for first note
+		}		
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////
@@ -164,9 +145,87 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 	}	
 }
 
+
+///////////////////////////////////////////////////////////////
+// POLYPHONIC 
+static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
+{
+	byte i, any_note;
+	if(vel) {	
+	
+		// note on... look for a space for it...
+		for(i=0; i<chord_size; ++i) {		
+			if(pstack->out[i] == NO_NOTE_OUT)  // free slot
+				break;
+		}
+		if(i == chord_size) {			
+			i = chord_size - 1; // no free slots, steal the last slot
+		}
+		pstack->out[i] = note;
+		cv_event(EV_NOTE_A + i, which_stack);
+		gate_event(EV_NOTE_A + i, which_stack);
+		gate_event(EV_NOTE_ON, which_stack);
+	}
+	else {
+		// note off - remove old note
+		any_note = 0;
+		for(i=0; i<4; ++i) {		
+			if(pstack->out[i] == note) {
+				pstack->out[i] = NO_NOTE_OUT; // but do not update CV
+				gate_event(EV_NO_NOTE_A + i, which_stack);
+			}		
+			else if(pstack->out[i] != NO_NOTE_OUT) {
+				any_note = 1;
+			}
+		}
+		if(!any_note) {
+			gate_event(EV_NOTES_OFF, which_stack);			
+		}
+	}
+}	
+
+///////////////////////////////////////////////////////////////
+// PARAPHONIC
+static void para_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
+{
+	update_held_notes(pstack, note, vel, PRIORITY_LOW);
+	if(vel) { 
+		// 0 0 0 0
+		// 0 1 0 1
+		// 0 1 2 0
+		// 0 1 2 3
+		byte from_index = 0;
+		for(int i=0; i<chord_size; ++i) {		
+			if(pstack->note[from_index] != pstack->out[i]) {
+				pstack->out[i] = pstack->note[from_index];
+				cv_event(EV_NOTE_A+i, which_stack);
+			}
+			if(++from_index >= pstack->count) {
+				from_index = 0;
+			}
+		}
+		if(pstack->count <= chord_size) {
+			gate_event(EV_NOTE_ON, which_stack);		// event if any audible note changed
+		}
+		if(pstack->count == 1) {
+			gate_event(EV_NOTE_A, which_stack);	// event when first note goes on
+		}
+	}
+	else {
+		if(!pstack->count) {
+			gate_event(EV_NO_NOTE_A, which_stack);	// events when all notes go off
+			gate_event(EV_NOTES_OFF, which_stack);			
+		}
+	}
+}	
+
+
+
+
+/* 
 ///////////////////////////////////////////////////////////////
 // HANDLE CHORDS
-static void chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
+static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
 {
 	byte i, any_note;
 	if(vel) {	
@@ -201,7 +260,7 @@ static void chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, by
 		}
 	}
 }	
-
+*/
 
 
 //
@@ -248,7 +307,11 @@ void stack_midi_note(byte chan, byte note, byte vel)
 			case PRIORITY_CHORD2:
 			case PRIORITY_CHORD3:
 			case PRIORITY_CHORD4:
-				chord_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CHORD2), note, vel);
+#ifdef PARA_CHORD			
+				para_chord_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CHORD2), note, vel);
+#else
+				poly_chord_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CHORD2), note, vel);
+#endif
 				break;	
 		}
 	}
