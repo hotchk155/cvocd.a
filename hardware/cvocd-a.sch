@@ -17531,7 +17531,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <sheet>
 <plain>
 <text x="59.436" y="172.212" size="3.81" layer="95">CV.OCD MIDI TO CV CONVERTER</text>
-<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 5, 22 FEB 2018</text>
+<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 6, 17 JAN 2020</text>
 <text x="59.944" y="160.782" size="3.81" layer="95">Jason Hotchkiss, Sixty-Four Pixels Ltd</text>
 <text x="-152.4" y="185.42" size="3.81" layer="95">POWER SUPPLY</text>
 <text x="-152.4" y="154.94" size="3.81" layer="95">MIDI IN</text>
@@ -18585,11 +18585,11 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="MIDI_IN" gate="G$1" pin="4"/>
 <pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="-127" y1="127" x2="-116.84" y2="127" width="0.1524" layer="91"/>
-<pinref part="MIDI" gate="G$1" pin="4"/>
 <wire x1="-116.84" y1="127" x2="-114.3" y2="127" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="147.32" x2="-116.84" y2="147.32" width="0.1524" layer="91"/>
-<wire x1="-116.84" y1="147.32" x2="-116.84" y2="127" width="0.1524" layer="91"/>
+<wire x1="-116.84" y1="149.86" x2="-116.84" y2="127" width="0.1524" layer="91"/>
 <junction x="-116.84" y="127"/>
+<pinref part="MIDI" gate="G$1" pin="3"/>
+<wire x1="-142.24" y1="149.86" x2="-116.84" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$30" class="0">
@@ -18615,10 +18615,10 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <pinref part="D1" gate="G$1" pin="P$1"/>
 <wire x1="-96.52" y1="119.888" x2="-96.52" y2="116.84" width="0.1524" layer="91"/>
 <junction x="-96.52" y="116.84"/>
-<pinref part="MIDI" gate="G$1" pin="3"/>
-<wire x1="-142.24" y1="149.86" x2="-119.38" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="-119.38" y1="149.86" x2="-119.38" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="-119.38" y1="147.32" x2="-119.38" y2="116.84" width="0.1524" layer="91"/>
 <junction x="-119.38" y="116.84"/>
+<pinref part="MIDI" gate="G$1" pin="4"/>
+<wire x1="-142.24" y1="147.32" x2="-119.38" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$42" class="0">
@@ -18915,34 +18915,11 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <approved hash="104,1,-111.76,50.8,ICSP,VSS(GND),GND,,,"/>
 <approved hash="104,1,58.42,-10.16,IC7P,VCC,VDD,,,"/>
 <approved hash="106,1,-91.44,76.2,MIDI_OUT,,,,,"/>
-<approved hash="113,1,-83.82,3.53483,R16,,,,,"/>
-<approved hash="113,1,-83.82,-4.08517,R17,,,,,"/>
-<approved hash="113,1,-83.82,18.7748,R19,,,,,"/>
-<approved hash="113,1,-83.82,11.1548,R18,,,,,"/>
-<approved hash="113,1,-133.35,-24.5313,C7,,,,,"/>
 <approved hash="113,1,-120.46,49.53,ICSP,,,,,"/>
 <approved hash="113,1,5.40173,151.13,LED3,,,,,"/>
 <approved hash="113,1,13.0217,151.13,LED1,,,,,"/>
-<approved hash="113,1,6.07483,139.7,R25,,,,,"/>
-<approved hash="113,1,13.6948,139.7,R23,,,,,"/>
-<approved hash="113,1,21.3148,139.7,R24,,,,,"/>
 <approved hash="113,1,20.6417,151.13,LED2,,,,,"/>
-<approved hash="113,1,-93.1113,166.37,C5,,,,,"/>
-<approved hash="113,1,-62.6313,166.37,C6,,,,,"/>
-<approved hash="113,1,-109.22,127.995,R1,,,,,"/>
-<approved hash="113,1,88.9,11.1548,R28,,,,,"/>
-<approved hash="113,1,88.9,3.53483,R29,,,,,"/>
-<approved hash="113,1,88.9,-4.08517,R30,,,,,"/>
-<approved hash="113,1,88.9,-11.7052,R31,,,,,"/>
-<approved hash="113,1,88.9,-19.3252,R32,,,,,"/>
-<approved hash="113,1,88.9,26.3948,R26,,,,,"/>
-<approved hash="113,1,88.9,18.7748,R27,,,,,"/>
-<approved hash="113,1,52.07,-16.9113,C8,,,,,"/>
-<approved hash="113,1,88.9,-26.9452,R33,,,,,"/>
 <approved hash="113,1,-127,75.8105,SW1,,,,,"/>
-<approved hash="113,1,-97.702,166.37,C3,,,,,"/>
-<approved hash="113,1,-54.522,166.37,C2,,,,,"/>
-<approved hash="113,1,-106.68,175.747,D2,,,,,"/>
 </errors>
 </schematic>
 </drawing>
