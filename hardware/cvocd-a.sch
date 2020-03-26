@@ -17531,7 +17531,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <sheet>
 <plain>
 <text x="59.436" y="172.212" size="3.81" layer="95">CV.OCD MIDI TO CV CONVERTER</text>
-<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 6, 17 JAN 2020</text>
+<text x="59.944" y="166.37" size="3.81" layer="95">REVISION 6a, 26 MAR 2020</text>
 <text x="59.944" y="160.782" size="3.81" layer="95">Jason Hotchkiss, Sixty-Four Pixels Ltd</text>
 <text x="-152.4" y="185.42" size="3.81" layer="95">POWER SUPPLY</text>
 <text x="-152.4" y="154.94" size="3.81" layer="95">MIDI IN</text>
