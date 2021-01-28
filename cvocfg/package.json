@@ -9,6 +9,6 @@
   "author": "Jason Hotchkiss",
   "license": "CC-NC-BY-SA",
   "dependencies": {
-    "electron": "^4.0.0"
+    "electron": "^9.4.0"
   }
 }
