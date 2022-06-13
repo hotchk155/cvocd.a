@@ -825,6 +825,8 @@ void setup() {
   
   // USB Serial 
   Serial.begin(9600);
+  Serial.println("CV.OCD CALIBRATION RIG");  
+  Serial.println("----------------------");  
   Serial.println("Begin");  
 
   // Hard serial (MIDI)
@@ -888,4 +890,3 @@ void loop() {
 //
 // END
 //
-
