@@ -81,3 +81,6 @@ fascia/cvocd-fascia.kicad_pcb-bak
 fascia/gerbers/cvocd-fascia-Edge_Cuts.gbr
 fascia/gerbers/cvocd-fascia-F_Cu.gbr
 fascia/gerbers/cvocd-fascia-F_SilkS.gbr
+firmware/SourceImages/5.1_BETA/Release/*.*
+firmware/SourceImages/5.2_BETA/Release/*.*
+firmware/SourceImages/VERSION_5_RELEASE/Release/*.*

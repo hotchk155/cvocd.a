@@ -1,0 +1,39 @@
+[Settings]
+Active Directory=C:\Users\jason\Dropbox\Github\cvocd.a\firmware\5.2_BETA\
+Target=PIC16F1825
+Active Compiler=BoostC
+Active Config=Release
+Last Ext=h
+Config=0
+Type=0
+Warnings=1
+Model=0
+Profiling=0
+Snapshot=0
+[Files]
+Count=7
+File0=cv.c
+File1=cvocd.c
+File2=cvocd.h
+File3=gate.c
+File4=global.c
+File5=stack.c
+File6=storage.c
+File7=cvocd.h
+File8=cvocd.h
+[Tools]
+BoostDir=C:\Program Files (x86)\SourceBoost\
+Programmer=
+PrefixWithBuildThreadNum=0
+[Debugger]
+DebugFromMain=1
+[Watch]
+Count=0
+[Watchpoint]
+Count=0
+[Register]
+Core=1
+Ports=1
+Interrupt=1
+Eeprom=1
+Misc=1
