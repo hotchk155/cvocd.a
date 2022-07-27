@@ -1,5 +1,5 @@
 [Settings]
-Active Directory=D:\GitHub\cvocd.a\test_firmware\
+Active Directory=C:\Users\jason\Dropbox\Github\cvocd.a\test_firmware\
 Target=PIC16F1825
 Active Compiler=BoostC
 Active Config=Release

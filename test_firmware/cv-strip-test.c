@@ -39,7 +39,8 @@
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
 
-#define I2C_ADDRESS 0b1100000
+#define I2C_ADDRESS 0b1100000	// A0
+//#define I2C_ADDRESS 0b1100110	// A6
 
 //
 // CONST DATA
