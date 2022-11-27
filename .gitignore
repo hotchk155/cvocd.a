@@ -84,3 +84,6 @@ fascia/gerbers/cvocd-fascia-F_SilkS.gbr
 firmware/SourceImages/5.1_BETA/Release/*.*
 firmware/SourceImages/5.2_BETA/Release/*.*
 firmware/SourceImages/VERSION_5_RELEASE/Release/*.*
+firmware.X/build
+firmware.X/dist
+firmware.X/.ca
