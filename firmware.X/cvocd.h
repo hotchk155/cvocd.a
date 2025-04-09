@@ -46,7 +46,7 @@
 #define P_SRDAT2	LATAbits.LATA1
 #define P_SRCLK		LATAbits.LATA4
 #define P_SRLAT		LATAbits.LATA5
-#define P_SWITCH 	LATCbits.LATC3
+#define P_SWITCH 	PORTCbits.RC3
 
 
 // constants
