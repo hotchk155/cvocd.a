@@ -287,7 +287,7 @@ void cv_event(byte event, byte stack_id) {
 				case EV_NOTE_D:
 					output_id = event - EV_NOTE_A;
 					if(pcv->event.out == output_id) {			
-						note = (int)pstack->out[output_id] + ((int)pcv->event.transpose - TRANSPOSE_NONE) - 24;
+						note = (int)(pstack->out[output_id]&0x7f) + ((int)pcv->event.transpose - TRANSPOSE_NONE) - 24;
 						while(note < 0) note += 12; 	
 						while(note > 120) note -= 12; 	
 						l_note[which_cv] = note;

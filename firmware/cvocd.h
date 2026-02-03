@@ -42,7 +42,6 @@
 #define GATE_MAX	12					// number of gate outs
 #define SZ_NOTE_STACK 5					// max notes in a single stack
 #define NUM_NOTE_STACKS 4				// number of stacks supported
-#define NOTE_OUT_MUTED 0x80 			// flag bit OR'd with notes to indicate gate closed
 #define I2C_TX_BUF_SZ 12				// size of i2c transmit buffer
 
 // Defaults

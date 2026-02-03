@@ -29,13 +29,6 @@
 #include <memory.h>
 #include "cvocd.h"
 
-//
-// LOCAL DEFS
-// 
-enum {
-	NO_INPUT_NOTE 	= 0xff,
-	NO_OUT_SLOT 	= 0xff
-};
 
 //
 // GLOBAL DATA
@@ -98,21 +91,12 @@ static void update_held_notes(NOTE_STACK *pstack, byte note, byte vel, byte prio
 }
 
 ///////////////////////////////////////////////////////////////
-static void all_notes_off(byte which_stack) {
-	gate_event(EV_NO_NOTE_A, which_stack);
-	gate_event(EV_NO_NOTE_B, which_stack);
-	gate_event(EV_NO_NOTE_C, which_stack);
-	gate_event(EV_NO_NOTE_D, which_stack);
-	gate_event(EV_NOTES_OFF, which_stack);
-}
-
-///////////////////////////////////////////////////////////////
 // MONOPHONIC MODE
 static void mono_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
 {
 	update_held_notes(pstack, note, vel, priority);
 	if(!pstack->count) { // no notes held
-		pstack->out[0] = NOTE_OUT_MUTED; // not any more!
+		pstack->out[0] = 0; // not any more!
 		gate_event(EV_NO_NOTE_A, which_stack);
 	}
 	else if(pstack->out[0] != pstack->note[0]) { 		// change in note to play?
@@ -136,7 +120,7 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 	}
 	else for(byte i=0; i<4; ++i) {		
 		if(pstack->out[i] == note) {
-			pstack->out[i] = NOTE_OUT_MUTED;
+			pstack->out[i] = 0;
 			gate_event(EV_NO_NOTE_A + i, which_stack);
 		}			
 	}	
@@ -146,28 +130,30 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 // POLYPHONIC CHORD MODE
 static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
 {
+	const byte NOTE_ON = 0x80;	
+
 	update_held_notes(pstack, note, vel, PRIORITY_LOW);
 
 	byte in_idx;
 	byte out_idx;
-	byte notes_to_assign[4];
+	byte note_assigned[4];
 	byte slot_assigned[4];
-	memset(notes_to_assign,NO_INPUT_NOTE,4);
+	memset(note_assigned,0,4);
 	memset(slot_assigned,0,4);
 	
+	byte num_in_notes = (pstack->count<chord_size)? pstack->count: chord_size;
+	
 	// scan for existing output slot for each input note (up to chord size)
-	for(in_idx=0; in_idx<pstack->count && in_idx<chord_size; ++in_idx) {
-		byte in_note = pstack->note[in_idx];
-		notes_to_assign[in_idx] = in_note;	// assume we won't find the note
+	for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
 		for(out_idx=0; out_idx<chord_size; ++out_idx) { 
-			if((pstack->out[out_idx]&~NOTE_OUT_MUTED) == in_note) { // match the note?
-				if(pstack->out[out_idx]&NOTE_OUT_MUTED) { // currently muted?
-					pstack->out[out_idx]&=~NOTE_OUT_MUTED; // unmute it
+			if((pstack->out[out_idx]&~NOTE_ON) == pstack->note[in_idx]) { // match the note?
+				if(!(pstack->out[out_idx]&NOTE_ON)) { // currently muted?
+					pstack->out[out_idx]|=NOTE_ON;
 					gate_event(EV_NOTE_A + out_idx, which_stack);
 					gate_event(EV_NOTE_ON, which_stack);			
 				}			
-				slot_assigned[out_idx] = 1;	// the slot is assigned
-				notes_to_assign[in_idx] = NO_INPUT_NOTE; // the note is already assigned
+				slot_assigned[out_idx] = 1;	
+				note_assigned[in_idx] = 1;
 				break;
 			}
 		}
@@ -177,19 +163,19 @@ static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_siz
 	for(byte i=0; i<chord_size; ++i) {	// scan over outputs looking for unassigned ones
 		out_idx%=chord_size;
 		if(!slot_assigned[out_idx]) { // no note assigned to this output
-			for(in_idx=0; in_idx<4; ++in_idx) { 
-				if(notes_to_assign[in_idx] != NO_INPUT_NOTE) { // input note needing an output?
-					pstack->out[out_idx] = notes_to_assign[in_idx];	// assign note to output
-					notes_to_assign[in_idx] = NO_INPUT_NOTE;
+			for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
+				if(!note_assigned[in_idx]) { // input note needing an output?
+					pstack->out[out_idx] = NOTE_ON|pstack->note[in_idx];	// assign note to output
 					slot_assigned[out_idx] = 1;
+					note_assigned[in_idx] = 1;
 					pstack->index = out_idx+1;	// next scan starts after this slot
 					cv_event(EV_NOTE_A + out_idx, which_stack);
 					gate_event(EV_NOTE_A + out_idx, which_stack);
 					break;
 				}
 			}
-			if(!slot_assigned[out_idx] && !(pstack->out[out_idx]&NOTE_OUT_MUTED)) { // unmuted out with no valid input
-				pstack->out[out_idx] |= NOTE_OUT_MUTED;	// mute it
+			if((pstack->out[out_idx]&NOTE_ON) && !slot_assigned[out_idx]) { // unmuted out with no valid input
+				pstack->out[out_idx]&=~NOTE_ON;
 				gate_event(EV_NO_NOTE_A + out_idx, which_stack);
 			}			
 		}
@@ -220,7 +206,7 @@ static void para_chord_note(NOTE_STACK *pstack, byte which_stack, byte note, byt
 		}
 	}
 	else for(byte out_idx=0; out_idx<4; ++out_idx) {
-		pstack->out[out_idx] = NOTE_OUT_MUTED;
+		pstack->out[out_idx] = 0;
 		gate_event(EV_NO_NOTE_A+out_idx, which_stack);
 	}	
 }	
@@ -388,23 +374,12 @@ byte *stack_storage(int *len) {
 ////////////////////////////////////////////////////////////
 // RESET NOTE STACK STATE
 void stack_reset() {
-	for(byte i=0; i<NUM_NOTE_STACKS; ++i) {
-		g_stack[i].count = 0;
-		g_stack[i].out[0] = NOTE_OUT_MUTED;
-		g_stack[i].out[1] = NOTE_OUT_MUTED;
-		g_stack[i].out[2] = NOTE_OUT_MUTED;
-		g_stack[i].out[3] = NOTE_OUT_MUTED;
-		g_stack[i].bend = 0;
-		g_stack[i].vel = 0;		
-		g_stack[i].index = 0;				
-		all_notes_off(i);
-	}
+	memset(g_stack, 0, sizeof(g_stack));
 }
  
 ////////////////////////////////////////////////////////////
 // INITIALISE NOTE STACK CONFIG
-void stack_init()
-{
+void stack_init() {
 	memset(g_stack_cfg, 0, sizeof(g_stack_cfg));
 }
 
