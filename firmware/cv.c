@@ -529,7 +529,6 @@ byte *cv_storage(int *len) {
 void cv_init() {
 	memset(l_cv, 0, sizeof(l_cv));
 	memset(l_dac, 0, sizeof(l_dac));
-	memset(l_note, 0, sizeof(l_note));
 	cv_config_dac();
 	
 	/*l_cv[0].event.mode = CV_NOTE;
@@ -545,6 +544,7 @@ void cv_init() {
 
 ////////////////////////////////////////////////////////////
 void cv_reset() {
+	memset(l_note, 0, sizeof(l_note));
 	for(byte which=0; which < CV_MAX; ++which) {
 		switch(l_cv[which].event.mode) {				
 		case CV_TEST:	
