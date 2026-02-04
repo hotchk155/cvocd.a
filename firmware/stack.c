@@ -156,29 +156,36 @@ static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_siz
 			}
 		}
 	}
-		
-	out_idx = pstack->index; // start after last allocated slot (spread notes across available outputs)
-	for(byte i=0; i<chord_size; ++i) {	// scan over outputs looking for unassigned ones
-		out_idx%=chord_size;
-		if(!slot_assigned[out_idx]) { // no note assigned to this output
-			for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
-				if(!note_assigned[in_idx]) { // input note needing an output?
-					pstack->out[out_idx] = NOTE_ON|pstack->note[in_idx];	// assign note to output
-					slot_assigned[out_idx] = 1;
-					note_assigned[in_idx] = 1;
-					pstack->index = out_idx+1;	// next scan starts after this slot
-					cv_event(EV_NOTE_A + out_idx, which_stack);
-					gate_event(EV_NOTE_A + out_idx, which_stack);
-					break;
+	
+	// assign new notes only when a note on event received
+	if(vel) {	
+		out_idx = pstack->index; // start after last allocated slot (spread notes across available outputs)
+		for(byte i=0; i<chord_size; ++i) {	// scan over outputs looking for unassigned ones
+			out_idx%=chord_size;
+			if(!slot_assigned[out_idx]) { // no note assigned to this output
+				for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
+					if(!note_assigned[in_idx]) { // input note needing an output?
+						pstack->out[out_idx] = NOTE_ON|pstack->note[in_idx];	// assign note to output
+						slot_assigned[out_idx] = 1;
+						note_assigned[in_idx] = 1;
+						pstack->index = out_idx+1;	// next scan starts after this slot
+						cv_event(EV_NOTE_A + out_idx, which_stack);
+						gate_event(EV_NOTE_A + out_idx, which_stack);
+						break;
+					}
 				}
 			}
-			if((pstack->out[out_idx]&NOTE_ON) && !slot_assigned[out_idx]) { // unmuted out with no valid input
-				pstack->out[out_idx]&=~NOTE_ON;
-				gate_event(EV_NO_NOTE_A + out_idx, which_stack);
-			}			
+			++out_idx;		
 		}
-		++out_idx;		
 	}
+	
+	// mute notes which are playing without matching input note
+	for(out_idx = 0; out_idx < chord_size; ++out_idx) {	
+		if((pstack->out[out_idx]&NOTE_ON) && !slot_assigned[out_idx]) { 
+			pstack->out[out_idx]&=~NOTE_ON;
+			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
+		}			
+	}		
 }
 
 ///////////////////////////////////////////////////////////////
