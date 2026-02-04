@@ -131,9 +131,6 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
 {
 	const byte NOTE_ON = 0x80;	
-
-	update_held_notes(pstack, note, vel, PRIORITY_LOW);
-
 	byte in_idx;
 	byte out_idx;
 	byte note_assigned[4];
@@ -141,6 +138,7 @@ static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_siz
 	memset(note_assigned,0,4);
 	memset(slot_assigned,0,4);
 	
+	update_held_notes(pstack, note, vel, PRIORITY_LOW);
 	byte num_in_notes = (pstack->count<chord_size)? pstack->count: chord_size;
 	
 	// scan for existing output slot for each input note (up to chord size)
@@ -192,21 +190,21 @@ static void para_chord_note(NOTE_STACK *pstack, byte which_stack, byte note, byt
 	// will re-assign chord note outputs if any input notes are currently held
 	// AND (we're responding to NOTE ON OR we're rebuilding for NOTE OFF)
 	if(pstack->count && (vel || rebuild)) { 
-		byte out_changed = 0; // flag applies to first change and following outputs
+		byte out_changed = 0; 
 		for(byte out_idx=0; out_idx<4; ++out_idx) {
-			byte out_note = pstack->note[out_idx%pstack->count];
-			if(pstack->out[out_idx] != out_note) {
+			byte out_note = pstack->note[out_idx%pstack->count]; // assign held notes across outputs
+			if(pstack->out[out_idx] != out_note) {	// new note for output
 				out_changed = 1;
 				pstack->out[out_idx] = out_note;
 				cv_event(EV_NOTE_A+out_idx, which_stack);
 			}
-			if(out_changed || (vel && out_note == note)) { 
-				gate_event(EV_NOTE_A+out_idx, which_stack);
+			if(out_changed || (vel && out_note == note)) { // trigger note event on changed gate and all following
+				gate_event(EV_NOTE_A+out_idx, which_stack); 
 			}
 		}
 	}
-	else for(byte out_idx=0; out_idx<4; ++out_idx) {
-		pstack->out[out_idx] = 0;
+	else for(byte out_idx=0; out_idx<4; ++out_idx) { // all outputs off 
+		pstack->out[out_idx] = 0; // force retrigger even if same note
 		gate_event(EV_NO_NOTE_A+out_idx, which_stack);
 	}	
 }	
