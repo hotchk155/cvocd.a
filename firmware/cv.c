@@ -33,7 +33,8 @@
 //
 // MACRO DEFS
 //
-#define I2C_ADDRESS 0b1100000
+#define I2C_ADDRESS 0b1100000	// A0
+//#define I2C_ADDRESS 0b1100110	// A6
 
 //
 // TYPE DEFS
