@@ -131,6 +131,8 @@ XAble_Input(<%=count%>);
 </script>
 
 </table>
+<p>&dagger;&nbsp; Firmware version <a href="firmwares.html">5.3 or later</a> is required to use settings marked &dagger;</p>
+
 
 <%
 ' ================================================================================================
@@ -201,7 +203,7 @@ XAble_CVOutput(<%=count%>);
 </script>
 
 </table>
-<p>&dagger;&nbsp;Some settings have specific firmware requirements. Make sure you have an <a href="firmwares.html">appropriate firmware version</a> to use settings marked with the &dagger; symbol</p>
+<p>&dagger;&nbsp; Firmware version <a href="firmwares.html">5.3 or later</a> is required to use settings marked &dagger;</p>
 <%
 ' ================================================================================================
 ' GATE OUTPUTS
@@ -290,8 +292,6 @@ document.getElementById("gt<%=count%>.src").onchange=function(){XAble_GateOutput
 XAble_GateOutput(<%=count%>);
 <% Next %>	
 </script>
-<p>&dagger;&nbsp;Some settings have specific firmware requirements. Make sure you have an <a href="firmwares.html">appropriate firmware version</a> to use settings marked with the &dagger; symbol</p>
-
 <hr>
 <input type="submit" value="I WANT YOUR SYSEX!">
 

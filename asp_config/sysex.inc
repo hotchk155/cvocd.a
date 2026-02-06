@@ -348,6 +348,9 @@ Class CVOutput
 				WriteParam id, NRPNL_SRC, Me.Source, 0
 				WriteParam id, NRPNL_CHAN, Me.ChanType, Me.ChanNumber
 				WriteParam id, NRPNL_VOLTS, 0, Me.Volts
+			Case NRPVH_SRC_TESTVOLTAGE
+				WriteParam id, NRPNL_SRC, Me.Source, 0
+				WriteParam id, NRPNL_VOLTS, 0, Me.Volts
 			case else
 				WriteParam id, NRPNL_SRC, Me.Source, 0
 		End select

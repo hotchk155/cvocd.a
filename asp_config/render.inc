@@ -187,9 +187,11 @@ Function RenderPriority(o)
 	dict.add "6", "2 note cycle"
 	dict.add "7", "3 note cycle"
 	dict.add "8", "4 note cycle"
-	dict.add "9", "2 note chord"
-	dict.add "10", "3 note chord"
-	dict.add "11", "4 note chord"
+	dict.add "9", "2 note polyphonic"
+	dict.add "10", "3 note polyphonic"
+	dict.add "11", "4 note polyphonic"
+	dict.add "12", "Paraphonic&dagger;"
+	dict.add "13", "Paraphonic (release)&dagger;"
 	RenderSelection o.Key & ".prty", o.Priority, dict
 end function
 
@@ -213,8 +215,7 @@ Function RenderCVSource(o)
 	dict.add "2", "MIDI CC"
 	dict.add "4", "Pitch Bend"
 	dict.add "5", "Channel Aftertouch"
-	dict.add "20", "BPM to CV"
-	dict.add "127", "Fixed Voltage"
+	dict.add "127", "Test Voltage&dagger;"
 	RenderSelection o.Key & ".src", o.Source, dict
 end function
 
@@ -264,7 +265,7 @@ Function RenderGateSource(o)
 	dict.add "22", "Transport Run"
 	dict.add "23", "Transport Restart"
 	dict.add "25", "Transport Stop"
-	dict.add "26", "Trans. Start/Stop &dagger;"
+	dict.add "26", "Trans. Start/Stop"
 	RenderSelection o.Key & ".src", o.Source, dict
 end function
 
@@ -319,8 +320,8 @@ end function
 Function RenderPitchScheme(o)
 	Set dict = Server.CreateObject("Scripting.Dictionary")
 	dict.add "0", "V/Oct"
-	dict.add "1", "Hz/V &dagger;"
-	dict.add "2", "1.2V/Oct &dagger;"
+	dict.add "1", "Hz/V"
+	dict.add "2", "1.2V/Oct"
 	RenderSelection o.Key & ".scheme", o.PitchScheme, dict
 end function
 
