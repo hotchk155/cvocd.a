@@ -29,6 +29,14 @@
 #include <memory.h>
 #include "cvocd.h"
 
+//
+// DEFS
+//
+
+// assign_notes() flags
+const byte ASSIGN_ALL_OUTPUTS	= 0x01;	// every output must be assigned valid note
+const byte REBUILD_ON_RELEASE	= 0x04;	// reassign outputs when a note is released
+const byte MUTE_ALL_ON_RELEASE	= 0x08;	// keep assignments but mute all outputs when note released
 
 //
 // GLOBAL DATA
@@ -42,6 +50,8 @@ NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 // PRIVATE FUNCTIONS
 //
 
+///////////////////////////////////////////////////////////////
+// MAINTAIN SORTED LIST OF ACTIVE MIDI NOTES
 static void update_held_notes(NOTE_STACK *pstack, byte note, byte vel, byte priority) {
 	int i,pos;
 	// If this is a note on message, the note needs to be added into the buffer
@@ -91,18 +101,54 @@ static void update_held_notes(NOTE_STACK *pstack, byte note, byte vel, byte prio
 }
 
 ///////////////////////////////////////////////////////////////
-// MONOPHONIC MODE
-static void mono_note(NOTE_STACK *pstack, byte which_stack, byte priority, byte note, byte vel)
-{
+// ASSIGN NOTES TO OUTPUTS
+static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte priority, byte flags, byte note, byte vel) {
+	
+	byte out_idx;
+	
+	// add/remove notes from sorted note list
 	update_held_notes(pstack, note, vel, priority);
-	if(!pstack->count) { // no notes held
-		pstack->out[0] = 0; // not any more!
-		gate_event(EV_NO_NOTE_A, which_stack);
+	
+	// does this note event need us to re-assign notes to outputs?
+	if(pstack->count && (vel || (flags & REBUILD_ON_RELEASE))) {	// do we need to (re)assign notes to outputs?
+	
+		byte outputs_to_assign = pstack->count; 
+		if((flags & ASSIGN_ALL_OUTPUTS) || (outputs_to_assign > chord_size)) {
+			outputs_to_assign = chord_size; // number of outputs to assign always 1..chord_size
+		}
+		for(out_idx=0; out_idx<outputs_to_assign; ++out_idx) { 
+			byte note_to_assign = pstack->note[out_idx%pstack->count]; // source note for output
+			byte trig_on_note = (flags & ASSIGN_ALL_OUTPUTS); // all gates trig even if no change in note?
+			if(pstack->out[out_idx] != note_to_assign) { // change of note?
+				pstack->out[out_idx] = note_to_assign;
+				cv_event(EV_NOTE_A + out_idx, which_stack);
+				trig_on_note = 1;
+			}
+			if(vel) {
+				pstack->vel = vel;	// store most recent note on velocity
+				if(trig_on_note) {
+					gate_event(EV_NOTE_A + out_idx, which_stack); // trig note gate
+				}
+				gate_event(EV_NOTE_ON, which_stack);
+			}
+		}
+		for(; out_idx<chord_size; ++out_idx) { // mute remaining outputs
+			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
+			pstack->out[out_idx] = 0;
+		}
 	}
-	else if(pstack->out[0] != pstack->note[0]) { 		// change in note to play?
-		pstack->out[0] = pstack->note[0]; 
-		cv_event(EV_NOTE_A, which_stack); 		// update CV out
-		gate_event(EV_NOTE_A, which_stack); 	// event for change of top note
+	else { // note off with no reassignment
+		byte any_notes = 0;
+		for(out_idx=0; out_idx<chord_size; ++out_idx) { 			
+			if((flags & MUTE_ALL_ON_RELEASE) || (note == pstack->out[out_idx])) { // mute this output?
+				gate_event(EV_NO_NOTE_A + out_idx, which_stack);
+				pstack->out[out_idx] = 0;
+			}
+			any_notes |= pstack->out[out_idx];
+		}
+		if(!any_notes) {
+			gate_event(EV_NOTES_OFF, which_stack); // signal final note off 
+		}
 	}
 }
 
@@ -114,107 +160,23 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 		pstack->out[pstack->index] = note;
 		cv_event(EV_NOTE_A + pstack->index, which_stack);
 		gate_event(EV_NOTE_A + pstack->index, which_stack);
+		gate_event(EV_NOTE_ON, which_stack);
 		if(++pstack->index >= cycle_size ) {
 			pstack->index = 0;
 		}
 	}
 	else for(byte i=0; i<4; ++i) {		
+		byte any_notes = 0;
 		if(pstack->out[i] == note) {
+			any_notes |= pstack->out[i];
 			pstack->out[i] = 0;
 			gate_event(EV_NO_NOTE_A + i, which_stack);
 		}			
+		if(!any_notes) {
+			gate_event(EV_NOTES_OFF, which_stack); 
+		}
 	}	
 }
-
-///////////////////////////////////////////////////////////////
-// POLYPHONIC CHORD MODE
-static void poly_chord_note(NOTE_STACK *pstack, byte which_stack, byte chord_size, byte note, byte vel) 
-{
-	const byte NOTE_ON = 0x80;	
-	byte in_idx;
-	byte out_idx;
-	byte note_assigned[4];
-	byte slot_assigned[4];
-	memset(note_assigned,0,4);
-	memset(slot_assigned,0,4);
-	
-	update_held_notes(pstack, note, vel, PRIORITY_LOW);
-	byte num_in_notes = (pstack->count<chord_size)? pstack->count: chord_size;
-	
-	// scan for existing output slot for each input note (up to chord size)
-	for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
-		for(out_idx=0; out_idx<chord_size; ++out_idx) { 
-			if((pstack->out[out_idx]&~NOTE_ON) == pstack->note[in_idx]) { // match the note?
-				if(!(pstack->out[out_idx]&NOTE_ON)) { // currently muted?
-					pstack->out[out_idx]|=NOTE_ON;
-					gate_event(EV_NOTE_A + out_idx, which_stack);
-					gate_event(EV_NOTE_ON, which_stack);			
-				}			
-				slot_assigned[out_idx] = 1;	
-				note_assigned[in_idx] = 1;
-				break;
-			}
-		}
-	}
-	
-	// assign new notes only when a note on event received
-	if(vel) {	
-		out_idx = pstack->index; // start after last allocated slot (spread notes across available outputs)
-		for(byte i=0; i<chord_size; ++i) {	// scan over outputs looking for unassigned ones
-			out_idx%=chord_size;
-			if(!slot_assigned[out_idx]) { // no note assigned to this output
-				for(in_idx=0; in_idx<num_in_notes; ++in_idx) {
-					if(!note_assigned[in_idx]) { // input note needing an output?
-						pstack->out[out_idx] = NOTE_ON|pstack->note[in_idx];	// assign note to output
-						slot_assigned[out_idx] = 1;
-						note_assigned[in_idx] = 1;
-						pstack->index = out_idx+1;	// next scan starts after this slot
-						cv_event(EV_NOTE_A + out_idx, which_stack);
-						gate_event(EV_NOTE_A + out_idx, which_stack);
-						break;
-					}
-				}
-			}
-			++out_idx;		
-		}
-	}
-	
-	// mute notes which are playing without matching input note
-	for(out_idx = 0; out_idx < chord_size; ++out_idx) {	
-		if((pstack->out[out_idx]&NOTE_ON) && !slot_assigned[out_idx]) { 
-			pstack->out[out_idx]&=~NOTE_ON;
-			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
-		}			
-	}		
-}
-
-///////////////////////////////////////////////////////////////
-// PARAPHONIC
-static void para_chord_note(NOTE_STACK *pstack, byte which_stack, byte note, byte vel, byte rebuild) 
-{
-	update_held_notes(pstack, note, vel, PRIORITY_LOW);
-
-	// will re-assign chord note outputs if any input notes are currently held
-	// AND (we're responding to NOTE ON OR we're rebuilding for NOTE OFF)
-	if(pstack->count && (vel || rebuild)) { 
-		byte out_changed = 0; 
-		for(byte out_idx=0; out_idx<4; ++out_idx) {
-			byte out_note = pstack->note[out_idx%pstack->count]; // assign held notes across outputs
-			if(pstack->out[out_idx] != out_note) {	// new note for output
-				out_changed = 1;
-				pstack->out[out_idx] = out_note;
-				cv_event(EV_NOTE_A+out_idx, which_stack);
-			}
-			if(out_changed || (vel && out_note == note)) { // trigger note event on changed gate and all following
-				gate_event(EV_NOTE_A+out_idx, which_stack); 
-			}
-		}
-	}
-	else for(byte out_idx=0; out_idx<4; ++out_idx) { // all outputs off 
-		pstack->out[out_idx] = 0; // force retrigger even if same note
-		gate_event(EV_NO_NOTE_A+out_idx, which_stack);
-	}	
-}	
 
 //
 // GLOBAL FUNCTIONS
@@ -236,13 +198,9 @@ void stack_midi_note(byte chan, byte note, byte vel)
 		if(!IS_NOTE_MATCH(pcfg->note_min, pcfg->note_max, note))
 			continue;
 		
-		if(vel) {
-			// for a note on message, velocity must be abve threshold
-			if(pcfg->vel_min && vel < pcfg->vel_min) {
-				continue;			
-			}
-			// store note velocity as stack velocity
-			pstack->vel = vel;
+		// for a note on message, velocity must be abve threshold
+		if(vel && pcfg->vel_min && vel<pcfg->vel_min) {
+			continue;			
 		}
 
 		// pass the note to the appropriate handler
@@ -250,31 +208,24 @@ void stack_midi_note(byte chan, byte note, byte vel)
 			case PRIORITY_LAST:
 			case PRIORITY_LOW:
 			case PRIORITY_HIGH:
-				mono_note(pstack, which_stack, pcfg->priority, note, vel);
+				assign_notes(pstack, which_stack, 1, pcfg->priority, REBUILD_ON_RELEASE, note, vel);
+				break;
+			case PRIORITY_CHORD2:
+			case PRIORITY_CHORD3:
+			case PRIORITY_CHORD4:
+				assign_notes(pstack, which_stack, 4, PRIORITY_LOW, 0, note, vel);
+				break;	
+			case PRIORITY_PARA:
+				assign_notes(pstack, which_stack, 4, PRIORITY_LOW, ASSIGN_ALL_OUTPUTS|REBUILD_ON_RELEASE, note, vel);
+				break;
+			case PRIORITY_PARA_RELEASE:
+				assign_notes(pstack, which_stack, 4, PRIORITY_LOW, ASSIGN_ALL_OUTPUTS|MUTE_ALL_ON_RELEASE, note, vel);
 				break;
 			case PRIORITY_CYCLE2:
 			case PRIORITY_CYCLE3:
 			case PRIORITY_CYCLE4:
 				cycle_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CYCLE2), note, vel);
 				break;	
-			case PRIORITY_CHORD2:
-			case PRIORITY_CHORD3:
-			case PRIORITY_CHORD4:
-				poly_chord_note(pstack, which_stack, (2 + pcfg->priority - PRIORITY_CHORD2), note, vel);
-				break;	
-			case PRIORITY_PARA:
-				para_chord_note(pstack, which_stack, note, vel, 1);
-				break;
-			case PRIORITY_PARA_RELEASE:
-				para_chord_note(pstack, which_stack, note, vel, 0);
-				break;
-		}
-
-		if(vel) {
-			gate_event(EV_NOTE_ON, which_stack);
-		}
-		else if(!pstack->count) {
-			gate_event(EV_NOTES_OFF, which_stack);			
 		}
 	}
 }
@@ -380,6 +331,10 @@ byte *stack_storage(int *len) {
 // RESET NOTE STACK STATE
 void stack_reset() {
 	memset(g_stack, 0, sizeof(g_stack));
+	gate_event(EV_NOTES_OFF, 0); 
+	gate_event(EV_NOTES_OFF, 1); 
+	gate_event(EV_NOTES_OFF, 2); 
+	gate_event(EV_NOTES_OFF, 3); 
 }
  
 ////////////////////////////////////////////////////////////

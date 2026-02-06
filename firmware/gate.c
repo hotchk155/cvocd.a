@@ -501,7 +501,6 @@ void gate_init() {
 		pcfg->event.flags = 0;
 		pcfg->event.duration = DEFAULT_GATE_DURATION;
 	}	
-	gate_reset();
 }
 
 
