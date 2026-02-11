@@ -35,8 +35,8 @@
 
 // assign_notes() flags
 const byte ASSIGN_ALL_OUTPUTS	= 0x01;	// every output must be assigned valid note
-const byte REBUILD_ON_RELEASE	= 0x04;	// reassign outputs when a note is released
-const byte MUTE_ALL_ON_RELEASE	= 0x08;	// keep assignments but mute all outputs when note released
+const byte REBUILD_ON_RELEASE	= 0x02;	// reassign outputs when a note is released
+const byte MUTE_ALL_ON_RELEASE	= 0x04;	// keep assignments but mute all outputs when note released
 
 //
 // GLOBAL DATA
@@ -109,10 +109,11 @@ static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, 
 	// add/remove notes from sorted note list
 	update_held_notes(pstack, note, vel, priority);
 	
-	// does this note event need us to re-assign notes to outputs?
-	if(pstack->count && (vel || (flags & REBUILD_ON_RELEASE))) {	// do we need to (re)assign notes to outputs?
+	// assign new outputs
+	byte outputs_to_assign = chord_size;
+	if(pstack->count && (vel || (flags & REBUILD_ON_RELEASE))) {
 	
-		byte outputs_to_assign = pstack->count; 
+		outputs_to_assign = pstack->count; 
 		if((flags & ASSIGN_ALL_OUTPUTS) || (outputs_to_assign > chord_size)) {
 			outputs_to_assign = chord_size; // number of outputs to assign always 1..chord_size
 		}
@@ -124,31 +125,28 @@ static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, 
 				cv_event(EV_NOTE_A + out_idx, which_stack);
 				trig_on_note = 1;
 			}
-			if(vel) {
-				pstack->vel = vel;	// store most recent note on velocity
-				if(trig_on_note) {
-					gate_event(EV_NOTE_A + out_idx, which_stack); // trig note gate
-				}
-				gate_event(EV_NOTE_ON, which_stack);
+			if(vel && trig_on_note) {
+				gate_event(EV_NOTE_A + out_idx, which_stack); // trig note gate
 			}
 		}
-		for(; out_idx<chord_size; ++out_idx) { // mute remaining outputs
-			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
-			pstack->out[out_idx] = 0;
+		if(vel) {
+			pstack->vel = vel;	// store most recent note on velocity
+			gate_event(EV_NOTE_ON, which_stack);
 		}
 	}
-	else { // note off with no reassignment
-		byte any_notes = 0;
-		for(out_idx=0; out_idx<chord_size; ++out_idx) { 			
-			if((flags & MUTE_ALL_ON_RELEASE) || (note == pstack->out[out_idx])) { // mute this output?
-				gate_event(EV_NO_NOTE_A + out_idx, which_stack);
-				pstack->out[out_idx] = 0;
-			}
-			any_notes |= pstack->out[out_idx];
+	
+	// mute outputs	
+	byte any_notes_muted = 0;
+	for(out_idx = 0; out_idx<chord_size; ++out_idx) { 			
+		if(	pstack->out[out_idx] && (out_idx >= outputs_to_assign || 
+			(!vel && ((pstack->out[out_idx] == note) || (flags & MUTE_ALL_ON_RELEASE))))) {
+			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
+			pstack->out[out_idx] = 0;
+			any_notes_muted = 1;
 		}
-		if(!any_notes) {
-			gate_event(EV_NOTES_OFF, which_stack); // signal final note off 
-		}
+	}
+	if(any_notes_muted && !pstack->count) {
+		gate_event(EV_NOTES_OFF, which_stack); // signal final note off 
 	}
 }
 
@@ -165,13 +163,15 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 			pstack->index = 0;
 		}
 	}
-	else for(byte i=0; i<4; ++i) {		
+	else {
 		byte any_notes = 0;
-		if(pstack->out[i] == note) {
-			any_notes |= pstack->out[i];
-			pstack->out[i] = 0;
-			gate_event(EV_NO_NOTE_A + i, which_stack);
-		}			
+		for(byte i=0; i<4; ++i) {		
+			if(pstack->out[i] == note) {
+				any_notes |= pstack->out[i];
+				pstack->out[i] = 0;
+				gate_event(EV_NO_NOTE_A + i, which_stack);
+			}			
+		}
 		if(!any_notes) {
 			gate_event(EV_NOTES_OFF, which_stack); 
 		}
