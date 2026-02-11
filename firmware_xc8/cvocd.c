@@ -45,25 +45,13 @@
 
 #define _XTAL_FREQ 16000000
 #include <xc.h>
+#include "cvocd.h"
+
 //////////////////////////////////////////////////////////////
 //
 // MAIN MODULE
 //
 //////////////////////////////////////////////////////////////
-
-//
-// HEADER FILES
-//
-#include "cvocd.h"
-
-
-// PIC CONFIG BITS
-// - RESET INPUT DISABLED
-// - WATCHDOG TIMER OFF
-//// - INTERNAL OSC
-//#pragma DATA _CONFIG1, _FOSC_INTOSC & _WDTE_OFF & _MCLRE_OFF &_CLKOUTEN_OFF
-//#pragma DATA _CONFIG2, _WRT_OFF & _PLLEN_OFF & _STVREN_ON & _BORV_19 & _LVP_OFF
-//#pragma CLOCK_FREQ 16000000
 
 //
 // TYPES
@@ -135,50 +123,40 @@ void __interrupt() ISR()
 	// TIMER0 OVERFLOW
 	// once per millisecond
     
-	//if(intcon.2)
 	if(INTCONbits.TMR0IF)
 	{
 		//tmr0 = TIMER_0_INIT_SCALAR;
 		TMR0 = TIMER_0_INIT_SCALAR;
 		ms_tick = 1;
 //		++millis;
-		//intcon.2 = 0;	
         INTCONbits.TMR0IF = 0;
 	}		
 	
 	/////////////////////////////////////////////////////
 	// UART RECEIVE
-//	if(pir1.5)
 	if(PIR1bits.RCIF)
 	{	
 		byte b = RCREG;
-		//byte b = rcreg;
 		byte next_head = (rx_head + 1)&SZ_RXBUFFER_MASK;
 		if(next_head != rx_tail) {
 			rx_buffer[rx_head] = b;
 			rx_head = next_head;
 		}
 		LED_1_PULSE(LED_PULSE_MIDI_IN);
-		//pir1.5 = 0;
-        //PIR1bits.RCIF = 0; read only
 	}
 
 	/////////////////////////////////////////////////////
 	// I2C INTERRUPT
-	//if(pir1.3) 
 	if(PIR1bits.SSP1IF) 
 	{
-		//pir1.3 = 0;
         PIR1bits.SSP1IF = 0;
 		if(g_i2c_tx_buf_index < g_i2c_tx_buf_len) {
 			// send next data byte
-			//ssp1buf = g_i2c_tx_buf[g_i2c_tx_buf_index++];
 			SSP1BUF = g_i2c_tx_buf[g_i2c_tx_buf_index++];
 		}
 		else if(g_i2c_tx_buf_index == g_i2c_tx_buf_len) {
 			++g_i2c_tx_buf_index;			
-			//ssp1con2.2 = 1; // send stop condition
-            SSP1CON2bits.PEN = 1;
+            SSP1CON2bits.PEN = 1; // send stop condition
 		}
 		else {			
 			// check if there is any synchronised gate data (This mechanism is designed to trigger
@@ -190,8 +168,7 @@ void __interrupt() ISR()
 				g_sync_sr_data_pending = 0;		
 				g_sr_data_pending = 1;			// but we do need to load the new info to shift regs
 			}			
-			//pie1.3 = 0; // we're done - disable the I2C interrupt
-            PIE1bits.SSP1IE = 0;
+            PIE1bits.SSP1IE = 0; // we're done - disable the I2C interrupt
 		}
 	}
 }
@@ -199,41 +176,25 @@ void __interrupt() ISR()
 ////////////////////////////////////////////////////////////
 // I2C MASTER INIT
 static void i2c_init() {
-	// disable output drivers on i2c pins
-	//trisc.0 = 1;
-	//trisc.1 = 1;
-    TRISCbits.TRISC0 = 1;
-    TRISCbits.TRISC1 = 1;
 	
-    SSP1CON1bits.SSPEN = 1;
-    SSP1CON1bits.CKP = 1;
-    SSP1CON1bits.SSPM3 = 1;
-    SSP1CON1bits.SSPM2 = 0;
-    SSP1CON1bits.SSPM1 = 0;
-    SSP1CON1bits.SSPM0 = 0;
-    
-	//ssp1con1.7 = 
-	//ssp1con1.6 = 
-	//ssp1con1.5 = 1; // Enable synchronous serial port
-	//ssp1con1.4 = 1; // Enable SCL
-	//ssp1con1.3 = 1; // }
-	//ssp1con1.2 = 0; // }
-	//ssp1con1.1 = 0; // }
-	//ssp1con1.0 = 0; // } I2C Master with clock = Fosc/(4(SSPxADD+1))
+    TRISCbits.TRISC0 = 1;		// } disable output drivers on i2c pins
+    TRISCbits.TRISC1 = 1;		// } 
+	
+    SSP1CON1bits.SSPEN = 1;  	// Enable synchronous serial port
+    SSP1CON1bits.CKP = 1;		// Enable clock
+    SSP1CON1bits.SSPM3 = 1;		// }
+    SSP1CON1bits.SSPM2 = 0; 	// }
+    SSP1CON1bits.SSPM1 = 0; 	// }
+    SSP1CON1bits.SSPM0 = 0; 	// } I2C Master with clock = Fosc/(4(SSPxADD+1))
 
-    //ssp1stat.7 = 1;	// slew rate disabled	
-    SSP1STATbits.SMP = 1;
-	//ssp1add = 19;	// 100kHz baud rate
-    SSP1ADD = 19;
+    SSP1STATbits.SMP = 1;		// slew rate control disabled	
+    SSP1ADD = 19; 				// 100kHz baud rate
 }
 
 ////////////////////////////////////////////////////////////
 // I2C WRITE BYTE TO BUS
 void i2c_send(byte data) {
-	//ssp1buf = data;
 	SSP1BUF = data;
-	//while((ssp1con2 & 0b00011111) || // SEN, RSEN, PEN, RCEN or ACKEN
-	//	(ssp1stat.2)); // data transmit in progress	
 	while((SSP1CON2 & 0b00011111) || // SEN, RSEN, PEN, RCEN or ACKEN
 		(SSP1STATbits.R_nW)); // data transmit in progress	
 }
@@ -241,11 +202,8 @@ void i2c_send(byte data) {
 ////////////////////////////////////////////////////////////
 // I2C START WRITE MESSAGE TO A SLAVE
 void i2c_begin_write(byte address) {
-	//pir1.3 = 0; // clear SSP1IF
-	PIR1bits.SSP1IF = 0;
-	//ssp1con2.0 = 1; // signal start condition
-    SSP1CON2bits.SEN = 1;
-	//while(!pir1.3); // wait for it to complete
+	PIR1bits.SSP1IF = 0; // clear SSP1IF
+    SSP1CON2bits.SEN = 1; // signal start condition
 	while(!PIR1bits.SSP1IF); // wait for it to complete
 	i2c_send((byte)(address<<1)); // address + WRITE(0) bit
 }
@@ -253,23 +211,17 @@ void i2c_begin_write(byte address) {
 ////////////////////////////////////////////////////////////
 // I2C FINISH MESSAGE
 void i2c_end() {
-	//pir1.3 = 0; // clear SSP1IF
-	PIR1bits.SSP1IF = 0;
-	//ssp1con2.2 = 1; // signal stop condition
-    SSP1CON2bits.PEN = 1;
-	//while(!pir1.3); // wait for it to complete
+	PIR1bits.SSP1IF = 0; // clear SSP1IF
+    SSP1CON2bits.PEN = 1; // signal stop condition
 	while(!PIR1bits.SSP1IF); // wait for it to complete
 }
 
 ////////////////////////////////////////////////////////////
 // I2C ASYNC SEND
 void i2c_send_async() {
-	//pir1.3 = 0; // clear interrupt flag
-	PIR1bits.SSP1IF = 0;
-	//pie1.3 = 1; // enable the interrupt
-	PIE1bits.SSP1IE = 0;
-	//ssp1con2.0 = 1; // signal start condition					
-    SSP1CON2bits.SEN = 1;
+	PIR1bits.SSP1IF = 0; // clear interrupt fired flag
+	PIE1bits.SSP1IE = 1; // enable the interrupt
+    SSP1CON2bits.SEN = 1; // signal start condition					
 }
 
 ////////////////////////////////////////////////////////////
@@ -280,75 +232,44 @@ void timer_init() {
 	// 	prescaled 1/16 = 250kHz
 	// 	rollover at 250 = 1kHz
 	// 	1ms per rollover	
-	//option_reg.5 = 0; // timer 0 driven from instruction cycle clock
-	//option_reg.3 = 0; // timer 0 is prescaled
-	//option_reg.2 = 0; // }
-	//option_reg.1 = 1; // } 1/16 prescaler
-	//option_reg.0 = 1; // }
-	//intcon.5 = 1; 	  // enabled timer 0 interrrupt
-	//intcon.2 = 0;     // clear interrupt fired flag
-    
-    OPTION_REGbits.TMR0CS = 0;
-    OPTION_REGbits.PSA = 0;
-    OPTION_REGbits.PS2 = 0;
-    OPTION_REGbits.PS1 = 1;
-    OPTION_REGbits.PS0 = 1;
-    
-    INTCONbits.T0IE = 1;
-    INTCONbits.T0IF = 0;
+    OPTION_REGbits.TMR0CS = 0; 	// timer 0 driven from instruction cycle clock
+    OPTION_REGbits.PSA = 0;		// timer 0 is prescaled
+    OPTION_REGbits.PS2 = 0; 	// }
+    OPTION_REGbits.PS1 = 1; 	// }
+    OPTION_REGbits.PS0 = 1; 	// } 1/16 prescaler    
+    INTCONbits.T0IE = 1;		// enabled timer 0 interrrupt
+    INTCONbits.T0IF = 0;		// clear interrupt fired flag
 }
 
 ////////////////////////////////////////////////////////////
 // INITIALISE SERIAL PORT FOR MIDI
 void uart_init()
 {
-
-	//pir1.1 = 0;		//TXIF 		
-    PIR1bits.TXIF = 0;
-	//pir1.5 = 0;		//RCIF
-    PIR1bits.RCIF = 0;
+    PIR1bits.TXIF = 0;		//TXIF 		
+    PIR1bits.RCIF = 0;		//RCIF
 	
-	//pie1.1 = 0;		//TXIE 		no interrupts
-    PIE1bits.TXIE = 0;
-	//pie1.5 = 1;		//RCIE 		enable
-    PIE1bits.RCIE = 1;
+    PIE1bits.TXIE = 0;		//TXIE 		no tx interrupt
+    PIE1bits.RCIE = 1;		//RCIE 		enable rx interrupt
 	
-	//baudcon.4 = 0;	// SCKP		synchronous bit polarity 
-    BAUDCONbits.SCKP = 0;
-	//baudcon.3 = 1;	// BRG16	enable 16 bit brg
-    BAUDCONbits.BRG16 = 1;
-	//baudcon.1 = 0;	// WUE		wake up enable off
-    BAUDCONbits.WUE = 0;
-	//baudcon.0 = 0;	// ABDEN	auto baud detect
-    BAUDCONbits.ABDEN = 0;
+    BAUDCONbits.SCKP = 0; 	// SCKP		synchronous bit polarity 
+    BAUDCONbits.BRG16 = 1;	// BRG16	enable 16 bit brg
+    BAUDCONbits.WUE = 0;	// WUE		wake up enable off
+    BAUDCONbits.ABDEN = 0;	// ABDEN	auto baud detect
 		
-	//txsta.6 = 0;	// TX9		8 bit transmission
-    TXSTAbits.TX9 = 0;
-	//txsta.5 = 0;	// TXEN		transmit enable
-    TXSTAbits.TXEN = 0;
-	//txsta.4 = 0;	// SYNC		async mode
-    TXSTAbits.SYNC = 0;
-	//txsta.3 = 0;	// SEDNB	break character
-    TXSTAbits.SENDB = 0;
-	//txsta.2 = 0;	// BRGH		high baudrate 
-    TXSTAbits.BRGH = 0;
-	//txsta.0 = 0;	// TX9D		bit 9
-    TXSTAbits.TX9D = 0;
+    TXSTAbits.TX9 = 0;		// TX9		8 bit transmission
+    TXSTAbits.TXEN = 0;		// TXEN		transmit enable
+    TXSTAbits.SYNC = 0;		// SYNC		async mode
+    TXSTAbits.SENDB = 0;	// SENDB	break character
+    TXSTAbits.BRGH = 0;		// BRGH		high baudrate 
+    TXSTAbits.TX9D = 0;		// TX9D		bit 9
 
-	//rcsta.7 = 1;	// SPEN 	serial port enable
-    RCSTAbits.SPEN = 1;
-	//rcsta.6 = 0;	// RX9 		8 bit operation
-    RCSTAbits.RX9 = 0;
-	//rcsta.5 = 1;	// SREN 	enable receiver
-    RCSTAbits.SREN = 1;
-	//rcsta.4 = 1;	// CREN 	continuous receive enable
-    RCSTAbits.CREN = 1;
+    RCSTAbits.SPEN = 1;		// SPEN 	serial port enable
+    RCSTAbits.RX9 = 0;		// RX9 		8 bit operation
+    RCSTAbits.SREN = 1;		// SREN 	enable receiver
+    RCSTAbits.CREN = 1;		// CREN 	continuous receive enable
 		
-	//spbrgh = 0;		// brg high byte
-    SPBRGH = 0;
-	//spbrg = 31;		// brg low byte (31250)	
-    SPBRG = 31;
-	
+    SPBRGH = 0;				// brg high byte
+    SPBRG = 31;				// brg low byte (31250)		
 }
 
 ////////////////////////////////////////////////////////////
@@ -387,17 +308,10 @@ byte midi_in()
 	for(;;)
 	{
 		// usart buffer overrun error?
-		//if(rcsta.1)
-		//{
-		//	rcsta.4 = 0;
-		//	rcsta.4 = 1;
-		//}
 		if(RCSTAbits.OERR)
 		{
             RCSTAbits.CREN = 0;
             RCSTAbits.CREN = 1;
-			//rcsta.4 = 0;
-			//rcsta.4 = 1;
 		}
 		
 		// check for empty receive buffer
@@ -441,14 +355,7 @@ byte midi_in()
 				case SYSEX_PARAMH:	// the state we'd expect to end in
 					P_LED1 = 1; 			
                     P_LED2 = 1; 
-                    __delay_ms(250);
-                    __delay_ms(250);
-                    __delay_ms(250);
-                    __delay_ms(250);
-					//delay_ms(250); 
-					//delay_ms(250); 
-					//delay_ms(250); 
-					//delay_ms(250); 
+                    __delay_ms(1000);
 					P_LED1 = 0; 
 					P_LED2 = 0; 
 					storage_write_patch();	// store to EEPROM 
@@ -459,10 +366,8 @@ byte midi_in()
 					for(char i=0; i<10; ++i) {
 						P_LED2 = 1; 
                         __delay_ms(100);
-						//delay_ms(100);
 						P_LED2 = 0; 
                         __delay_ms(100);
-						//delay_ms(100);
 					}
 					all_reset();
 					break;
@@ -590,27 +495,17 @@ void nrpn(byte param_hi, byte param_lo, byte value_hi, byte value_lo) {
 int main()
 { 		
 	// osc control / 16MHz / internal
-	//osccon = 0b01111010;
     OSCCON = 0b01111010;
 
-	//trisa 	= TRIS_A;              	
     TRISA = TRIS_A;
-    //trisc 	= TRIS_C;   	
     TRISC = TRIS_C;
-	//ansela 	= 0b00000000;
     ANSELA = 0b00000000;
-	//anselc 	= 0b00000000;
     ANSELC = 0b00000000;
-	//porta 	= 0b00000000;
     PORTA = 0b00000000;
-	//portc 	= 0b00000000;
     PORTC = 0b00000000;
 
-	// enable interrupts	
-	//intcon.7 = 1; //GIE
-    INTCONbits.GIE = 1;
-	//intcon.6 = 1; //PEIE
-    INTCONbits.PEIE = 1;
+    INTCONbits.GIE = 1;		// GIE	enable interrupts
+    INTCONbits.PEIE = 1;	// PEIE	enable interrupts
 
 	g_cv_dac_pending = 0;
 	nrpn_hi = 0;

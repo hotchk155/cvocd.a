@@ -30,16 +30,8 @@
 #define false 0
 
 // Pin definitions
-//#define P_LED1		lata.2
-//#define P_LED2		latc.2
-//#define P_SRDAT1	lata.0
-//#define P_SRDAT2	lata.1
-//#define P_SRCLK		lata.4
-//#define P_SRLAT		lata.5
-//#define P_SWITCH 	portc.3
 #define TRIS_A		0b11001000
 #define TRIS_C		0b11111011
-
 #define P_LED1		LATAbits.LATA2
 #define P_LED2		LATCbits.LATC2
 #define P_SRDAT1	LATAbits.LATA0
