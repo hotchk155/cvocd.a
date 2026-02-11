@@ -1,0 +1,56 @@
+{
+    "version": "1.8",
+    "configurations": [
+        {
+            "name": "default",
+            "id": "",
+            "device": "PIC16F1825",
+            "imagePath": "./out/cvocd_xc8/default.elf",
+            "toolProperties": "default-tool-base",
+            "tool": "PICkit 5",
+            "packs": [
+                {
+                    "name": "PIC12-16F1xxx_DFP",
+                    "vendor": "Microchip",
+                    "version": "1.8.254"
+                }
+            ],
+            "fileSet": "default",
+            "toolchain": "default-XC8",
+            "userVariables": "default-uservariables"
+        }
+    ],
+    "propertyGroups": [
+        {
+            "name": "default-uservariables",
+            "type": "uservariables",
+            "properties": {}
+        },
+        {
+            "name": "default-XC8",
+            "type": "toolchain",
+            "provider": "microchip.toolchains:xc8@3.10",
+            "properties": {
+                "HI-TECH-COMP.optimization-level": "-O2"
+            }
+        },
+        {
+            "name": "default-tool-base",
+            "type": "tool",
+            "properties": {
+                "bluetoothsetting": "off"
+            }
+        }
+    ],
+    "fileSets": [
+        {
+            "name": "default",
+            "files": [
+                {
+                    "include": "**/*",
+                    "exclude": "**/(_build|out|cmake|.vscode)/**/*"
+                }
+            ]
+        }
+    ]
+}

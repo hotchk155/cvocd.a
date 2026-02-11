@@ -87,3 +87,5 @@ firmware/SourceImages/VERSION_5_RELEASE/Release/*.*
 firmware.X/build
 firmware.X/dist
 firmware.X/.ca
+/firmware_xc8/_build
+/firmware_xc8/out
