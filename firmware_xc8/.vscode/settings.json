@@ -8,5 +8,6 @@
         "embedded-debug",
         "gdb",
         "mplab-core-da"
-    ]
+    ],
+    "cmake.sourceDirectory": "C:/GitHub/cvocd.a/firmware_xc8/cmake/cvocd_xc8/default"
 }

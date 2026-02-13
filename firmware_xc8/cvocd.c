@@ -92,7 +92,7 @@ byte sysex_state = SYSEX_NONE;			// whether we are currently inside a sysex bloc
 // Timer related stuff
 #define TIMER_0_INIT_SCALAR		5		// Timer 0 initialiser to overlow at 1ms intervals
 volatile byte ms_tick = 0;				// once per millisecond tick flag used to synchronise stuff
-//volatile int millis = 0;				// millisecond counter
+volatile PERIOD_2US g_pp24_period;
 
 byte nrpn_hi = 0;						// value of last NRPN param high byte			
 byte nrpn_lo = 0;						// value of last NRPN param low byte
@@ -122,16 +122,22 @@ void __interrupt() ISR()
 	/////////////////////////////////////////////////////
 	// TIMER0 OVERFLOW
 	// once per millisecond
-    
 	if(INTCONbits.TMR0IF)
 	{
-		//tmr0 = TIMER_0_INIT_SCALAR;
 		TMR0 = TIMER_0_INIT_SCALAR;
 		ms_tick = 1;
-//		++millis;
         INTCONbits.TMR0IF = 0;
 	}		
-	
+
+	/////////////////////////////////////////////////////
+	// TIMER1 OVERFLOW
+	if(PIR1bits.TMR1IF) {
+		T1CONbits.TMR1ON = 0;			// stop the timer
+		g_pp24_period = PERIOD_2US_MAX;	// remember we timed out
+		TMR1 = 0;						// reset the timer
+		PIR1bits.TMR1IF = 0;			// clear interrupt
+	}
+
 	/////////////////////////////////////////////////////
 	// UART RECEIVE
 	if(PIR1bits.RCIF)
@@ -141,6 +147,12 @@ void __interrupt() ISR()
 		if(next_head != rx_tail) {
 			rx_buffer[rx_head] = b;
 			rx_head = next_head;
+		}
+		if(b == MIDI_SYNCH_TICK) {
+			T1CONbits.TMR1ON = 0;	// stop timer 1
+			g_pp24_period = TMR1;	// capture timer 1 value
+			TMR1 = 0;				// reset timer
+			T1CONbits.TMR1ON = 1;	// start timer 1 again
 		}
 		LED_1_PULSE(LED_PULSE_MIDI_IN);
 	}
@@ -237,8 +249,23 @@ void timer_init() {
     OPTION_REGbits.PS2 = 0; 	// }
     OPTION_REGbits.PS1 = 1; 	// }
     OPTION_REGbits.PS0 = 1; 	// } 1/16 prescaler    
-    INTCONbits.T0IE = 1;		// enabled timer 0 interrrupt
+    INTCONbits.T0IE = 1;		// enable timer 0 interrrupt
     INTCONbits.T0IF = 0;		// clear interrupt fired flag
+
+	// Configure timer 1 (times tempo)
+	// 	timer 0 runs at 4MHz
+	// 	prescaled 1/8 = 500kHz (2us per tick)
+	// 	131ms per rollover (approx 24pp tick period at 19bpm)	
+	// T1CONbits.TMR1CS0 = 0; // 7	} clock source is Fosc/4
+	// T1CONbits.TMR1CS1 = 0; // 6 } 
+	// T1CONbits.T1CKPS1 = 1; // 5 } 1:8 prescale
+	// T1CONbits.T1CKPS0 = 1; // 4 }
+	// T1CONbits.T1OSCEN = 0; // 3 32kHz oscillator disabled
+	// T1CONbits.nT1SYNC = 1; // 2 do not synchronise ext input
+	// T1CONbits.TMR1ON = 1;  // 0 enable the timer
+	T1CON = 0b00000101;
+	PIE1bits.TMR1IE = 1;		// enable timer 1 interrrupt
+	PIR1bits.TMR1IF = 0;		// clear interrupt fired flag
 }
 
 ////////////////////////////////////////////////////////////
@@ -294,6 +321,8 @@ void sr_write(unsigned int nmask) {
 // RESET STATES
 void all_reset()
 {
+	g_pp24_period = 0;
+
 	gate_reset();
 	cv_reset();
 	stack_reset();
@@ -533,7 +562,7 @@ int main()
 
 	// App loop
 	int bend;
-	long tick_time = 0; // milliseconds between ticks x 256
+	byte slew_step_timeout = 0;
 	for(;;)
 	{	
 		// once per millisecond tick event
@@ -572,6 +601,19 @@ int main()
 			else {
 				button_press = 0;
 			}
+
+			if(g_pp24_period) { // midi clock tick received 
+				cv_set_pp24_period(g_pp24_period);				
+				g_pp24_period = 0;
+			}
+
+			if(!slew_step_timeout) { // process CV slewing
+				cv_run_slew();
+				slew_step_timeout = SLEW_STEP_PERIOD_MS-1;
+			}
+			else {
+				--slew_step_timeout;
+			}
 		}
 		
 		// poll for incoming MIDI data
@@ -583,10 +625,6 @@ int main()
 			case MIDI_SYNCH_TICK:
 				if(!midi_ticks) {
 					LED_2_PULSE(LED_PULSE_MIDI_BEAT);				
-//					if(millis>0) {		
-//						cv_midi_bpm(((long)256*60000)/millis);					
-//						millis = 0;
-//					}
 				}
 				if(++midi_ticks>=24) {
 					midi_ticks = 0;

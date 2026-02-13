@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "XC8",
+            "includePath": [
+                "${workspaceFolder}",
+                "C:/PROGRA~1/MICROC~1/xc8/v3.10/pic/include/*"
+            ],
+            "defines": [
+                "__XC8__"
+            ],
+            "intelliSenseMode": "windows-clang-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "C:/PROGRA~1/MICROC~1/xc8/v3.10/pic/include/*"
+                ],
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "cStandard": "c89",
+            "cppStandard": "c++17",
+            "compilerPath": "C:/PROGRA~1/MICROC~1/xc8/v3.10/bin/xc8-clangd.exe"
+        }
+    ],
+    "version": 4
+}

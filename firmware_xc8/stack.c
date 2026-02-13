@@ -37,6 +37,7 @@
 const byte ASSIGN_ALL_OUTPUTS	= 0x01;	// every output must be assigned valid note
 const byte REBUILD_ON_RELEASE	= 0x02;	// reassign outputs when a note is released
 const byte MUTE_ALL_ON_RELEASE	= 0x04;	// keep assignments but mute all outputs when note released
+const byte TB_PITCH_GLIDE		= 0x08;	// TB style glide on tied notes
 
 //
 // GLOBAL DATA
@@ -112,7 +113,7 @@ static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, 
 	// assign new outputs
 	byte outputs_to_assign = chord_size;
 	if(pstack->count && (vel || (flags & REBUILD_ON_RELEASE))) {
-	
+		byte gate_dur_override = 0;
 		outputs_to_assign = pstack->count; 
 		if((flags & ASSIGN_ALL_OUTPUTS) || (outputs_to_assign > chord_size)) {
 			outputs_to_assign = chord_size; // number of outputs to assign always 1..chord_size
@@ -122,16 +123,22 @@ static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, 
 			byte trig_on_note = (flags & ASSIGN_ALL_OUTPUTS); // all gates trig even if no change in note?
 			if(pstack->out[out_idx] != note_to_assign) { // change of note?
 				pstack->out[out_idx] = note_to_assign;
-				cv_event(EV_NOTE_A + out_idx, which_stack);
+				if((flags & TB_PITCH_GLIDE) && (pstack->count>1))  {
+					cv_event(EV_NOTE_A + out_idx, which_stack, 6);
+					gate_dur_override = 3;
+				}
+				else {
+					cv_event(EV_NOTE_A + out_idx, which_stack, 0);
+				}
 				trig_on_note = 1;
 			}
 			if(vel && trig_on_note) {
-				gate_event(EV_NOTE_A + out_idx, which_stack); // trig note gate
+				gate_event(EV_NOTE_A + out_idx, which_stack, gate_dur_override); // trig note gate
 			}
 		}
 		if(vel) {
 			pstack->vel = vel;	// store most recent note on velocity
-			gate_event(EV_NOTE_ON, which_stack);
+			gate_event(EV_NOTE_ON, which_stack, 0);
 		}
 	}
 	
@@ -140,13 +147,13 @@ static void assign_notes(NOTE_STACK *pstack, byte which_stack, byte chord_size, 
 	for(out_idx = 0; out_idx<chord_size; ++out_idx) { 			
 		if(	pstack->out[out_idx] && (out_idx >= outputs_to_assign || 
 			(!vel && ((pstack->out[out_idx] == note) || (flags & MUTE_ALL_ON_RELEASE))))) {
-			gate_event(EV_NO_NOTE_A + out_idx, which_stack);
+			gate_event(EV_NO_NOTE_A + out_idx, which_stack, 0);
 			pstack->out[out_idx] = 0;
 			any_notes_muted = 1;
 		}
 	}
 	if(any_notes_muted && !pstack->count) {
-		gate_event(EV_NOTES_OFF, which_stack); // signal final note off 
+		gate_event(EV_NOTES_OFF, which_stack, 0); // signal final note off 
 	}
 }
 
@@ -156,9 +163,9 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 {
 	if(vel) {
 		pstack->out[pstack->index] = note;
-		cv_event(EV_NOTE_A + pstack->index, which_stack);
-		gate_event(EV_NOTE_A + pstack->index, which_stack);
-		gate_event(EV_NOTE_ON, which_stack);
+		cv_event(EV_NOTE_A + pstack->index, which_stack, 0);
+		gate_event(EV_NOTE_A + pstack->index, which_stack, 0);
+		gate_event(EV_NOTE_ON, which_stack, 0);
 		if(++pstack->index >= cycle_size ) {
 			pstack->index = 0;
 		}
@@ -169,11 +176,11 @@ static void cycle_note(NOTE_STACK *pstack, byte which_stack, byte cycle_size, by
 			if(pstack->out[i] == note) {
 				any_notes |= pstack->out[i];
 				pstack->out[i] = 0;
-				gate_event(EV_NO_NOTE_A + i, which_stack);
+				gate_event(EV_NO_NOTE_A + i, which_stack, 0);
 			}			
 		}
 		if(!any_notes) {
-			gate_event(EV_NOTES_OFF, which_stack); 
+			gate_event(EV_NOTES_OFF, which_stack, 0); 
 		}
 	}	
 }
@@ -209,6 +216,9 @@ void stack_midi_note(byte chan, byte note, byte vel)
 			case PRIORITY_LOW:
 			case PRIORITY_HIGH:
 				assign_notes(pstack, which_stack, 1, pcfg->priority, REBUILD_ON_RELEASE, note, vel);
+				break;
+			case PRIORITY_GLIDE:
+				assign_notes(pstack, which_stack, 1, PRIORITY_LAST, REBUILD_ON_RELEASE|TB_PITCH_GLIDE, note, vel);
 				break;
 			case PRIORITY_CHORD2:
 			case PRIORITY_CHORD3:
@@ -249,7 +259,7 @@ void stack_midi_bend(byte chan, int bend)
 		int new_bend = (int)((long)pcfg->bend_range * (bend - 8192))/32;
 		if(pstack->bend != new_bend) {
 			pstack->bend = new_bend;
-			cv_event(EV_BEND, i);
+			cv_event(EV_BEND, i, 0);
 		}
 	}
 }
@@ -331,10 +341,10 @@ byte *stack_storage(int *len) {
 // RESET NOTE STACK STATE
 void stack_reset() {
 	memset(g_stack, 0, sizeof(g_stack));
-	gate_event(EV_NOTES_OFF, 0); 
-	gate_event(EV_NOTES_OFF, 1); 
-	gate_event(EV_NOTES_OFF, 2); 
-	gate_event(EV_NOTES_OFF, 3); 
+	gate_event(EV_NOTES_OFF, 0, 0); 
+	gate_event(EV_NOTES_OFF, 1, 0); 
+	gate_event(EV_NOTES_OFF, 2, 0); 
+	gate_event(EV_NOTES_OFF, 3, 0); 
 }
  
 ////////////////////////////////////////////////////////////

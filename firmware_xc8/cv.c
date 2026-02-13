@@ -57,6 +57,7 @@ typedef struct {
 	byte volts;	
 	byte ofs;
 	byte scale;
+	byte slew_time;
 	byte stack_id;
 	byte out;
 	byte transpose;  
@@ -67,6 +68,7 @@ typedef struct {
 	byte volts;	
 	byte ofs;
 	byte scale;
+	byte slew_time;
 	byte chan;
 	byte cc;
 } T_CV_MIDI;
@@ -76,18 +78,31 @@ typedef union {
 	T_CV_MIDI 				midi;
 } CV_OUT;
 
+typedef unsigned int _dac_fp;
+typedef struct {
+	_dac_fp	cur_dac;
+	_dac_fp target_dac;
+	_dac_fp increment;
+} DAC_OUT;
+#define INT_TO_DACFP(i) (((_dac_fp)(i))<<4)
+#define DACFP_TO_INT(d) ((int)((d)>>4))
+
 //
 // LOCAL DATA
 //
 
 // cache of raw DAC data
-int l_dac[CV_MAX] = {0};
+DAC_OUT l_dac[CV_MAX] = {0};
 
 // CV config 
 CV_OUT l_cv[CV_MAX];
 
 // cache of the notes playing on each output
 int l_note[CV_MAX];
+
+// last tempo timing reading in 2us units
+PERIOD_2US l_pp24_period;
+#define DEFAULT_PP24_PERIOD ((PERIOD_2US)10417) // At 120BPM
 
 //
 // LOCAL FUNCTIONS
@@ -107,11 +122,12 @@ static void cv_config_dac() {
 
 ////////////////////////////////////////////////////////////
 // STORE AN OUTPUT VALUE READY TO SEND TO DAC
-static void cv_update(byte which, int value) {
-	
-	if(l_cv[which].event.scale) {
-		long scale = (long)l_cv[which].event.scale - 64;
-		long ofs = (long)l_cv[which].event.ofs - 64;
+static void cv_update(byte which, int value, byte slew_period_pp24) {
+	CV_OUT *pcv = &l_cv[which];
+	DAC_OUT *pdac = &l_dac[which];
+	if(pcv->event.scale) {
+		long scale = (long)pcv->event.scale - 64;
+		long ofs = (long)pcv->event.ofs - 64;
 		value = (int)((((long)value * (4096 + scale))/4096) + ofs);
 	}
 	
@@ -119,31 +135,54 @@ static void cv_update(byte which, int value) {
 		value = 0;
 	if(value > 4095) 
 		value = 4095;
-		
+				
 	// check the value has actually changed
-	if(value != l_dac[which]) {
-		l_dac[which] = value;
-		g_cv_dac_pending = 1;
+	_dac_fp new_dac = INT_TO_DACFP(value);
+	if(value != DACFP_TO_INT(pdac->cur_dac)) {		
+		slew_period_pp24 = slew_period_pp24? slew_period_pp24 : pcv->event.slew_time;	// use default or override slew time
+		if(slew_period_pp24) { 
+			// start the slew
+			pdac->target_dac = new_dac;
+
+			int num_glide_steps = (int)(((unsigned long)l_pp24_period * slew_period_pp24)/((unsigned long)PERIOD_2US_PER_MS * SLEW_STEP_PERIOD_MS));
+			if(new_dac > pdac->cur_dac) {
+				pdac->increment = 1 + (new_dac - pdac->cur_dac)/num_glide_steps;
+			}
+			else {
+				pdac->increment = 1 + (pdac->cur_dac - new_dac)/num_glide_steps;
+			}
+		}
+		else {
+			// no slew - go directly to the new value
+			pdac->cur_dac = new_dac;
+			pdac->increment = 0;
+			g_cv_dac_pending = 1;
+		}
+	}
+	else {
+		// no change to output - ensure any current slewing is cancelled
+		pdac->cur_dac = new_dac; 	
+		pdac->increment = 0;					
 	}
 }	
 
 ////////////////////////////////////////////////////////////
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
-static void cv_write_note(byte which, long note, int pitch_bend, long dacs_per_oct) {
+static void cv_write_note(byte which, long note, int pitch_bend, long dacs_per_oct, byte slew_period_pp24) {
 	note <<= 8;
 	note += pitch_bend;
 	note *= dacs_per_oct;
 	note /= 12;	
 	note >>= 8;
-	cv_update(which, (int)note);
+	cv_update(which, (int)note, slew_period_pp24);
 }
 
 
 ////////////////////////////////////////////////////////////
 // WRITE A NOTE VALUE TO A CV OUTPUT
 // pitch_bend units = MIDI note * 256
-static void cv_write_note_hzvolt(byte which, long note, int pitch_bend) {
+static void cv_write_note_hzvolt(byte which, long note, int pitch_bend, byte slew_period_pp24) {
 
 	// convert pitch bend to whole notes and fractional (1/256) notes
 	note <<= 8;
@@ -197,7 +236,7 @@ static void cv_write_note_hzvolt(byte which, long note, int pitch_bend) {
 	dac >>= (5-octave);
 		
 	// finally update dac
-	cv_update(which, dac);
+	cv_update(which, dac, slew_period_pp24);
 }
 
 ////////////////////////////////////////////////////////////
@@ -210,7 +249,7 @@ static void cv_write_7bit(byte which, byte value, byte volts) {
 	// DAC value = (value / 127) * (500 * volts)
 	// = 3.937 * value * volts
 	// ~ 4 * value * volts
-	cv_update(which, ((int)value * volts)<<2);
+	cv_update(which, ((int)value * volts)<<2, 0);
 }
 
 ////////////////////////////////////////////////////////////
@@ -222,13 +261,13 @@ static void cv_write_bend(byte which, int value, byte volts) {
 	// DAC value = (value / 16384) * (500 * volts)
 	// = (value / 32.768) * volts
 	// ~ (volts * value)/32
-	cv_update(which, (int)(((long)value * volts) >> 5));
+	cv_update(which, (int)(((long)value * volts) >> 5), 0);
 }
 
 ////////////////////////////////////////////////////////////
 // WRITE VOLTS
 static void cv_write_volts(byte which, byte value) {
-	cv_update(which, (int)value * 500);
+	cv_update(which, (int)value * 500, 0);
 }
 
 //
@@ -237,6 +276,7 @@ static void cv_write_volts(byte which, byte value) {
 
 ////////////////////////////////////////////////////////////
 // COPY CURRENT OUTPUT VALUES TO TRANSMIT BUFFER FOR DAC
+/*
 void cv_dac_prepare() {	
 	g_i2c_tx_buf[0] = I2C_ADDRESS<<1;
 	g_i2c_tx_buf[1] = ((l_dac[1]>>8) & 0xF);
@@ -250,10 +290,24 @@ void cv_dac_prepare() {
 	g_i2c_tx_buf_len = 9;
 	g_i2c_tx_buf_index = 0;
 }
+*/
+void cv_dac_prepare() {	
+	g_i2c_tx_buf[0] = I2C_ADDRESS<<1;
+	g_i2c_tx_buf[1] = ((l_dac[1].cur_dac>>12) & 0xF);
+	g_i2c_tx_buf[2] = ((l_dac[1].cur_dac>>4) & 0xFF);
+	g_i2c_tx_buf[3] = ((l_dac[3].cur_dac>>12) & 0xF);
+	g_i2c_tx_buf[4] = ((l_dac[3].cur_dac>>4) & 0xFF);
+	g_i2c_tx_buf[5] = ((l_dac[2].cur_dac>>12) & 0xF);
+	g_i2c_tx_buf[6] = ((l_dac[2].cur_dac>>4) & 0xFF);
+	g_i2c_tx_buf[7] = ((l_dac[0].cur_dac>>12) & 0xF);
+	g_i2c_tx_buf[8] = ((l_dac[0].cur_dac>>4) & 0xFF);
+	g_i2c_tx_buf_len = 9;
+	g_i2c_tx_buf_index = 0;
+}
 
 ////////////////////////////////////////////////////////////
 // HANDLE AN EVENT FROM A NOTE STACK
-void cv_event(byte event, byte stack_id) {
+void cv_event(byte event, byte stack_id, byte slew_period_pp24) {
 	byte output_id;
 	int note;
 	NOTE_STACK *pstack;
@@ -294,13 +348,13 @@ void cv_event(byte event, byte stack_id) {
 					// fall through
 				case EV_BEND:
 					if(pcv->event.mode == CV_NOTE_HZV) {
-						cv_write_note_hzvolt(which_cv, l_note[which_cv], (int)pstack->bend);
+						cv_write_note_hzvolt(which_cv, l_note[which_cv], (int)pstack->bend, slew_period_pp24);
 					}
 					else if(pcv->event.mode == CV_NOTE_12VO) {
-						cv_write_note(which_cv, l_note[which_cv], (int)pstack->bend, 600);
+						cv_write_note(which_cv, l_note[which_cv], (int)pstack->bend, 600, slew_period_pp24);
 					}
 					else {
-						cv_write_note(which_cv, l_note[which_cv], (int)pstack->bend, 500);
+						cv_write_note(which_cv, l_note[which_cv], (int)pstack->bend, 500, slew_period_pp24);
 					}
 					break;
 			}
@@ -382,21 +436,50 @@ void cv_midi_bend(byte chan, int value)
 
 ////////////////////////////////////////////////////////////
 // HANDLE BPM
-// BPM is upscaled by 256
-/*
-void cv_midi_bpm(long value) {
-	if(value & (long)0xFFFF0000)
-		value = 0xFFFF;
-	for(byte which_cv=0; which_cv<CV_MAX; ++which_cv) {
-		CV_OUT *pcv = &l_cv[which_cv];
-		if(pcv->event.mode != CV_MIDI_BPM) {
-			continue;
-		}				
-		value *= (500 * pcv->event.volts);
-		cv_update(which_cv, value>>16);
+void cv_set_pp24_period(PERIOD_2US pp24_period) {
+	if(pp24_period) {
+		l_pp24_period = pp24_period;
+		for(byte which_cv=0; which_cv<CV_MAX; ++which_cv) {
+			CV_OUT *pcv = &l_cv[which_cv];
+			if(pcv->event.mode != CV_MIDI_BPM) {
+				continue;
+			}				
+			int dac = (int)((6250000UL*pcv->event.volts)/pp24_period);
+			cv_update(which_cv, dac, 0);
+		}
 	}
 }
-*/
+
+////////////////////////////////////////////////////////////
+// RUN SLEW
+void cv_run_slew() {
+	for(int i=0; i<4; ++i) {
+		if(l_dac[i].increment) { // any glide to process?
+			if(l_dac[i].target_dac > l_dac[i].cur_dac) { // gliding up in pitch
+				_dac_fp next_dac = l_dac[i].cur_dac + l_dac[i].increment;
+				if(next_dac >= l_dac[i].target_dac || next_dac < l_dac[i].increment) { // guard against overflow
+					l_dac[i].cur_dac = l_dac[i].target_dac; // reached target
+					l_dac[i].increment = 0;
+				}
+				else {
+					l_dac[i].cur_dac = next_dac; // still going
+				}
+			}
+			else { // gliding down in pitch
+				_dac_fp next_dac = l_dac[i].cur_dac - l_dac[i].increment;
+				if(next_dac <= l_dac[i].target_dac || next_dac > l_dac[i].target_dac) { // guard against overflow
+					l_dac[i].cur_dac = l_dac[i].target_dac; // reached target
+					l_dac[i].increment = 0;
+				}
+				else {
+					l_dac[i].cur_dac = next_dac; // still going
+				}
+			}
+		}
+		g_cv_dac_pending = 1;
+	}
+}
+
 ////////////////////////////////////////////////////////////
 // CONFIGURE A CV OUTPUT
 // return nonzero if any change was made
@@ -418,7 +501,7 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			pcv->event.mode = CV_TEST;
 			pcv->event.volts = DEFAULT_CV_TEST_VOLTS;
 			return 1;
-		case NRPVH_SRC_MIDITICK: // BPM
+		case NRPVH_SRC_BPM: // BPM
 			pcv->event.mode = CV_MIDI_BPM;
 			pcv->event.volts = DEFAULT_CV_BPM_MAX_VOLTS;
 			return 1;
@@ -504,7 +587,9 @@ byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo)
 			pcv->event.mode = CV_NOTE;
 		}
 		return 1;		
-		
+	case NRPNL_CV_SLEW_TIME:
+		pcv->event.slew_time = value_lo; 
+		return 1;
 	// CALIBRATION
 	case NRPNL_CAL_SCALE:
 		pcv->event.scale = value_lo; // zero here is "off"
@@ -542,7 +627,8 @@ void cv_init() {
 }
 
 ////////////////////////////////////////////////////////////
-void cv_reset() {
+void cv_reset() {	
+	l_pp24_period = DEFAULT_PP24_PERIOD; 
 	memset(l_note, 0, sizeof(l_note));
 	for(byte which=0; which < CV_MAX; ++which) {
 		switch(l_cv[which].event.mode) {				

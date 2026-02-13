@@ -47,6 +47,7 @@
 #define SZ_NOTE_STACK 5					// max notes in a single stack
 #define NUM_NOTE_STACKS 4				// number of stacks supported
 #define I2C_TX_BUF_SZ 12				// size of i2c transmit buffer
+#define SLEW_STEP_PERIOD_MS 50
 
 // Defaults
 #define DEFAULT_GATE_NOTE 			60
@@ -141,6 +142,7 @@ enum {
 	PRIORITY_LAST			= 0,	// gives priority to newest note
 	PRIORITY_LOW			= 1,	// gives priority to lowest note
 	PRIORITY_HIGH			= 3,	// gives priority to highest note
+	PRIORITY_GLIDE			= 4,	
 
 	PRIORITY_CYCLE2			= 6,	// 2 note cycle
 	PRIORITY_CYCLE3			= 7,	// 3 note cycle
@@ -205,6 +207,7 @@ enum {
 	NRPNL_TRANSPOSE		= 14,
 	NRPNL_VOLTS			= 15,
 	NRPNL_PITCH_SCHEME  = 16,
+	NRPNL_CV_SLEW_TIME	= 17,
 	NRPNL_CAL_SCALE  	= 98,
 	NRPNL_CAL_OFS  		= 99,
 	NRPNL_SAVE			= 100
@@ -232,6 +235,7 @@ enum {
 	NRPVH_SRC_MIDISTOP		= 25,
 	NRPVH_SRC_MIDISTARTSTOP	= 26,
 
+	NRPVH_SRC_BPM			= 30,
 	NRPVH_SRC_TESTVOLTAGE	= 127,
 	
 	NRPVH_CHAN_SPECIFIC		= 0,
@@ -264,7 +268,10 @@ enum {
 //
 // TYPE DEFS
 //
-typedef unsigned char byte;
+typedef unsigned char 	byte;
+typedef unsigned int 	PERIOD_2US;	// period of time in 2us units
+#define PERIOD_2US_MAX	(~((PERIOD_2US)0))
+#define PERIOD_2US_PER_MS	500
 
 // global config
 typedef struct {
@@ -336,7 +343,7 @@ void stack_reset(void);
 byte *stack_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM GATES MODULE
-void gate_event(byte event, byte stack_id);
+void gate_event(byte event, byte stack_id, byte dur_override);
 void gate_midi_note(byte chan, byte note, byte vel);
 void gate_midi_cc(byte chan, byte cc, byte value);
 void gate_midi_clock(byte msg);
@@ -350,11 +357,12 @@ void gate_write(void);
 byte *gate_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM CV MODULE
-void cv_event(byte event, byte stack_id);
+void cv_event(byte event, byte stack_id, byte slew_period_pp24);
 void cv_midi_cc(byte chan, byte cc, byte value);
 void cv_midi_touch(byte chan, byte value);
 void cv_midi_bend(byte chan, int bend);
-//void cv_midi_bpm(long value);
+void cv_set_pp24_period(PERIOD_2US ms_per_24pp);
+void cv_run_slew(void);
 void cv_init(void); 
 void cv_reset(void);
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);

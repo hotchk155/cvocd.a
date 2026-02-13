@@ -151,7 +151,7 @@ static GATE_OUT l_gate[GATE_MAX];
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
-static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync)
+static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync, byte dur_override)
 {	
 	// get appropriate shift register bit
 	unsigned int gate_bit = 0;
@@ -199,7 +199,10 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 			}
 		}
 		// set duration counter
-		if(GATE_DUR_GLOBAL == pcfg->event.duration) {
+		if(dur_override) {
+			pgate->counter = dur_override;
+		}
+		else if(GATE_DUR_GLOBAL == pcfg->event.duration) {
 			pgate->counter = g_global.gate_duration;
 		}
 		else {
@@ -231,7 +234,7 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 
 ////////////////////////////////////////////////////////////
 // HANDLE EVENT FROM A NOTE STACK
-void gate_event(byte event, byte stack_id)
+void gate_event(byte event, byte stack_id, byte dur_override)
 {
 
 	// iterate thru gate outputs
@@ -249,50 +252,50 @@ void gate_event(byte event, byte stack_id)
 		switch(pcfg->event.mode) {
 			case GATE_NOTE_ON: // Any note on/changed
 				if(EV_NOTE_ON == event) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(EV_NOTES_OFF == event) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 			case GATE_NOTES_OFF: // All notes off
 				if(EV_NOTES_OFF == event) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(EV_NOTE_ON == event) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 			case GATE_NOTE_GATEA: // Note present at output A
 				if(event == EV_NOTE_A) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(event == EV_NO_NOTE_A) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 			case GATE_NOTE_GATEB: // Note present at output B
 				if(event == EV_NOTE_B) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(event == EV_NO_NOTE_B) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 			case GATE_NOTE_GATEC: // Note present at output C
 				if(event == EV_NOTE_C) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(event == EV_NO_NOTE_C) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 			case GATE_NOTE_GATED: // Note present at output D
 				if(event == EV_NOTE_D) {
-					trigger(pgate, pcfg, which_gate, true, true);
+					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
 				else if(event == EV_NO_NOTE_D) {
-					trigger(pgate, pcfg, which_gate, false, false);
+					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
 		}
@@ -324,7 +327,7 @@ void gate_midi_note(byte chan, byte note, byte vel)
 		}		
 		
 		// trigger (for note on) or untrigger (for note off)
-		trigger(pgate, pcfg, which_gate, !!vel, false);
+		trigger(pgate, pcfg, which_gate, !!vel, false, 0);
 	}			
 }
 
@@ -357,7 +360,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// trigger gate
-			trigger(pgate, pcfg, which_gate, !(pcfg->event.mode == GATE_MIDI_CC_NEG), false);
+			trigger(pgate, pcfg, which_gate, !(pcfg->event.mode == GATE_MIDI_CC_NEG), false, 0);
 			pgate->value = value;		
 		}
 		// has the value just gone below threshold?
@@ -366,7 +369,7 @@ void gate_midi_cc(byte chan, byte cc, byte value)
 				pgate->value == NO_VALUE)) {
 			
 			// untrigger gate
-			trigger(pgate, pcfg, which_gate, (pcfg->event.mode == GATE_MIDI_CC_NEG), false);
+			trigger(pgate, pcfg, which_gate, (pcfg->event.mode == GATE_MIDI_CC_NEG), false, 0);
 			pgate->value = value;		
 		}
 	}			
@@ -391,7 +394,7 @@ void gate_midi_clock(byte msg) {
 				}
 				pgate = &l_gate[which_gate];			
 				if(!pgate->value) {
-					trigger(pgate, &l_gate_cfg[which_gate], which_gate, true, false);
+					trigger(pgate, &l_gate_cfg[which_gate], which_gate, true, false, 0);
 				}
 				if(++pgate->value >= pcfg->clock.div) {
 					pgate->value = 0;
@@ -420,10 +423,10 @@ void gate_midi_clock(byte msg) {
 			case GATE_MIDI_CLOCK_STARTSTOP:
 			case GATE_MIDI_CLOCK_RUN:
 			//case GATE_MIDI_CLOCK_STARTCONT:
-				trigger(pgate, pcfg, which_gate, true, false);
+				trigger(pgate, pcfg, which_gate, true, false, 0);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
-				trigger(pgate, pcfg, which_gate, false, false);
+				trigger(pgate, pcfg, which_gate, false, false, 0);
 				break;
 			}
 		}
@@ -436,11 +439,11 @@ void gate_midi_clock(byte msg) {
 			pgate = &l_gate[which_gate];			
 			switch(pcfg->event.mode) {				
 			case GATE_MIDI_CLOCK_RUN:
-				trigger(pgate, pcfg, which_gate, false, false);
+				trigger(pgate, pcfg, which_gate, false, false, 0);
 				break;
 			case GATE_MIDI_CLOCK_STOP:
 			case GATE_MIDI_CLOCK_STARTSTOP:
-				trigger(pgate, pcfg, which_gate, true, false);
+				trigger(pgate, pcfg, which_gate, true, false, 0);
 				break;
 			}
 		}
@@ -455,7 +458,7 @@ void gate_run() {
 		GATE_OUT *pgate = &l_gate[which_gate];
 		if(pgate->counter) {
 			if(!--pgate->counter) {
-				trigger(pgate, &l_gate_cfg[which_gate], which_gate, false, false);
+				trigger(pgate, &l_gate_cfg[which_gate], which_gate, false, false, 0);
 			}
 		}
 	}
@@ -486,7 +489,7 @@ void gate_reset() {
 				pgate->value = NO_VALUE;
 				break;
 		}
-		trigger(pgate, pcfg, which_gate, false, false);
+		trigger(pgate, pcfg, which_gate, false, false, 0);
 	}
 }
 	

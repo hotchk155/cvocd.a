@@ -89,3 +89,5 @@ firmware.X/dist
 firmware.X/.ca
 /firmware_xc8/_build
 /firmware_xc8/out
+/asp_config/test
+firmware_xc8/.vscode/cvocd_xc8.mplab-local.json
