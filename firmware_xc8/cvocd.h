@@ -124,17 +124,24 @@ enum {
 
 // Events from note stack
 enum {
-	EV_NOTE_A = 1,
+	EV_NOTE = 1,
+	EV_NOTE_A,
 	EV_NOTE_B,
 	EV_NOTE_C,
 	EV_NOTE_D,
+	EV_NO_NOTE,
 	EV_NO_NOTE_A,
 	EV_NO_NOTE_B,
 	EV_NO_NOTE_C,
 	EV_NO_NOTE_D,
-	EV_NOTES_OFF,
-	EV_NOTE_ON,
+	//EV_NOTES_OFF,
+	//EV_NOTE_ON,
 	EV_BEND
+};
+// event flags
+enum {	
+	EVF_NO_SLEW	= 0x01,	// ignore slew for this note
+	EVF_TB_GLIDE= 0x02	// 1/16th note slew, 1/32nd gate duration
 };
 
 // note stack note priority orders
@@ -254,14 +261,24 @@ enum {
 
 // Parameter Value Low Byte
 enum {
-	NRPVL_SRC_NO_NOTES			= 0,
+	NRPVL_SRC_NOTE				= 0,
 	NRPVL_SRC_NOTE1				= 1,
 	NRPVL_SRC_NOTE2				= 2,
 	NRPVL_SRC_NOTE3				= 3,
 	NRPVL_SRC_NOTE4				= 4,
-	NRPVL_SRC_ANY_NOTES			= 5,
+	//NRPVL_SRC_ANY_NOTES			= 5,
+
+	NRPVL_SRC_LEGATO			= 10,
+	NRPVL_SRC_LEGATO1			= 11,
+	NRPVL_SRC_LEGATO2			= 12,
+	NRPVL_SRC_LEGATO3			= 13,
+	NRPVL_SRC_LEGATO4			= 14,
 
 	NRPVL_SRC_VEL				= 20,
+	NRPVL_SRC_VEL1				= 21,
+	NRPVL_SRC_VEL2				= 22,
+	NRPVL_SRC_VEL3				= 23,
+	NRPVL_SRC_VEL4				= 24,
 	//NRPVL_SRC_AFTERTOUCH		= 22
 };
 
@@ -272,6 +289,9 @@ typedef unsigned char 	byte;
 typedef unsigned int 	PERIOD_2US;	// period of time in 2us units
 #define PERIOD_2US_MAX	(~((PERIOD_2US)0))
 #define PERIOD_2US_PER_MS	500
+#define PERIOD_2US_DEFAULT_PP24 ((PERIOD_2US)10417) // At 120BPM
+#define TB_GLIDE_PP24	6
+#define TB_GATE_PP24	4
 
 // global config
 typedef struct {
@@ -279,34 +299,17 @@ typedef struct {
 	byte gate_duration;
 } GLOBAL_CFG;
 
-// note stack config
-typedef struct {
-	byte chan;			// midi channel
-	byte note_min;		// lowest note
-	byte note_max;		// highest note
-	byte vel_min;		// minimum velocity threshold
-	byte bend_range;	// pitch bend range (+/- semitones)
-	byte priority;		// how notes are prioritised when assigned to outputs
-} NOTE_STACK_CFG;
 
-// note stack state
-typedef struct {
-	byte note[SZ_NOTE_STACK];	// the notes held in the stack
-	char count;					// number of held notes
-	byte out[4];				// the stack output notes
-	long bend;					// pitch bend
-	byte vel;					// note velocity	
-	byte index;					// index for note cycling
-} NOTE_STACK;
 
 //
 // GLOBAL DATA DECLARATIONS
 //
+extern PERIOD_2US g_pp24_period;
 extern byte g_led_1_timeout;
 extern byte g_led_2_timeout;
 extern GLOBAL_CFG g_global;
-extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
-extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
+//extern NOTE_STACK g_stack[NUM_NOTE_STACKS];
+//extern NOTE_STACK_CFG g_stack_cfg[NUM_NOTE_STACKS];
 extern volatile byte g_cv_dac_pending;
 extern volatile byte g_i2c_tx_buf[I2C_TX_BUF_SZ];
 extern volatile byte g_i2c_tx_buf_index;
@@ -343,7 +346,7 @@ void stack_reset(void);
 byte *stack_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM GATES MODULE
-void gate_event(byte event, byte stack_id, byte dur_override);
+void gate_note_event(byte event, byte stack_id, byte flags);
 void gate_midi_note(byte chan, byte note, byte vel);
 void gate_midi_cc(byte chan, byte cc, byte value);
 void gate_midi_clock(byte msg);
@@ -357,12 +360,12 @@ void gate_write(void);
 byte *gate_storage(int *len);
 
 // PUBLIC FUNCTIONS FROM CV MODULE
-void cv_event(byte event, byte stack_id, byte slew_period_pp24);
+void cv_note_event(byte event, byte stack_id, byte midi_note, byte midi_vel, int midi_pb, byte flags);
 void cv_midi_cc(byte chan, byte cc, byte value);
 void cv_midi_touch(byte chan, byte value);
 void cv_midi_bend(byte chan, int bend);
-void cv_set_pp24_period(PERIOD_2US ms_per_24pp);
-void cv_run_slew(void);
+void cv_midi_tempo(void);
+void cv_run(void);
 void cv_init(void); 
 void cv_reset(void);
 byte cv_nrpn(byte which_cv, byte param_lo, byte value_hi, byte value_lo);

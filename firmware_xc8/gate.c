@@ -69,12 +69,18 @@ enum {
 	
 	// respond to events from a note stack
 	GATE_NOTE_EVENT_BASE		= 128,
-	GATE_NOTE_ON,								// when any note on is received
-	GATE_NOTES_OFF,								// when no notes are pressed		
-	GATE_NOTE_GATEA,							// when note out A is playing
-	GATE_NOTE_GATEB,							// when note out B is playing
-	GATE_NOTE_GATEC,							// when note out C is playing
-	GATE_NOTE_GATED								// when note out D is playing
+	GATE_NOTE,							// when any note on is received
+	//GATE_NOTES_OFF,						// when no notes are pressed		
+	GATE_NOTE_A,							// when note out A is playing
+	GATE_NOTE_B,							// when note out B is playing
+	GATE_NOTE_C,							// when note out C is playing
+	GATE_NOTE_D,								// when note out D is playing
+
+	GATE_LEGATO,						
+	GATE_LEGATO_A,							
+	GATE_LEGATO_B,							
+	GATE_LEGATO_C,							
+	GATE_LEGATO_D							
 	
 };
 
@@ -82,7 +88,7 @@ enum {
 // STRUCT DEFS 
 //
 typedef struct {
-	byte counter;		
+	unsigned int counter;		
 	byte value;
 } GATE_OUT;
 
@@ -91,7 +97,7 @@ typedef struct {
 	byte mode;			// type of trigger - GATE_xxx enum
 	byte flags;		
 	byte duration;		// gate pulse duration in ms (or 0 for "as long as active")
-	byte stack_id;	// index of the note stack
+	byte stack_id;		// index of the note stack
 } T_GATE_EVENT;
 
 // Structure to hold mapping of a raw MIDI note to a gate
@@ -151,7 +157,7 @@ static GATE_OUT l_gate[GATE_MAX];
 
 ////////////////////////////////////////////////////////////
 // TRIGGER OR UNTRIGGER A GATE
-static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync, byte dur_override)
+static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte trigger_enabled, byte sync, byte flags)
 {	
 	// get appropriate shift register bit
 	unsigned int gate_bit = 0;
@@ -199,8 +205,8 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 			}
 		}
 		// set duration counter
-		if(dur_override) {
-			pgate->counter = dur_override;
+		if(flags & EVF_TB_GLIDE) {
+			pgate->counter = g_pp24_period * TB_GATE_PP24;
 		}
 		else if(GATE_DUR_GLOBAL == pcfg->event.duration) {
 			pgate->counter = g_global.gate_duration;
@@ -234,7 +240,7 @@ static void trigger(GATE_OUT *pgate, GATE_OUT_CFG *pcfg, byte which_gate, byte t
 
 ////////////////////////////////////////////////////////////
 // HANDLE EVENT FROM A NOTE STACK
-void gate_event(byte event, byte stack_id, byte dur_override)
+void gate_note_event(byte event, byte stack_id, byte flags)
 {
 
 	// iterate thru gate outputs
@@ -247,6 +253,34 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 		if(pcfg->event.stack_id != stack_id)
 			continue;
 			
+		switch(event) {
+			case EV_NOTE:
+			case EV_NOTE_A:
+			case EV_NOTE_B:
+			case EV_NOTE_C:
+			case EV_NOTE_D:
+				if(pcfg->event.mode == (event - EV_NOTE + GATE_NOTE)) {
+					trigger(pgate, pcfg, which_gate, true, true, flags);
+				}
+				else if(pcfg->event.mode == (event - EV_NOTE + GATE_LEGATO)) {
+					trigger(pgate, pcfg, which_gate, true, true, flags);
+				}
+				break;
+			case EV_NO_NOTE:
+			case EV_NO_NOTE_A:
+			case EV_NO_NOTE_B:
+			case EV_NO_NOTE_C:
+			case EV_NO_NOTE_D:
+				if(pcfg->event.mode == (event - EV_NO_NOTE)) {
+					trigger(pgate, pcfg, which_gate, false, false, flags);
+				}
+				else if(pcfg->event.mode == (event - EV_NO_NOTE + GATE_LEGATO)) {
+					trigger(pgate, pcfg, which_gate, false, false, flags);
+				}
+		}
+	}
+			
+/*
 		// check the mode of this gate against the event. only modes
 		// which watch note stacks are matched
 		switch(pcfg->event.mode) {
@@ -258,7 +292,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
-			case GATE_NOTES_OFF: // All notes off
+			case GATE_NOTE_ANY: // All notes off
 				if(EV_NOTES_OFF == event) {
 					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
@@ -266,7 +300,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
-			case GATE_NOTE_GATEA: // Note present at output A
+			case GATE_NOTE_A: // Note present at output A
 				if(event == EV_NOTE_A) {
 					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
@@ -274,7 +308,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
-			case GATE_NOTE_GATEB: // Note present at output B
+			case GATE_NOTE_B: // Note present at output B
 				if(event == EV_NOTE_B) {
 					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
@@ -282,7 +316,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
-			case GATE_NOTE_GATEC: // Note present at output C
+			case GATE_NOTE_C: // Note present at output C
 				if(event == EV_NOTE_C) {
 					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
@@ -290,7 +324,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 					trigger(pgate, pcfg, which_gate, false, false, dur_override);
 				}
 				break;
-			case GATE_NOTE_GATED: // Note present at output D
+			case GATE_NOTE_D: // Note present at output D
 				if(event == EV_NOTE_D) {
 					trigger(pgate, pcfg, which_gate, true, true, dur_override);
 				}
@@ -299,7 +333,7 @@ void gate_event(byte event, byte stack_id, byte dur_override)
 				}
 				break;
 		}
-	}
+	}*/
 }
 
 ////////////////////////////////////////////////////////////
@@ -542,18 +576,26 @@ byte gate_nrpn(byte which_gate, byte param_lo, byte value_hi, byte value_lo) {
 			pcfg->event.flags = 0;
 			// NOTE STACK EVENT
 			switch(value_lo) {
-			case NRPVL_SRC_NOTE1:// NOTE GATES
+			case NRPVL_SRC_NOTE:// NOTE GATES
+			case NRPVL_SRC_NOTE1:
 			case NRPVL_SRC_NOTE2:
 			case NRPVL_SRC_NOTE3:
 			case NRPVL_SRC_NOTE4:
-				pcfg->event.mode = GATE_NOTE_GATEA + (value_lo - NRPVL_SRC_NOTE1);
+				pcfg->event.mode = value_lo - NRPVL_SRC_NOTE + GATE_NOTE;
 				return 1;
-			case NRPVL_SRC_NO_NOTES: // ALL NOTES OFF
-				pcfg->event.mode = GATE_NOTES_OFF;
+			case NRPVL_SRC_LEGATO:
+			case NRPVL_SRC_LEGATO1:
+			case NRPVL_SRC_LEGATO2:
+			case NRPVL_SRC_LEGATO3:
+			case NRPVL_SRC_LEGATO4:
+				pcfg->event.mode = value_lo - NRPVL_SRC_LEGATO + GATE_LEGATO;
 				return 1;
-			case NRPVL_SRC_ANY_NOTES: // ANY NOTE ON
-				pcfg->event.mode = GATE_NOTE_ON;
-				return 1;
+			//case NRPVL_SRC_NO_NOTES: // ALL NOTES OFF
+			//	pcfg->event.mode = GATE_NOTES_OFF;
+			//	return 1;
+			//case NRPVL_SRC_ANY_NOTES: // ANY NOTE ON
+			//	pcfg->event.mode = GATE_NOTE_ANY;
+			//	return 1;
 			default: 
 				break;
 			}

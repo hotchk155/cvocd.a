@@ -92,7 +92,7 @@ byte sysex_state = SYSEX_NONE;			// whether we are currently inside a sysex bloc
 // Timer related stuff
 #define TIMER_0_INIT_SCALAR		5		// Timer 0 initialiser to overlow at 1ms intervals
 volatile byte ms_tick = 0;				// once per millisecond tick flag used to synchronise stuff
-volatile PERIOD_2US g_pp24_period;
+volatile PERIOD_2US last_pp24_period;
 
 byte nrpn_hi = 0;						// value of last NRPN param high byte			
 byte nrpn_lo = 0;						// value of last NRPN param low byte
@@ -115,6 +115,8 @@ volatile byte g_i2c_tx_buf_len = 0;			// total number of bytes in buffer
 byte g_led_1_timeout = 0;					// ms after which LED1 is turned off
 byte g_led_2_timeout = 0;					// ms after which LED1 is turned off
 
+PERIOD_2US g_pp24_period;
+
 ////////////////////////////////////////////////////////////
 // INTERRUPT SERVICE ROUTINE
 void __interrupt() ISR()
@@ -133,7 +135,7 @@ void __interrupt() ISR()
 	// TIMER1 OVERFLOW
 	if(PIR1bits.TMR1IF) {
 		T1CONbits.TMR1ON = 0;			// stop the timer
-		g_pp24_period = PERIOD_2US_MAX;	// remember we timed out
+		last_pp24_period = 0;			// remember we timed out
 		TMR1 = 0;						// reset the timer
 		PIR1bits.TMR1IF = 0;			// clear interrupt
 	}
@@ -150,7 +152,7 @@ void __interrupt() ISR()
 		}
 		if(b == MIDI_SYNCH_TICK) {
 			T1CONbits.TMR1ON = 0;	// stop timer 1
-			g_pp24_period = TMR1;	// capture timer 1 value
+			last_pp24_period = TMR1;	// capture timer 1 value
 			TMR1 = 0;				// reset timer
 			T1CONbits.TMR1ON = 1;	// start timer 1 again
 		}
@@ -602,13 +604,14 @@ int main()
 				button_press = 0;
 			}
 
-			if(g_pp24_period) { // midi clock tick received 
-				cv_set_pp24_period(g_pp24_period);				
-				g_pp24_period = 0;
+
+			if(last_pp24_period && last_pp24_period != g_pp24_period) {
+				g_pp24_period = last_pp24_period;
+				cv_midi_tempo();				
 			}
 
 			if(!slew_step_timeout) { // process CV slewing
-				cv_run_slew();
+				cv_run();
 				slew_step_timeout = SLEW_STEP_PERIOD_MS-1;
 			}
 			else {

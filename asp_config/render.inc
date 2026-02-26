@@ -248,6 +248,22 @@ Function RenderTranspose(o)
 	dict.add "28", "-3oct"
 	RenderSelection o.Key & ".trans", o.Transpose, dict
 end function
+'====================================================================
+Function RenderCVSlew(o)
+	Set dict = Server.CreateObject("Scripting.Dictionary")	
+	dict.add "0", "no"
+	dict.add "3", "1"
+	dict.add "6", "2"
+	dict.add "9", "3"
+	dict.add "12", "4"
+	dict.add "15", "5"
+	dict.add "18", "6"
+	dict.add "21", "7"
+	dict.add "24", "8"
+	dict.add "27", "9"
+	dict.add "30", "10"
+	RenderSelection o.Key & ".slew", o.Slew, dict	
+end function
 
 '====================================================================
 Function RenderGateSource(o)
