@@ -1,0 +1,127 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "d6028aad-759f-4736-9818-30f0061d1d8d")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 119.38 96.52)
+		(size 12.7 5.08)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "53ea022f-21ec-467d-a620-575d4d777832")
+		(property "Sheetname" "gate_out"
+			(at 119.38 95.8084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "gate_out.kicad_sch"
+			(at 119.38 102.1846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 121.92 109.22)
+		(size 12.7 5.08)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "721fd379-0889-4e74-8212-a23ae46bf4ef")
+		(property "Sheetname" "cv_out"
+			(at 121.92 108.5084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "cv_out.kicad_sch"
+			(at 121.92 114.8846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 121.92 127)
+		(size 12.7 3.81)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "a7087e78-201a-4bde-9ba0-5717116ba4d1")
+		(property "Sheetname" "inputs"
+			(at 121.92 126.2884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "inputs.kicad_sch"
+			(at 121.92 131.3946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
