@@ -2288,6 +2288,12 @@
 		(uuid "d2e3cfa6-f3ce-4636-af52-78c9214d9b60")
 	)
 	(junction
+		(at 100.33 85.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d6a538c8-7542-41a8-b02e-f307e5db0ce1")
+	)
+	(junction
 		(at 224.79 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2897,6 +2903,16 @@
 	)
 	(wire
 		(pts
+			(xy 100.33 88.9) (xy 100.33 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bca2ab50-c113-4af7-b539-2fc6c7ce1671")
+	)
+	(wire
+		(pts
 			(xy 172.72 127) (xy 172.72 129.54)
 		)
 		(stroke
@@ -2904,6 +2920,16 @@
 			(type default)
 		)
 		(uuid "beaeab01-68d9-4de9-83d2-a6f13153ccab")
+	)
+	(wire
+		(pts
+			(xy 97.79 88.9) (xy 100.33 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c17ff056-79df-43fa-95cc-a82dbe76bfef")
 	)
 	(wire
 		(pts
@@ -6673,6 +6699,140 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector_Generic:Conn_01x01")
+		(at 92.71 88.9 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "738f85f1-8af1-4830-b181-98d8dfddca47")
+		(property "Reference" "GND4"
+			(at 90.678 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x01"
+			(at 90.17 87.6301 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
+			(at 92.71 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 92.71 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 92.71 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4e3dbf82-6008-4e53-a7b0-be34177991e2")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "GND4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x01")
+		(at 125.73 142.24 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "73de5f87-c1a1-4a03-941e-c3cecf6ff003")
+		(property "Reference" "POWER4"
+			(at 123.698 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x01"
+			(at 123.19 140.9701 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
+			(at 125.73 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 125.73 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 125.73 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e72a280-b75c-43f2-814a-01b45fbb0dff")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "POWER4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 207.01 137.16 0)
 		(unit 1)
@@ -6804,6 +6964,71 @@
 			(project ""
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
 					(reference "IC7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 130.81 146.05 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7bdbe25d-af05-49cf-97d5-0202ef67733a")
+		(property "Reference" "#PWR090"
+			(at 127 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5V"
+			(at 135.89 146.05 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 130.81 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 130.81 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 130.81 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "172fda08-20f3-43dc-87f2-e38a9a8cda0b")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR090")
 					(unit 1)
 				)
 			)
@@ -7549,7 +7774,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
-		(at 102.87 90.17 0)
+		(at 102.87 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7557,7 +7782,7 @@
 		(dnp no)
 		(uuid "8cc97bc3-202d-46a4-9512-79102d087403")
 		(property "Reference" "MIDI1"
-			(at 104.902 90.17 0)
+			(at 104.902 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7566,7 +7791,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01"
-			(at 105.41 91.4399 0)
+			(at 105.41 100.3299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7576,7 +7801,7 @@
 			)
 		)
 		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
-			(at 102.87 90.17 0)
+			(at 102.87 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7585,7 +7810,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 102.87 90.17 0)
+			(at 102.87 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7594,7 +7819,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 102.87 90.17 0)
+			(at 102.87 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7882,7 +8107,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
-		(at 92.71 90.17 180)
+		(at 92.71 99.06 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7890,7 +8115,7 @@
 		(dnp no)
 		(uuid "9375eeda-21d8-4623-b69a-c4fe2c0bb0ea")
 		(property "Reference" "XMIDI1"
-			(at 90.678 90.17 0)
+			(at 90.678 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7899,7 +8124,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01"
-			(at 90.17 88.9001 0)
+			(at 90.17 97.7901 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7909,7 +8134,7 @@
 			)
 		)
 		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
-			(at 92.71 90.17 0)
+			(at 92.71 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7918,7 +8143,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 92.71 90.17 0)
+			(at 92.71 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7927,7 +8152,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 92.71 90.17 0)
+			(at 92.71 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8617,7 +8842,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
-		(at 102.87 93.98 0)
+		(at 102.87 102.87 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8625,7 +8850,7 @@
 		(dnp no)
 		(uuid "b8ba01e5-6c0f-4235-96f7-b303ce1bef93")
 		(property "Reference" "MIDI2"
-			(at 104.902 93.98 0)
+			(at 104.902 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8634,7 +8859,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01"
-			(at 105.41 95.2499 0)
+			(at 105.41 104.1399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8644,7 +8869,7 @@
 			)
 		)
 		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
-			(at 102.87 93.98 0)
+			(at 102.87 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8653,7 +8878,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 102.87 93.98 0)
+			(at 102.87 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8662,7 +8887,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 102.87 93.98 0)
+			(at 102.87 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9085,6 +9310,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+10V")
+		(at 130.81 142.24 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cd214491-9ff2-41db-a812-e79e7e38889f")
+		(property "Reference" "#PWR089"
+			(at 127 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+10V"
+			(at 136.398 142.24 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 130.81 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 130.81 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+10V\""
+			(at 130.81 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8aa9110e-58db-4c0a-9635-d1c6213acbe4")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR089")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:D_Schottky")
 		(at 49.53 133.35 180)
 		(unit 1)
@@ -9153,8 +9443,73 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+15V")
+		(at 130.81 138.43 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d1a19055-5ae4-43c9-b94f-22c0ada328f3")
+		(property "Reference" "#PWR088"
+			(at 127 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+15V"
+			(at 136.398 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 130.81 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 130.81 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+15V\""
+			(at 130.81 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "21ccb556-ade7-4474-9cd7-d3d83910b1c6")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR088")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
-		(at 92.71 93.98 180)
+		(at 92.71 102.87 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9162,7 +9517,7 @@
 		(dnp no)
 		(uuid "d4e03e9c-fae2-4428-910e-1f676ee45b58")
 		(property "Reference" "XMIDI2"
-			(at 90.678 93.98 0)
+			(at 90.678 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9171,7 +9526,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01"
-			(at 90.17 92.7101 0)
+			(at 90.17 101.6001 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9181,7 +9536,7 @@
 			)
 		)
 		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
-			(at 92.71 93.98 0)
+			(at 92.71 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9190,7 +9545,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 92.71 93.98 0)
+			(at 92.71 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9199,7 +9554,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 92.71 93.98 0)
+			(at 92.71 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9287,6 +9642,73 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x01")
+		(at 125.73 138.43 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d9801d55-b4bb-4cfe-91b5-f8da3032732c")
+		(property "Reference" "POWER3"
+			(at 123.698 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x01"
+			(at 123.19 137.1601 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
+			(at 125.73 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 125.73 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 125.73 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e57b4d9a-a8f6-4e26-9a69-651b4bb9c224")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "POWER3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x01")
 		(at 34.29 83.82 180)
 		(unit 1)
 		(exclude_from_sim no)
@@ -9347,6 +9769,73 @@
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
 					(reference "GTIN11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x01")
+		(at 125.73 146.05 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "de4b62ac-0f45-48ed-9132-8a64be3be653")
+		(property "Reference" "POWER5"
+			(at 123.698 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x01"
+			(at 123.19 144.7801 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jason_Kicad:WireToBoardCVOCD"
+			(at 125.73 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 125.73 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 125.73 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c4a6143c-821c-4a5e-9eed-0996bd3d1049")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "POWER5")
 					(unit 1)
 				)
 			)
