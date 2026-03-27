@@ -1,7 +1,7 @@
 {
   "board": {
-    "active_layer": 0,
-    "active_layer_preset": "All Layers",
+    "active_layer": 44,
+    "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [],
     "hidden_nets": [],
@@ -16,14 +16,14 @@
     },
     "selection_filter": {
       "dimensions": false,
-      "footprints": true,
-      "graphics": false,
+      "footprints": false,
+      "graphics": true,
       "keepouts": false,
       "lockedItems": false,
       "otherItems": false,
       "pads": false,
       "text": false,
-      "tracks": true,
+      "tracks": false,
       "vias": false,
       "zones": false
     },
@@ -42,6 +42,7 @@
       13,
       15,
       16,
+      17,
       18,
       19,
       20,
@@ -60,11 +61,10 @@
       34,
       35,
       36,
-      37,
       39,
       40
     ],
-    "visible_layers": "fffffff_ffffffff",
+    "visible_layers": "00010e0_00000001",
     "zone_display_mode": 0
   },
   "git": {
@@ -74,7 +74,7 @@
     "ssh_key": ""
   },
   "meta": {
-    "filename": "cvocd_banana.kicad_prl",
+    "filename": "cvocd_banana_fascia.kicad_prl",
     "version": 3
   },
   "project": {
