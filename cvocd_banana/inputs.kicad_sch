@@ -1716,6 +1716,179 @@
 				)
 			)
 		)
+		(symbol "Switch:SW_SPDT"
+			(pin_names
+				(offset 0) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "SW"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SW_SPDT"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 -7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Switch, single pole double throw"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "switch single-pole double-throw spdt ON-ON"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SW_SPDT_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.651 0.254) (xy 1.651 2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 -2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SW_SPDT_1_1"
+				(rectangle
+					(start -3.175 3.81)
+					(end 3.175 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 2.54)
+					(name "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "power:+10V"
 			(power)
 			(pin_numbers hide)
@@ -2192,6 +2365,12 @@
 		(uuid "1cfa4ef7-22e2-4de6-ad7c-09b9936fa9aa")
 	)
 	(junction
+		(at 54.61 175.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1dc1bf6d-d88f-442c-b389-6c12e7b18030")
+	)
+	(junction
 		(at 200.66 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2300,16 +2479,30 @@
 		(uuid "db5ff196-2fd5-4838-bb16-73aab9f7aff6")
 	)
 	(no_connect
-		(at 43.18 129.54)
-		(uuid "5013e031-01c4-4958-b690-357d09eca4de")
+		(at 43.18 146.05)
+		(uuid "136f0b1b-35c9-404e-8936-055fc0f922ae")
 	)
 	(no_connect
-		(at 43.18 107.95)
-		(uuid "aa6a6c49-26b2-450c-aa29-d8005db217d5")
+		(at 43.18 124.46)
+		(uuid "23a0eba4-affa-4370-aa71-8ce2f6c04dd2")
 	)
 	(no_connect
-		(at 43.18 151.13)
-		(uuid "ab4b2de2-9943-436e-b5ee-2e3bc263c8bc")
+		(at 43.18 172.72)
+		(uuid "a182afe4-d5ea-4150-868c-49c343af8429")
+	)
+	(no_connect
+		(at 43.18 102.87)
+		(uuid "e27ad8a9-4a90-4a2e-a799-10d9327eef31")
+	)
+	(wire
+		(pts
+			(xy 54.61 175.26) (xy 53.34 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "02e3a2bd-047e-445b-bc94-5a48f5299c5f")
 	)
 	(wire
 		(pts
@@ -2420,6 +2613,16 @@
 			(type default)
 		)
 		(uuid "1a491812-3ddf-44d2-9b1a-601574710822")
+	)
+	(wire
+		(pts
+			(xy 41.91 177.8) (xy 41.91 179.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1dad9e49-112f-437a-a5a7-857a535af165")
 	)
 	(wire
 		(pts
@@ -2773,6 +2976,16 @@
 	)
 	(wire
 		(pts
+			(xy 43.18 177.8) (xy 41.91 177.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d8c78b1-6b33-489c-b485-5a3083fd4a36")
+	)
+	(wire
+		(pts
 			(xy 207.01 127) (xy 207.01 129.54)
 		)
 		(stroke
@@ -2853,6 +3066,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 172.72) (xy 54.61 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a7c238e9-58b9-4d72-b343-2b6f7042b923")
+	)
+	(wire
+		(pts
 			(xy 224.79 96.52) (xy 226.06 96.52)
 		)
 		(stroke
@@ -2860,6 +3083,16 @@
 			(type default)
 		)
 		(uuid "a8c3022d-c09d-4aff-ac84-323a11cc4c60")
+	)
+	(wire
+		(pts
+			(xy 55.88 175.26) (xy 54.61 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ae663945-67a8-4089-8f4e-fe43cb08cc53")
 	)
 	(wire
 		(pts
@@ -2990,6 +3223,16 @@
 			(type default)
 		)
 		(uuid "cf310860-ba52-479e-a693-f01168648312")
+	)
+	(wire
+		(pts
+			(xy 54.61 163.83) (xy 54.61 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d15495db-7dc9-418d-acd3-481b0607ac55")
 	)
 	(wire
 		(pts
@@ -3375,6 +3618,28 @@
 			)
 		)
 	)
+	(global_label "CLAMP_EN"
+		(shape input)
+		(at 55.88 175.26 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9626a8d0-0d51-4ea7-b789-aed35d98f176")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 68.4204 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "GATE5"
 		(shape input)
 		(at 39.37 60.96 0)
@@ -3582,7 +3847,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0af69aa6-dbeb-4706-87a6-11c61d82331e")
-		(property "Reference" "#PWR082"
+		(property "Reference" "#PWR086"
 			(at 224.79 143.51 0)
 			(effects
 				(font
@@ -3633,7 +3898,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR082")
+					(reference "#PWR086")
 					(unit 1)
 				)
 			)
@@ -3648,7 +3913,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0ed5ee83-04fa-418f-8e3f-c93297c4bf22")
-		(property "Reference" "#PWR061"
+		(property "Reference" "#PWR065"
 			(at 165.1 102.87 0)
 			(effects
 				(font
@@ -3699,7 +3964,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR061")
+					(reference "#PWR065")
 					(unit 1)
 				)
 			)
@@ -3853,7 +4118,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "14d58cd9-2e34-4070-8927-72e288aca997")
-		(property "Reference" "D5"
+		(property "Reference" "D9"
 			(at 49.276 157.48 0)
 			(effects
 				(font
@@ -3906,7 +4171,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "D5")
+					(reference "D9")
 					(unit 1)
 				)
 			)
@@ -3921,7 +4186,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "165040c7-db67-4058-bbbc-cc6885fef21f")
-		(property "Reference" "#PWR062"
+		(property "Reference" "#PWR066"
 			(at 171.45 102.87 0)
 			(effects
 				(font
@@ -3972,7 +4237,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR062")
+					(reference "#PWR066")
 					(unit 1)
 				)
 			)
@@ -4054,7 +4319,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1e19782a-4536-4782-b0be-8667caa6c27a")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR071"
 			(at 214.63 113.03 0)
 			(effects
 				(font
@@ -4105,7 +4370,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR068")
+					(reference "#PWR071")
 					(unit 1)
 				)
 			)
@@ -4257,7 +4522,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "23df2142-a81c-493c-a683-91a1f8ebd2ad")
-		(property "Reference" "#PWR064"
+		(property "Reference" "#PWR068"
 			(at 222.25 96.52 0)
 			(effects
 				(font
@@ -4308,7 +4573,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR064")
+					(reference "#PWR068")
 					(unit 1)
 				)
 			)
@@ -4410,7 +4675,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "24564dac-4396-4a81-a081-786512a95300")
-		(property "Reference" "#PWR058"
+		(property "Reference" "#PWR062"
 			(at 99.06 58.42 0)
 			(effects
 				(font
@@ -4461,7 +4726,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR058")
+					(reference "#PWR062")
 					(unit 1)
 				)
 			)
@@ -4476,7 +4741,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "24cdc075-e66a-42da-a4ba-4868b94e035b")
-		(property "Reference" "#PWR079"
+		(property "Reference" "#PWR083"
 			(at 180.34 143.51 0)
 			(effects
 				(font
@@ -4527,7 +4792,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR079")
+					(reference "#PWR083")
 					(unit 1)
 				)
 			)
@@ -4610,7 +4875,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2a17af9b-46ab-4c4a-86ce-4ca662235f62")
-		(property "Reference" "#PWR059"
+		(property "Reference" "#PWR063"
 			(at 107.95 81.28 0)
 			(effects
 				(font
@@ -4661,7 +4926,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR059")
+					(reference "#PWR063")
 					(unit 1)
 				)
 			)
@@ -4942,8 +5207,78 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 54.61 168.91 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2e199610-c5d2-4585-991f-335c1fe6a432")
+		(property "Reference" "R42"
+			(at 57.15 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "R"
+			(at 57.15 170.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+			(at 52.832 168.91 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 54.61 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 54.61 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "25422543-66f8-45f1-9ffe-47aac6904eca")
+		)
+		(pin "1"
+			(uuid "fd87a52b-a0ea-4c3e-8485-596c9e2f0489")
+		)
+		(instances
+			(project ""
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "R42")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+15V")
-		(at 43.18 102.87 90)
+		(at 43.18 107.95 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4951,8 +5286,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "30471f07-65fd-424d-9d6a-a15b080fecdc")
-		(property "Reference" "#PWR066"
-			(at 46.99 102.87 0)
+		(property "Reference" "#PWR073"
+			(at 46.99 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4961,7 +5296,7 @@
 			)
 		)
 		(property "Value" "+15V"
-			(at 39.37 102.8699 90)
+			(at 39.37 107.9499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4970,7 +5305,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 43.18 102.87 0)
+			(at 43.18 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4979,7 +5314,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 43.18 102.87 0)
+			(at 43.18 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4988,7 +5323,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+15V\""
-			(at 43.18 102.87 0)
+			(at 43.18 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5002,7 +5337,7 @@
 		(instances
 			(project ""
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR066")
+					(reference "#PWR073")
 					(unit 1)
 				)
 			)
@@ -5084,7 +5419,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3512981c-48d7-4789-8e06-1cbda3fe8326")
-		(property "Reference" "#PWR057"
+		(property "Reference" "#PWR061"
 			(at 119.38 43.18 0)
 			(effects
 				(font
@@ -5135,7 +5470,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR057")
+					(reference "#PWR061")
 					(unit 1)
 				)
 			)
@@ -5150,7 +5485,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "36e7f85e-5b6f-4ea4-b731-4955d37229a8")
-		(property "Reference" "#PWR060"
+		(property "Reference" "#PWR064"
 			(at 199.39 87.63 0)
 			(effects
 				(font
@@ -5201,7 +5536,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR060")
+					(reference "#PWR064")
 					(unit 1)
 				)
 			)
@@ -5216,7 +5551,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "36eed46c-f773-47e4-b533-45819c18ec16")
-		(property "Reference" "#PWR076"
+		(property "Reference" "#PWR080"
 			(at 46.99 133.35 0)
 			(effects
 				(font
@@ -5266,7 +5601,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR076")
+					(reference "#PWR080")
 					(unit 1)
 				)
 			)
@@ -5352,7 +5687,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "40793191-ae0b-404f-8d65-5d7d87e34d4c")
-		(property "Reference" "#PWR067"
+		(property "Reference" "#PWR070"
 			(at 46.99 105.41 0)
 			(effects
 				(font
@@ -5403,7 +5738,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR067")
+					(reference "#PWR070")
 					(unit 1)
 				)
 			)
@@ -5418,7 +5753,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "42be0065-3488-4464-afc8-080542ca9c66")
-		(property "Reference" "#PWR069"
+		(property "Reference" "#PWR072"
 			(at 224.79 113.03 0)
 			(effects
 				(font
@@ -5469,7 +5804,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR069")
+					(reference "#PWR072")
 					(unit 1)
 				)
 			)
@@ -5484,7 +5819,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "44840b83-8b84-4771-a4a8-302382094927")
-		(property "Reference" "#PWR078"
+		(property "Reference" "#PWR082"
 			(at 152.4 143.51 0)
 			(effects
 				(font
@@ -5535,7 +5870,74 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR078")
+					(reference "#PWR082")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+15V")
+		(at 43.18 151.13 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "45d3e2f3-38c9-45d4-b8eb-8a0d6a834eb4")
+		(property "Reference" "#PWR093"
+			(at 46.99 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+15V"
+			(at 39.37 151.1299 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 43.18 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+15V\""
+			(at 43.18 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "245bcb28-d447-4afd-887f-ede8f671632c")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR093")
 					(unit 1)
 				)
 			)
@@ -5550,7 +5952,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "46ce2b16-3423-461d-bbe2-8b04bb8dc30e")
-		(property "Reference" "#PWR070"
+		(property "Reference" "#PWR074"
 			(at 46.99 111.76 0)
 			(effects
 				(font
@@ -5600,7 +6002,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR070")
+					(reference "#PWR074")
 					(unit 1)
 				)
 			)
@@ -5616,7 +6018,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4b3021a4-c955-46c7-94de-030752e19b04")
-		(property "Reference" "D2"
+		(property "Reference" "D6"
 			(at 217.17 87.9474 90)
 			(effects
 				(font
@@ -5671,7 +6073,7 @@
 		(instances
 			(project ""
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "D2")
+					(reference "D6")
 					(unit 1)
 				)
 			)
@@ -5754,7 +6156,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4ed2d0af-c8d2-4cf8-9789-b840c0b9f37b")
-		(property "Reference" "D1"
+		(property "Reference" "D5"
 			(at 159.0675 73.66 0)
 			(effects
 				(font
@@ -5808,7 +6210,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "D1")
+					(reference "D5")
 					(unit 1)
 				)
 			)
@@ -6317,7 +6719,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "Jason_Kicad:Slide_SW_Rev_Mnt_CLSB13B01"
+		(property "Footprint" "Jason_Kicad:Slide_1P3T_Rev_Mnt_CLSB13B01"
 			(at 64.135 122.555 0)
 			(effects
 				(font
@@ -6374,7 +6776,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "66d39879-13fc-40c4-ac15-711dbfbf5c2c")
-		(property "Reference" "#PWR072"
+		(property "Reference" "#PWR076"
 			(at 186.69 121.92 0)
 			(effects
 				(font
@@ -6424,7 +6826,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR072")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
@@ -6841,7 +7243,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7655ffc2-7ee9-46b5-9c7c-93d730a358a7")
-		(property "Reference" "#PWR081"
+		(property "Reference" "#PWR085"
 			(at 207.01 143.51 0)
 			(effects
 				(font
@@ -6892,7 +7294,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR081")
+					(reference "#PWR085")
 					(unit 1)
 				)
 			)
@@ -7044,7 +7446,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7c39f698-c6bd-4c20-a223-103d5fa2b9f8")
-		(property "Reference" "#PWR074"
+		(property "Reference" "#PWR077"
 			(at 46.99 127 0)
 			(effects
 				(font
@@ -7095,7 +7497,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR074")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -7110,7 +7512,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7ed525d3-a8ef-4865-938a-8058d89c40cb")
-		(property "Reference" "#PWR065"
+		(property "Reference" "#PWR069"
 			(at 190.5 104.14 0)
 			(effects
 				(font
@@ -7161,7 +7563,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR065")
+					(reference "#PWR069")
 					(unit 1)
 				)
 			)
@@ -7176,7 +7578,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7f146efe-15dd-43b4-8865-62a20a7f21e7")
-		(property "Reference" "#PWR086"
+		(property "Reference" "#PWR092"
 			(at 172.72 154.94 0)
 			(effects
 				(font
@@ -7227,7 +7629,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR086")
+					(reference "#PWR092")
 					(unit 1)
 				)
 			)
@@ -7982,7 +8384,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9132fa09-dcbe-4137-a731-0b655fc7ff17")
-		(property "Reference" "#PWR075"
+		(property "Reference" "#PWR078"
 			(at 228.6 127 0)
 			(effects
 				(font
@@ -8032,7 +8434,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR075")
+					(reference "#PWR078")
 					(unit 1)
 				)
 			)
@@ -8248,7 +8650,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "94f3a496-3055-41e6-b2c9-f2268c98c268")
-		(property "Reference" "#PWR071"
+		(property "Reference" "#PWR075"
 			(at 152.4 125.73 0)
 			(effects
 				(font
@@ -8298,7 +8700,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR071")
+					(reference "#PWR075")
 					(unit 1)
 				)
 			)
@@ -8382,7 +8784,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "95cd2c55-2d29-4b3e-853b-80666bbecf1a")
-		(property "Reference" "#PWR083"
+		(property "Reference" "#PWR087"
 			(at 231.14 143.51 0)
 			(effects
 				(font
@@ -8433,7 +8835,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR083")
+					(reference "#PWR087")
 					(unit 1)
 				)
 			)
@@ -8448,7 +8850,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "99c30b82-a771-4e76-8934-f89a1c28372d")
-		(property "Reference" "D3"
+		(property "Reference" "D7"
 			(at 49.276 114.3 0)
 			(effects
 				(font
@@ -8501,7 +8903,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "D3")
+					(reference "D7")
 					(unit 1)
 				)
 			)
@@ -8517,7 +8919,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9a7e93fb-3c55-48d7-8501-8d22e3f6d7c4")
-		(property "Reference" "#PWR085"
+		(property "Reference" "#PWR091"
 			(at 46.99 148.59 0)
 			(effects
 				(font
@@ -8568,7 +8970,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR085")
+					(reference "#PWR091")
 					(unit 1)
 				)
 			)
@@ -8583,7 +8985,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9af5a9ea-6f27-4e11-bf9b-7208001cd459")
-		(property "Reference" "#PWR055"
+		(property "Reference" "#PWR059"
 			(at 119.38 34.29 0)
 			(effects
 				(font
@@ -8634,7 +9036,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR055")
+					(reference "#PWR059")
 					(unit 1)
 				)
 			)
@@ -8649,7 +9051,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a1f70fe3-8337-41ec-89f8-7fbe8184442d")
-		(property "Reference" "#PWR063"
+		(property "Reference" "#PWR067"
 			(at 182.88 102.87 0)
 			(effects
 				(font
@@ -8700,7 +9102,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR063")
+					(reference "#PWR067")
 					(unit 1)
 				)
 			)
@@ -8774,17 +9176,16 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+15V")
-		(at 43.18 124.46 90)
+		(lib_id "power:+5V")
+		(at 54.61 163.83 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "af083635-ccd0-4809-9f59-d7b204cc8608")
-		(property "Reference" "#PWR073"
-			(at 46.99 124.46 0)
+		(uuid "b355bfd4-3e23-49f8-b7cf-108aef6ab4bb")
+		(property "Reference" "#PWR095"
+			(at 54.61 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8792,17 +9193,16 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "+15V"
-			(at 39.37 124.4599 90)
+		(property "Value" "+5V"
+			(at 54.102 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
 		(property "Footprint" ""
-			(at 43.18 124.46 0)
+			(at 54.61 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8811,7 +9211,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 43.18 124.46 0)
+			(at 54.61 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8819,8 +9219,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"+15V\""
-			(at 43.18 124.46 0)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 54.61 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8829,12 +9229,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "bc563938-ac4d-4198-953e-ce17b78ff81b")
+			(uuid "d6480ac6-64b9-4971-b9c4-1267e31382bb")
 		)
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR073")
+					(reference "#PWR095")
 					(unit 1)
 				)
 			)
@@ -8969,6 +9369,77 @@
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
 					(reference "GTIN5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_SPDT")
+		(at 48.26 175.26 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c301cefa-e402-49bc-9456-b9e84561e7ce")
+		(property "Reference" "SW4"
+			(at 47.752 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SW_SPDT"
+			(at 48.26 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Jason_Kicad:Slide_1P2T_Rev_Mnt_CLSB12B01"
+			(at 48.26 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 48.26 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Switch, single pole double throw"
+			(at 48.26 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "216a121d-089c-41ff-bb8a-496b39c17794")
+		)
+		(pin "2"
+			(uuid "11b6d5fb-dcc9-4636-82d7-aa95152ea8d1")
+		)
+		(pin "3"
+			(uuid "9ec35ae0-92b3-41e4-93c1-46b7a36ff11e")
+		)
+		(instances
+			(project ""
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "SW4")
 					(unit 1)
 				)
 			)
@@ -9383,7 +9854,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d0aeda8a-140a-45c0-b82f-7ad7fde54595")
-		(property "Reference" "D4"
+		(property "Reference" "D8"
 			(at 49.276 135.89 0)
 			(effects
 				(font
@@ -9436,7 +9907,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "D4")
+					(reference "D8")
 					(unit 1)
 				)
 			)
@@ -9583,7 +10054,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d7d1735c-2c3a-4d06-b845-25476bcd2457")
-		(property "Reference" "#PWR054"
+		(property "Reference" "#PWR058"
 			(at 119.38 25.4 0)
 			(effects
 				(font
@@ -9634,7 +10105,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR054")
+					(reference "#PWR058")
 					(unit 1)
 				)
 			)
@@ -9850,7 +10321,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "de517c0f-ac32-49ed-b0df-2ba5bab94b84")
-		(property "Reference" "#PWR077"
+		(property "Reference" "#PWR081"
 			(at 215.9 140.97 0)
 			(effects
 				(font
@@ -9901,74 +10372,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR077")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+15V")
-		(at 43.18 146.05 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "dee91af3-cc81-4bd0-9d24-88f0af66bf96")
-		(property "Reference" "#PWR084"
-			(at 46.99 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+15V"
-			(at 39.37 146.0499 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 43.18 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 43.18 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+15V\""
-			(at 43.18 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f824af28-c15c-4e7c-829b-d87ce46d83b1")
-		)
-		(instances
-			(project "cvocd_banana"
-				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR084")
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
@@ -9983,7 +10387,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e0b6d26c-b8fc-46cf-8555-68daa1436f76")
-		(property "Reference" "#PWR056"
+		(property "Reference" "#PWR060"
 			(at 101.6 43.18 0)
 			(effects
 				(font
@@ -10033,7 +10437,73 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR056")
+					(reference "#PWR060")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 41.91 179.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e56304da-0705-4b4c-a408-6eb7577353ec")
+		(property "Reference" "#PWR096"
+			(at 41.91 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 43.942 182.626 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 41.91 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 41.91 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 41.91 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3510c93b-d751-4ae5-a4b7-3ebc412a2798")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR096")
 					(unit 1)
 				)
 			)
@@ -10048,7 +10518,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e87ec5f2-0d9d-419f-bb19-bd2af9de1b9e")
-		(property "Reference" "#PWR087"
+		(property "Reference" "#PWR094"
 			(at 46.99 154.94 0)
 			(effects
 				(font
@@ -10098,7 +10568,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR087")
+					(reference "#PWR094")
 					(unit 1)
 				)
 			)
@@ -10181,7 +10651,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e94fe334-c637-491f-a6a3-2b50a3999192")
-		(property "Reference" "#PWR080"
+		(property "Reference" "#PWR084"
 			(at 186.69 143.51 0)
 			(effects
 				(font
@@ -10232,7 +10702,7 @@
 		(instances
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
-					(reference "#PWR080")
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -10369,6 +10839,73 @@
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
 					(reference "C28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+15V")
+		(at 43.18 129.54 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f20786ca-8297-4483-ac23-f77f8bee5732")
+		(property "Reference" "#PWR079"
+			(at 46.99 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+15V"
+			(at 39.37 129.5399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 43.18 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+15V\""
+			(at 43.18 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c85d5781-ec8a-4979-a549-10b6e0ef4a7f")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/a7087e78-201a-4bde-9ba0-5717116ba4d1"
+					(reference "#PWR079")
 					(unit 1)
 				)
 			)
@@ -10538,7 +11075,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "Jason_Kicad:Slide_SW_Rev_Mnt_CLSB13B01"
+		(property "Footprint" "Jason_Kicad:Slide_1P3T_Rev_Mnt_CLSB13B01"
 			(at 64.135 144.145 0)
 			(effects
 				(font
@@ -10613,7 +11150,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "Jason_Kicad:Slide_SW_Rev_Mnt_CLSB13B01"
+		(property "Footprint" "Jason_Kicad:Slide_1P3T_Rev_Mnt_CLSB13B01"
 			(at 64.135 100.965 0)
 			(effects
 				(font

@@ -1,4 +1,4 @@
-23997684553202268
+23999459472904376
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -63567,7 +63567,14 @@ SK6812MINI-E
 4
 4
 Jason_Kicad
-Slide_SW_Rev_Mnt_CLSB13B01
+Slide_1P2T_Rev_Mnt_CLSB12B01
+
+
+0
+3
+3
+Jason_Kicad
+Slide_1P3T_Rev_Mnt_CLSB13B01
 
 
 0
@@ -63627,8 +63634,8 @@ WireToBoardCVOCD
 
 
 0
-0
-0
+1
+1
 Jason_Kicad
 isolation_test_pad
 
