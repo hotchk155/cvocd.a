@@ -91,3 +91,10 @@ firmware.X/.ca
 /firmware_xc8/out
 /asp_config/test
 firmware_xc8/.vscode/cvocd_xc8.mplab-local.json
+cvocd_banana/\#auto_saved_files\#
+cvocd_banana/~cvocd_banana.kicad_pcb.lck
+cvocd_banana_fascia/cvocd_banana_fascia/fp-info-cache
+cvocd_banana_fascia/cvocd_banana_fascia/fp-lib-table
+cvocd_banana_fascia/cvocd_banana_fascia/~cvocd_banana_fascia.kicad_pcb.lck
+/cvocd_banana/gerber
+/cvocd_banana_fascia/cvocd_banana_fascia/gerber

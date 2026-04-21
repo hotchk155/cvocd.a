@@ -1370,7 +1370,7 @@
 				)
 			)
 		)
-		(symbol "power:+5V"
+		(symbol "power:+10V"
 			(power)
 			(pin_numbers hide)
 			(pin_names
@@ -1387,7 +1387,7 @@
 					(hide yes)
 				)
 			)
-			(property "Value" "+5V"
+			(property "Value" "+10V"
 				(at 0 3.556 0)
 				(effects
 					(font
@@ -1413,7 +1413,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(property "Description" "Power symbol creates a global label with name \"+10V\""
 				(at 0 0 0)
 				(effects
 					(font
@@ -1431,7 +1431,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "+5V_0_1"
+			(symbol "+10V_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27) (xy 0 2.54)
@@ -1469,7 +1469,7 @@
 					)
 				)
 			)
-			(symbol "+5V_1_1"
+			(symbol "+10V_1_1"
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
@@ -5246,71 +5246,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+5V")
-		(at 123.19 130.81 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "eee5400c-5b7b-4df8-b4a1-64235bca7f99")
-		(property "Reference" "#PWR055"
-			(at 123.19 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 123.19 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 123.19 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 123.19 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 123.19 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "51edef10-b41b-4551-aea5-12156a6c306e")
-		)
-		(instances
-			(project "cvocd_banana"
-				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/721fd379-0889-4e74-8212-a23ae46bf4ef"
-					(reference "#PWR055")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Amplifier_Operational:LM324")
 		(at 130.81 87.63 0)
 		(unit 3)
@@ -5476,6 +5411,71 @@
 			(project "cvocd_banana"
 				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/721fd379-0889-4e74-8212-a23ae46bf4ef"
 					(reference "XCV1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+10V")
+		(at 123.19 130.81 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f4e9b8b2-2646-4f0f-801f-5fe8a2967cd4")
+		(property "Reference" "#PWR055"
+			(at 123.19 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+10V"
+			(at 122.936 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 123.19 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 123.19 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+10V\""
+			(at 123.19 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "47435520-4915-4c88-922d-67c60c127b80")
+		)
+		(instances
+			(project "cvocd_banana"
+				(path "/d6028aad-759f-4736-9818-30f0061d1d8d/721fd379-0889-4e74-8212-a23ae46bf4ef"
+					(reference "#PWR055")
 					(unit 1)
 				)
 			)

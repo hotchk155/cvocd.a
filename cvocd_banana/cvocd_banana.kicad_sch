@@ -5,6 +5,18 @@
 	(uuid "d6028aad-759f-4736-9818-30f0061d1d8d")
 	(paper "A4")
 	(lib_symbols)
+	(text "1- Added lower mounting hole and moved led/button solder points\n2- Change orientation of limit switch\n3- input for 5v reg comes from dc input not 10v\n4- LED buffer amp powered from 10V not 5V\n5- AP3012 boost reg used\n\n\n"
+		(exclude_from_sim no)
+		(at 44.958 30.734 0)
+		(effects
+			(font
+				(size 3.81 3.81)
+				(thickness 0.4763)
+			)
+			(justify left)
+		)
+		(uuid "21dff523-15bc-436e-a8da-d9182fc74e60")
+	)
 	(sheet
 		(at 119.38 96.52)
 		(size 12.7 5.08)
