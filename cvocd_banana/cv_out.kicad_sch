@@ -3620,12 +3620,11 @@
 			)
 		)
 		(property "Value" "LM324"
-			(at 130.81 31.75 0)
+			(at 128.524 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_SO:SO-14_3.9x8.65mm_P1.27mm"
@@ -4156,7 +4155,7 @@
 		(dnp no)
 		(uuid "8467e4ae-9f3c-49c2-8ed4-29366b45ece2")
 		(property "Reference" "Q2"
-			(at 105.156 62.484 90)
+			(at 102.108 67.31 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4164,12 +4163,11 @@
 			)
 		)
 		(property "Value" "2N7002"
-			(at 100.33 57.15 90)
+			(at 104.648 69.088 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
@@ -4230,7 +4228,7 @@
 		(dnp no)
 		(uuid "85f508ff-fdcc-498d-be0c-769cece4670a")
 		(property "Reference" "Q4"
-			(at 105.156 110.744 90)
+			(at 102.362 115.57 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4238,12 +4236,11 @@
 			)
 		)
 		(property "Value" "2N7002"
-			(at 100.33 105.41 90)
+			(at 104.648 117.348 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
@@ -4377,13 +4374,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Zener"
-			(at 88.9 81.28 0)
+		(property "Value" "5V1"
+			(at 89.408 89.408 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_0805_2012Metric"
@@ -4705,7 +4701,7 @@
 		(dnp no)
 		(uuid "b3093d8a-c161-418f-ace4-eac360f1d097")
 		(property "Reference" "C19"
-			(at 128.27 128.778 90)
+			(at 129.286 135.382 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4713,7 +4709,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 128.524 135.382 90)
+			(at 129.794 137.16 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4772,7 +4768,7 @@
 		(dnp no)
 		(uuid "bbf2ab95-798a-4eaf-9ce9-c3cf7b50f9b5")
 		(property "Reference" "Q3"
-			(at 105.156 86.614 90)
+			(at 102.108 91.694 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4780,12 +4776,11 @@
 			)
 		)
 		(property "Value" "2N7002"
-			(at 100.33 81.28 90)
+			(at 104.648 93.472 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
@@ -4920,13 +4915,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Zener"
-			(at 88.9 33.02 0)
+		(property "Value" "5V1"
+			(at 89.408 41.148 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_0805_2012Metric"
@@ -5113,7 +5107,7 @@
 		(dnp no)
 		(uuid "de51a7b4-3bc4-4a81-a973-c379bf92ae46")
 		(property "Reference" "Q1"
-			(at 105.156 38.354 90)
+			(at 102.108 43.18 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5121,12 +5115,11 @@
 			)
 		)
 		(property "Value" "2N7002"
-			(at 100.33 33.02 90)
+			(at 104.648 44.958 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
@@ -5194,13 +5187,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Zener"
-			(at 88.9 105.41 0)
+		(property "Value" "5V1"
+			(at 89.408 113.538 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_0805_2012Metric"
@@ -5498,13 +5490,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Zener"
-			(at 88.9 57.15 0)
+		(property "Value" "5V1"
+			(at 89.408 65.278 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_0805_2012Metric"

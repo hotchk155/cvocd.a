@@ -5,21 +5,28 @@
 	(uuid "d6028aad-759f-4736-9818-30f0061d1d8d")
 	(paper "A4")
 	(lib_symbols)
-	(text "1- Added lower mounting hole and moved led/button solder points\n2- Change orientation of limit switch\n3- input for 5v reg comes from dc input not 10v\n4- LED buffer amp powered from 10V not 5V\n5- AP3012 boost reg used\n\n\n"
+	(text_box "22/4/26\n1- Added lower mounting hole and moved led/button solder points\n2- Change orientation of limit switch\n3- input for 5v reg comes from dc input not 10v\n4- LED buffer amp powered from 10V not 5V\n5- AP3012 boost reg used"
 		(exclude_from_sim no)
-		(at 44.958 30.734 0)
+		(at 179.705 64.135 0)
+		(size 95.885 28.575)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
 		(effects
 			(font
-				(size 3.81 3.81)
-				(thickness 0.4763)
+				(size 2.032 2.032)
 			)
-			(justify left)
+			(justify left top)
 		)
-		(uuid "21dff523-15bc-436e-a8da-d9182fc74e60")
+		(uuid "92bfb9eb-1e9c-46c8-93f5-8ca0a4a75af3")
 	)
 	(sheet
-		(at 119.38 96.52)
-		(size 12.7 5.08)
+		(at 32.385 32.385)
+		(size 12.7 3.81)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
@@ -30,7 +37,7 @@
 		)
 		(uuid "53ea022f-21ec-467d-a620-575d4d777832")
 		(property "Sheetname" "gate_out"
-			(at 119.38 95.8084 0)
+			(at 32.385 31.6734 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -39,7 +46,7 @@
 			)
 		)
 		(property "Sheetfile" "gate_out.kicad_sch"
-			(at 119.38 102.1846 0)
+			(at 32.385 36.7796 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -56,8 +63,8 @@
 		)
 	)
 	(sheet
-		(at 121.92 109.22)
-		(size 12.7 5.08)
+		(at 32.385 43.18)
+		(size 12.7 3.81)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
@@ -68,7 +75,7 @@
 		)
 		(uuid "721fd379-0889-4e74-8212-a23ae46bf4ef")
 		(property "Sheetname" "cv_out"
-			(at 121.92 108.5084 0)
+			(at 32.385 42.4684 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -77,7 +84,7 @@
 			)
 		)
 		(property "Sheetfile" "cv_out.kicad_sch"
-			(at 121.92 114.8846 0)
+			(at 32.385 47.5746 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -94,7 +101,7 @@
 		)
 	)
 	(sheet
-		(at 121.92 127)
+		(at 32.385 54.61)
 		(size 12.7 3.81)
 		(fields_autoplaced yes)
 		(stroke
@@ -106,7 +113,7 @@
 		)
 		(uuid "a7087e78-201a-4bde-9ba0-5717116ba4d1")
 		(property "Sheetname" "inputs"
-			(at 121.92 126.2884 0)
+			(at 32.385 53.8984 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -115,7 +122,7 @@
 			)
 		)
 		(property "Sheetfile" "inputs.kicad_sch"
-			(at 121.92 131.3946 0)
+			(at 32.385 59.0046 0)
 			(effects
 				(font
 					(size 1.27 1.27)

@@ -1,4 +1,4 @@
-23999459472904376
+24006580100042753
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -63378,6 +63378,13 @@ CINCH-BANANA
 1
 1
 Jason_Kicad
+CUI_PJ-085AH
+
+
+0
+6
+6
+Jason_Kicad
 DC_JACK_RAPID
 
 
@@ -63518,6 +63525,13 @@ PEC16_4_Encoder
 5
 3
 Jason_Kicad
+Panel_Mount_DIN
+
+
+0
+0
+0
+Jason_Kicad
 RK09K_Single_Vertical_Slots
 113004U 1130A6S 11300DR 1130A8G 1130081 1130A5R 1130AP5 1130AST  D1130C3W D1130C1B D1130C3C D1130C2P Potentiometer, vertical, Alps RK09K Single, https://tech.alpsalpine.com/prod/e/pdf/potentiometer/rotarypotentiometers/rk09k/rk09k.pdf
 Potentiometer vertical Alps RK09K RK09D Single Snapin
@@ -63566,6 +63580,13 @@ SK6812MINI-E
 0
 4
 4
+Jason_Kicad
+SMT_Tact_SW_ThruMount
+Surface Mount Tactile Switch for High-Density Mounting, 3.1mm height, https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3fs.pdf
+Tactile Switch
+0
+4
+2
 Jason_Kicad
 Slide_1P2T_Rev_Mnt_CLSB12B01
 
@@ -97124,6 +97145,13 @@ CUI_PJ-085AH
 0
 6
 6
+footprints
+CUI_UJ20-C-H-G-SMT-TR
+
+
+0
+20
+20
 footprints
 DDA8_3P1X2P4
 

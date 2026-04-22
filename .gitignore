@@ -98,3 +98,6 @@ cvocd_banana_fascia/cvocd_banana_fascia/fp-lib-table
 cvocd_banana_fascia/cvocd_banana_fascia/~cvocd_banana_fascia.kicad_pcb.lck
 /cvocd_banana/gerber
 /cvocd_banana_fascia/cvocd_banana_fascia/gerber
+cvocd_banana/fp-info-cache
+cvocd_banana/~$cvb_bom.xlsx
+cvocd_banana/~cvocd_banana.kicad_sch.lck

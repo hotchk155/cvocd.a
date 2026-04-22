@@ -3845,7 +3845,7 @@
 				)
 			)
 		)
-		(property "Value" "L"
+		(property "Value" "TYS4012100M-10/10uH"
 			(at 214.63 64.77 90)
 			(effects
 				(font
@@ -3978,13 +3978,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Schottky"
-			(at 49.276 157.48 0)
+		(property "Value" "MBR0520"
+			(at 45.974 159.258 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SOD-123"
@@ -4106,7 +4105,7 @@
 		(dnp no)
 		(uuid "205d1e09-5432-4669-bade-1acc725de774")
 		(property "Reference" "C20"
-			(at 205.74 49.276 0)
+			(at 200.66 43.434 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4114,8 +4113,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 203.962 44.196 0)
+		(property "Value" "100n"
+			(at 200.66 44.958 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4642,7 +4641,7 @@
 		(dnp no)
 		(uuid "2ceae534-b9ff-40f3-846a-3305aa092131")
 		(property "Reference" "C29"
-			(at 199.644 134.366 0)
+			(at 199.644 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4650,17 +4649,16 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C_Polarized"
-			(at 203.2 132.4609 0)
+		(property "Value" "100u/20"
+			(at 199.644 130.048 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-6032-28_Kemet-C"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 200.3552 135.89 0)
 			(effects
 				(font
@@ -4712,7 +4710,7 @@
 		(dnp no)
 		(uuid "2e0e9586-71f9-43e8-9651-919c3d9d7cd7")
 		(property "Reference" "C22"
-			(at 230.124 49.276 0)
+			(at 229.87 49.022 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4720,17 +4718,16 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C_Polarized"
-			(at 233.68 47.3709 0)
+		(property "Value" "100u"
+			(at 229.87 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-6032-28_Kemet-C"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 230.8352 50.8 0)
 			(effects
 				(font
@@ -4780,10 +4777,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "2e199610-c5d2-4585-991f-335c1fe6a432")
 		(property "Reference" "R40"
-			(at 57.15 167.6399 0)
+			(at 55.88 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4791,8 +4787,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
-			(at 57.15 170.1799 0)
+		(property "Value" "10k"
+			(at 55.88 169.418 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5117,7 +5113,7 @@
 		(dnp no)
 		(uuid "37fd59e3-241e-4134-a5f8-978cb2ae7287")
 		(property "Reference" "C26"
-			(at 161.036 94.996 0)
+			(at 165.354 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5125,17 +5121,16 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C_Polarized"
-			(at 168.91 93.0909 0)
+		(property "Value" "100u/20"
+			(at 165.354 90.678 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-6032-28_Kemet-C"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 166.0652 96.52 0)
 			(effects
 				(font
@@ -5797,7 +5792,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k"
 			(at 101.854 34.29 90)
 			(effects
 				(font
@@ -6289,7 +6284,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k"
 			(at 101.854 43.18 90)
 			(effects
 				(font
@@ -7020,7 +7015,7 @@
 		(dnp no)
 		(uuid "84d376ca-29ce-4585-aae8-55b2f312340b")
 		(property "Reference" "R38"
-			(at 187.706 132.08 90)
+			(at 183.134 132.08 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7154,7 +7149,7 @@
 		(dnp no)
 		(uuid "89947d90-71e3-44c1-b87b-a6b61ceae15b")
 		(property "Reference" "R39"
-			(at 187.706 143.51 90)
+			(at 183.134 143.002 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7288,7 +7283,7 @@
 		(dnp no)
 		(uuid "8b416e08-091d-4580-b448-b92f55f2e57d")
 		(property "Reference" "C28"
-			(at 193.04 134.366 0)
+			(at 188.976 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7296,8 +7291,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 191.262 129.286 0)
+		(property "Value" "100n"
+			(at 187.96 130.048 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7897,7 +7892,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k"
 			(at 101.854 25.4 90)
 			(effects
 				(font
@@ -8022,7 +8017,7 @@
 		(dnp no)
 		(uuid "954d1415-2c8f-4f8c-b86d-46b4cf9d94cd")
 		(property "Reference" "C27"
-			(at 165.1 134.366 0)
+			(at 161.036 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8030,8 +8025,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 163.322 129.286 0)
+		(property "Value" "100n"
+			(at 160.02 130.048 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8164,13 +8159,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Schottky"
-			(at 49.276 114.3 0)
+		(property "Value" "MBR0520"
+			(at 45.974 116.332 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SOD-123"
@@ -8623,7 +8617,7 @@
 		(dnp no)
 		(uuid "bf246bd6-d26c-4638-9094-3abaea253ad3")
 		(property "Reference" "R37"
-			(at 241.046 92.456 90)
+			(at 236.728 92.456 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9298,7 +9292,7 @@
 		(dnp no)
 		(uuid "cebc249f-2731-49b7-8026-cc306d716eee")
 		(property "Reference" "R36"
-			(at 241.046 82.55 90)
+			(at 236.728 82.296 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9365,7 +9359,7 @@
 		(dnp no)
 		(uuid "ced14b57-07f8-42a3-b506-08464f962687")
 		(property "Reference" "C24"
-			(at 198.12 91.186 0)
+			(at 193.04 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9373,8 +9367,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 196.342 86.106 0)
+		(property "Value" "1u"
+			(at 193.04 86.868 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9382,7 +9376,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric_Pad1.33x2.70mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 199.0852 92.71 0)
 			(effects
 				(font
@@ -9441,13 +9435,12 @@
 				)
 			)
 		)
-		(property "Value" "D_Schottky"
-			(at 49.276 135.89 0)
+		(property "Value" "MBR0520"
+			(at 46.228 137.668 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SOD-123"
@@ -10032,7 +10025,7 @@
 		(dnp no)
 		(uuid "e1ac484c-6712-4ac8-a1d4-4a251bd15d41")
 		(property "Reference" "C25"
-			(at 246.38 91.186 0)
+			(at 246.38 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10040,8 +10033,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 244.602 86.106 0)
+		(property "Value" "1u"
+			(at 246.38 86.868 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10049,7 +10042,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric_Pad1.33x2.70mm_HandSolder"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 247.3452 92.71 0)
 			(effects
 				(font
@@ -10240,7 +10233,7 @@
 				)
 			)
 		)
-		(property "Value" "L"
+		(property "Value" "CM322522-1R0KL/1uH"
 			(at 255.27 74.93 90)
 			(effects
 				(font
@@ -10433,7 +10426,7 @@
 		(dnp no)
 		(uuid "f14fb77b-d007-4536-88ec-b3a4799b639f")
 		(property "Reference" "C21"
-			(at 223.52 49.276 0)
+			(at 218.44 49.022 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10441,8 +10434,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
-			(at 221.742 44.196 0)
+		(property "Value" "100n"
+			(at 218.44 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10702,7 +10695,7 @@
 		(dnp no)
 		(uuid "fd895acb-2a18-4855-b112-0d52ae98ef68")
 		(property "Reference" "C23"
-			(at 256.286 88.646 0)
+			(at 260.604 82.042 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10710,17 +10703,16 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C_Polarized"
-			(at 264.16 86.7409 0)
+		(property "Value" "100u/20"
+			(at 260.604 84.074 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-6032-28_Kemet-C"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 261.3152 90.17 0)
 			(effects
 				(font
