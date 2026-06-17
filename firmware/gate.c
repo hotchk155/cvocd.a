@@ -485,6 +485,8 @@ void gate_reset() {
 				break;
 		}
 		trigger(pgate, pcfg, which_gate, false, false);
+		g_sr_retrigs = 0;
+		g_sr_data_pending = 1;			
 	}
 }
 	
