@@ -3,7 +3,7 @@
 // CV.OCD BASIC HARDWARE TEST
 // SPECIAL FIRMWARE
 // 
-// REV 2 
+// REV 3 
 //
 ///////////////////////////////////////////////////////////////////////////
 
@@ -191,21 +191,21 @@ void generate_test_outputs()
 			P_LED1 = 0;
 			P_LED2 = 0;
 			break;			
-		case 0x1000:
+		case 0x0200:
 			sr_write(
 				gate_bit[1]|gate_bit[5]|gate_bit[9]
 			);
 			P_LED1 = 0;
 			P_LED2 = 1;
 			break;
-		case 0x2000:
+		case 0x0400:
 			sr_write(
 				gate_bit[2]|gate_bit[6]|gate_bit[10]
 			);
 			P_LED1 = 1;
 			P_LED2 = 0;
 			break;
-		case 0x3000:
+		case 0x0600:
 			sr_write(
 				gate_bit[3]|gate_bit[7]|gate_bit[11]
 			);
@@ -214,10 +214,10 @@ void generate_test_outputs()
 			break;
 		}
 		
-		++i;
+		i+=2;
 		i&=0x1FFF;
 		++j;
-		j&=0x3FFF;
+		j&=0x07FF;
 	}
 }
 
