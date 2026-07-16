@@ -131,7 +131,7 @@ XAble_Input(<%=count%>);
 </script>
 
 </table>
-<p>&dagger;&nbsp; Firmware version <a href="firmwares.html">5.3 or later</a> is required to use settings marked &dagger;</p>
+<p>&dagger;&nbsp; Firmware version <a href="https://six4pix.net/product/cvocd/#tab-firmware-downloads">5.3 or later</a> is required to use settings marked &dagger;</p>
 
 
 <%
@@ -203,7 +203,7 @@ XAble_CVOutput(<%=count%>);
 </script>
 
 </table>
-<p>&dagger;&nbsp; Firmware version <a href="firmwares.html">5.3 or later</a> is required to use settings marked &dagger;</p>
+<p>&dagger;&nbsp; Firmware version <a href="https://six4pix.net/product/cvocd/#tab-firmware-downloads">5.3 or later</a> is required to use settings marked &dagger;</p>
 <%
 ' ================================================================================================
 ' GATE OUTPUTS
